@@ -29,6 +29,9 @@ class JobTrace {
 
     ///This function converts the trace to string for file output
     string toString();
+
+    ///This function returns the timestamp
+    struct timespec getTimestamp();
 };
 
 #endif

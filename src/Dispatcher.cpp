@@ -16,12 +16,12 @@
 /*********** CONSTRUCTORS ***********/
 
 ///Contructor needs Simulation pointer, and a disp_id
-Dispatcher::Dispatcher (Simulation *s, unsigned int id) : Thread()
+Dispatcher::Dispatcher (Simulation *s, unsigned int _id) : Thread(id)
 {
   cout << "++New Dispatcher - " << id << "\n";
 
   sim = s;
-  disp_id = id;
+  id = _id;
 
   //By default periodic
   periodicity = periodic;
@@ -50,9 +50,6 @@ void Dispatcher::setOffset(struct timespec o) {
 ///This is the pthread's wrapper function
 void Dispatcher::wrapper() {
   start();
-
-  pthread_exit(NULL);
-  return;
 }
 
 /*********** MEMBER FUNCTIONS ***********/
@@ -77,7 +74,7 @@ void Dispatcher::dispatch() {
 void Dispatcher::activate() {
 
 #if _DEBUG == 1
-  cout << "Dispatcher " << disp_id << " now has DISP_PR\n";
+  cout << "Dispatcher " << id << " now has DISP_PR\n";
 #endif
 
   pthread_getschedparam(thread, &policy, &thread_param);

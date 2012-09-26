@@ -1,4 +1,5 @@
 #include "TDMA.h"
+//#include "defines.h"
 
 #include "Scheduler.h"
 #include "Runnable.h"
@@ -25,27 +26,30 @@ TDMA::TDMA(Simulation *s, unsigned int id) : Scheduler(s, id) {
 ///This function performs the actual scheduling (figuring out the order of execution for its load)
 void TDMA::schedule(){
   struct timespec rem;
-  unsigned int c;
 
 #if _DEBUG == 1
   cout << "Began scheduling...\n";
 #endif
 
   while (sim->isSimulating() == 1) {
-    for(c=0;c<timeslots.size() && sim->isSimulating()==1;c++) {
 
-      sim->getTraces()->add_trace(scheduler, sched_id, sched_start);
+    for(active_index=0; active_index<timeslots.size() && sim->isSimulating()==1; active_index++) {
+      sim->getTraces()->add_trace(scheduler, id, sched_start);
 
-      load[c]->activate();
+      load[active_index]->activate();
 
 #if _DEBUG == 0
-      cout << "Activated new Runnable " << c << "\n";
+      cout << "Activated new Runnable " << active_index << "\n";
 #endif
-      nanosleep(&timeslots[c], &rem);
+      if(sim->isSimulating() == 1) {
+	cout << "sleeping" << timeslots[active_index].tv_sec << ":" << timeslots[active_index].tv_nsec << "\n";
+	nanosleep(&timeslots[active_index], &rem);
+	cout << "woke up\n";
+      }
   
-      load[c]->deactivate();
+      load[active_index]->deactivate();
 
-      sim->getTraces()->add_trace(scheduler, sched_id, sched_end);
+      sim->getTraces()->add_trace(scheduler, id, sched_end);
     }
   }
 }

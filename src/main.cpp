@@ -1,9 +1,7 @@
+//#include "defines.h"
 #include <iostream>
 
 #include "Simulation.h"
-
-#define _INFO   1
-#define _DEBUG  1
 
 int main() {
     

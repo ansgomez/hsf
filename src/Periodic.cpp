@@ -1,10 +1,11 @@
 #include "Periodic.h"
+//#include "defines.h"
 
 #include "Worker.h"
 #include "Simulation.h"
 #include "Trace.h"
 
-#include <stdio.h>
+#include <iostream>
 
 /********************************************************************************
  * CLASS DEFINITION
@@ -22,18 +23,25 @@ void Periodic::dispatch() {
   while (sim->isSimulating() ==  1) {
 
 #if _INFO == 1
-    cout << "Disp " << disp_id << ": new job!\n";
+    cout << "Disp " << id << ": new job!\n";
 #endif  
 
-    sim->getTraces()->add_trace(dispatcher, disp_id, task_arrival);
+    sim->getTraces()->add_trace(dispatcher, id, task_arrival);
 
     if(worker != NULL) {
       worker->new_job();
     }
     else {
-      printf("Dispatcher error: worker is null!\n");
+      cout << "Dispatcher error: worker is null!\n";
     }
 
-    nanosleep(&period, &rem);
+    if(sim->isSimulating() ==  1) {
+      nanosleep(&period, &rem);
+    }
+  }
+
+  //Free worker from blocking (doesn't affect workers while they have inactive priority -> only when the simulation has ended
+  if(worker != NULL) {
+    worker->new_job();
   }
 }

@@ -25,11 +25,8 @@ class Worker : public Runnable {
   enum _task_load task_load;
   
   Scheduler * scheduler;
- 
-  unsigned int worker_id;
 
   sem_t wrapper_sem;
-
 
  public:
   Worker(Simulation *s, Scheduler *sched, unsigned int id, _task_load tl);

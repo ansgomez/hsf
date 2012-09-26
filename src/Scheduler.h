@@ -19,22 +19,26 @@ class Scheduler : public Runnable {
  protected:
   Simulation *sim;
 
-  unsigned int sched_id;
-
   _sched_type sched_type;
 
   vector<Runnable*> load;
+
+  ///This variable holds the index of the currently active load
+  unsigned int active_index;
 
  public:
   /*********** CONSTRUCTOR ***********/
 
   ///Constructor needs pointer to simulation
-  Scheduler(Simulation *s, unsigned int id);
+  Scheduler(Simulation *s, unsigned int _id);
 
   /*********** INHERITED FUNCTIONS ***********/
 
   ///This is the pthread's wrapper function
   void wrapper();
+
+  ///This function rewrites the deactivate method both the scheduler as well as its load
+  void deactivate();
 
   /*********** MEMBER FUNCTIONS ***********/
 
@@ -49,5 +53,8 @@ class Scheduler : public Runnable {
 
   ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
   virtual void job_finished(int worker);
+
+  ///This function waits for the scheduler's load to join
+  void join_all();
 };
 #endif

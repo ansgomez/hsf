@@ -5,7 +5,7 @@
 #include <iostream>
 
 ///The constructor needs the simulation pointer
-Idle::Idle(Simulation *s) {
+Idle::Idle(Simulation *s) : Thread(0) {
   sim = s;
 }
 
@@ -13,7 +13,7 @@ Idle::Idle(Simulation *s) {
 void Idle::run() {
   while (sim->isSimulating() == 1);
 
-#if _INFO == 1
+#if _INFO == 0
   cout << "Exiting Idle thread\n";
 #endif  
 }
@@ -21,7 +21,4 @@ void Idle::run() {
 ///This inherited function will only call run()
 void Idle::wrapper() {
   run();
-
-  pthread_exit(NULL);
-  return;
 }

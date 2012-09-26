@@ -3,6 +3,10 @@
 #include "TimeUtil.h"
 #include "Operators.h"
 
+#include <iostream>
+
+using namespace std;
+
 /********************************************************************************
  * CLASS DEFINITION
  ********************************************************************************
@@ -16,9 +20,14 @@ void BusyWait::fire() {
   struct timespec start_time, end_time, us_100, count;
 
   //100 us
-  us_100.tv_nsec = 100000;
+  us_100.tv_sec = 0;
+  us_100.tv_nsec = 999999;
+  count.tv_sec = 0;
+  count.tv_nsec = 0;
 
-    clock_gettime(CLOCK_REALTIME, &start_time);
+  clock_gettime(CLOCK_REALTIME, &start_time);
+
+  cout << "Began execution\n";
 
   //BUSY WAIT LOOP
   do {
@@ -30,4 +39,6 @@ void BusyWait::fire() {
       start_time = end_time;
     }
   } while ( count < WCET);// && sim==1); 
+
+  cout << "Finished Execution!\n";
 }

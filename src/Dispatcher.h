@@ -22,8 +22,6 @@ class Dispatcher : public Thread {
 
   Simulation *sim;
 
-  unsigned int disp_id;
-
   Worker *worker;
   
   _task_periodicity periodicity;

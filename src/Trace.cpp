@@ -1,4 +1,5 @@
 #include "Trace.h"
+//#include "defines.h"
 
 #include "Enumerations.h"
 #include "Simulation.h"
@@ -10,7 +11,7 @@
 
 using namespace std;
 
-#define MAX_TRACES 200
+#define MAX_TRACES 1000
 
 /********************************************************************************
  * CLASS DEFINITION
@@ -22,7 +23,7 @@ Trace::Trace(Simulation *s) {
   sim = s;
 
   trace_full = 0;
-  
+
   traces.reserve(MAX_TRACES);//preallocate memory
 
   //Initialize semaphore to 1, so it acts like a mutex
@@ -69,8 +70,10 @@ void Trace::to_file() {
   for(unsigned int c=0;c<=traces.size();c++) {
 
     aux = &traces[c];
-    
-    file << aux->toString() << "\n"; 
+
+    if(aux->getTimestamp().tv_sec != 0 || aux->getTimestamp().tv_nsec != 0) {
+      file << aux->toString() << "\n"; 
+    }
   }
 
   file.close();

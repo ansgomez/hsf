@@ -1,4 +1,5 @@
 #include "Simulation.h"
+//#include "defines.h"
 
 #include "Dispatcher.h"
 #include "Scheduler.h"
@@ -75,7 +76,7 @@ void Simulation::initialize() {
   wcet.tv_sec = 0;
 
   //add first worker
-  wcet.tv_nsec = 1000000; //1ms
+  wcet.tv_nsec = 500000000; //1ms
   t = new BusyWait(disp[0], wcet);
   w = new Worker(this, top_sched, 4, busy_wait);
   w->setLoad(t);
@@ -83,7 +84,7 @@ void Simulation::initialize() {
   disp[0]->setWorker(w);
 
   //add second worker
-  wcet.tv_nsec = 2000000; //2ms
+  wcet.tv_nsec = 500000000; //2ms
   t = new BusyWait(disp[1], wcet);
   w = new Worker(this, top_sched, 5, busy_wait);
   w->setLoad(t);
@@ -102,31 +103,57 @@ void Simulation::initialize() {
   sched->add_slot(ts);
 }
 
+///This function sets the dispatchers to their 'active' priority.
+void Simulation::activate_dispatchers() {
+  for (unsigned int c=0;c<disp.size();c++) {
+    disp[c]->activate();
+  }
+}
 
 void Simulation::simulate() {
   struct timespec rem;
   cout << "**Simulating**\n" ;
 
+  //Set simulation variables
   simulating = 1;  
   TimeUtil::setOffset();
 
-  disp[0]->activate();
-  disp[1]->activate();
-
+  //Activate threads
+  activate_dispatchers();
   top_sched->activate();
 
+  //Sleep for the duration of the simulation
   nanosleep(&sim_time, &rem);
 
-cout << "HELLO\n";
-
+  //Deactivate threads
   simulating = 0;  
   top_sched->deactivate();
 
+  //Join all other threads
+  join_all();
+
   cout << "Stopped simulation\n";
 
+  //Save traces to filex
   traces->to_file();
 
   cout << "Saved simulation results...\n";
+}
+
+///This function waits for all other thread to join
+void Simulation::join_all() {
+  //Wait for all dispatchers
+  for(unsigned int c=0;c<disp.size();c++) {
+    pthread_join(*(disp[c]->getPthread()), NULL);
+  }
+   
+  //Wait for the idle thread (all other threads should be deactivated
+  pthread_join(*(idle->getPthread()), NULL);
+
+  top_sched->join_all();
+
+  //TODO: call functions that post to all semaphores
+  pthread_join(*(top_sched->getPthread()), NULL);
 }
 
 int Simulation::isSimulating() {

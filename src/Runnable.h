@@ -15,8 +15,6 @@ class Runnable : public Thread {
  protected:
   Simulation *sim;
   
-  unsigned int *id;
-
   Deadline deadline;
   
   Task* current_task;
@@ -27,7 +25,7 @@ class Runnable : public Thread {
 
  public:
   ///Constructor needs simulation pointer and an id
-  Runnable(Simulation *s, unsigned int *_id);
+  Runnable(Simulation *s, unsigned int _id);
 
   virtual void wrapper();
 

@@ -1,4 +1,5 @@
 #include "Worker.h"
+//#include "defines.h"
 
 #include "Scheduler.h"
 #include "Trace.h"
@@ -8,9 +9,9 @@
 
 #include <stdio.h>
 
-Worker::Worker(Simulation *s, Scheduler *sched, unsigned int id, _task_load tl) : Runnable(s, &worker_id) {
+Worker::Worker(Simulation *s, Scheduler *sched, unsigned int _id, _task_load tl) : Runnable(s, _id) {
   sim = s;
-  worker_id = id;
+  id = _id;
   scheduler = sched;
 
   sem_init(&wrapper_sem, 0, 0);
@@ -24,7 +25,7 @@ void Worker::wrapper() {
   while (sim->isSimulating() == 1) {
     sem_wait(&wrapper_sem);
 
-    sim->getTraces()->add_trace(worker, worker_id, task_start);
+    sim->getTraces()->add_trace(worker, id, task_start);
 
     if(load != NULL) {
       load->fire();    
@@ -33,11 +34,8 @@ void Worker::wrapper() {
       printf("Worker error: load is null!\n");
     }
 
-    sim->getTraces()->add_trace(worker, worker_id, task_end);
+    sim->getTraces()->add_trace(worker, id, task_end);
   }
-
-  pthread_exit(NULL);
-  return;
 }
 
 void Worker::setLoad(Task *t) {

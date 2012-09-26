@@ -13,15 +13,14 @@
  ********************************************************************************
  */
 
-Runnable::Runnable(Simulation *s, unsigned int *_id) : Thread() {
+Runnable::Runnable(Simulation *s, unsigned int _id) : Thread(_id) {
   sim = s;
-  id = _id;
 }
 
 ///This function set the current runnable to active, meaning that it has control of the CPU and should 'run'
 void Runnable::activate() {
 
-  sim->getTraces()->add_trace(scheduler, *id, sched_start);
+  sim->getTraces()->add_trace(scheduler, id, sched_start);
 
   pthread_getschedparam(thread, &policy, &thread_param);
   thread_param.sched_priority = Priorities::get_active_pr(); //active priority
@@ -30,7 +29,7 @@ void Runnable::activate() {
 
 ///This function set the current runnable to inactive, meaning that it has lost control of the CPU and has to stop running
 void Runnable::deactivate() {
-  sim->getTraces()->add_trace(scheduler, *id, sched_end);
+  sim->getTraces()->add_trace(scheduler, id, sched_end);
 
   pthread_getschedparam(thread, &policy, &thread_param);
   thread_param.sched_priority = Priorities::get_inactive_pr(); //active priority

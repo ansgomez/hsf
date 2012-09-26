@@ -27,3 +27,9 @@ string JobTrace::toString() {
 
   return out.str();
 }
+
+
+///This function returns the timestamp
+struct timespec JobTrace::getTimestamp() {
+  return timestamp;
+}

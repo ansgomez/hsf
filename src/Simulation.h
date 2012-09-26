@@ -61,6 +61,12 @@ class Simulation {
   ///This function tells if there is currently a simulation
   int isSimulating();
 
+  ///This function sets the dispatchers to their 'active' priority.
+  void activate_dispatchers();
+
+  ///This function waits for all other thread to join
+  void join_all();
+
   /************** GETTER FUNCTIONS *************/
 
   ///This function returns the name of the simulation
