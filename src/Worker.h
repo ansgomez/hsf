@@ -35,5 +35,9 @@ class Worker : public Runnable {
   void wrapper();
 
   void setLoad(Task *t);
+
+  /**** INHERITED METHODS ****/
+  void activate();
+  void deactivate();
 };
 #endif

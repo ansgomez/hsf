@@ -37,6 +37,9 @@ class Scheduler : public Runnable {
   ///This is the pthread's wrapper function
   void wrapper();
 
+  ///This function rewrites the activate method to activate both the scheduler as well as its load
+  void activate();
+
   ///This function rewrites the deactivate method both the scheduler as well as its load
   void deactivate();
 

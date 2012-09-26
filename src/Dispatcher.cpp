@@ -73,7 +73,7 @@ void Dispatcher::dispatch() {
 
 void Dispatcher::activate() {
 
-#if _DEBUG == 1
+#if _DEBUG == 0
   cout << "Dispatcher " << id << " now has DISP_PR\n";
 #endif
 

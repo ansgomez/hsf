@@ -15,6 +15,7 @@ Scheduler::Scheduler(Simulation *s, unsigned int _id) : Runnable(s, id){
   sim = s;
   id = _id;
   thread_type = scheduler;
+  active_index = -1;
 }
 
 ///This function adds a load to the scheduler (could be another scheduler, or a worker)
@@ -27,10 +28,26 @@ void Scheduler::wrapper() {
   schedule();
 }
 
-///This function rewrites the deactivate method both the scheduler as well as its load
+///This function rewrites the activate method to activate both the scheduler as well as its load
+void Scheduler::activate() {
+  cout << "Scheduler " << id << " is now active\n";
+  pthread_getschedparam(thread, &policy, &thread_param);
+  thread_param.sched_priority = Priorities::get_server_pr(0); //server priority
+  pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
+
+  //if there was an active load, reactivate it
+  if(active_index != -1) {
+    load[active_index]->deactivate();
+  }
+}
+
+
+///This function rewrites the deactivate method to deactivate both the scheduler as well as its load
 void Scheduler::deactivate() {
   //first deactivate it's active load
-  load[active_index]->deactivate();
+  if(active_index != -1) {
+    load[active_index]->deactivate();
+  }
 
   //now the old deactivate() for itself
   sim->getTraces()->add_trace(scheduler, id, sched_end);

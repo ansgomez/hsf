@@ -30,9 +30,27 @@ void TDMA::schedule(){
 #if _DEBUG == 1
   cout << "Began scheduling...\n";
 #endif
-
+  unsigned int c;
   while (sim->isSimulating() == 1) {
 
+    for(c=0;c<timeslots.size() && sim->isSimulating()==1;c++) {
+ 
+      sim->getTraces()->add_trace(scheduler, id, sched_start);
+ 
+      load[c]->activate();
+ 
+ #if _DEBUG == 0
+      cout << "Activated new Runnable " << c << "\n";
+ #endif
+   
+      nanosleep(&timeslots[c], &rem);
+
+      load[c]->deactivate();
+
+      sim->getTraces()->add_trace(scheduler, id, sched_end);
+    }
+
+    /*
     for(active_index=0; active_index<timeslots.size() && sim->isSimulating()==1; active_index++) {
       sim->getTraces()->add_trace(scheduler, id, sched_start);
 
@@ -41,7 +59,8 @@ void TDMA::schedule(){
 #if _DEBUG == 0
       cout << "Activated new Runnable " << active_index << "\n";
 #endif
-      if(sim->isSimulating() == 1) {
+      //if(sim->isSimulating() == 1)
+      {
 	cout << "sleeping" << timeslots[active_index].tv_sec << ":" << timeslots[active_index].tv_nsec << "\n";
 	nanosleep(&timeslots[active_index], &rem);
 	cout << "woke up\n";
@@ -51,6 +70,7 @@ void TDMA::schedule(){
 
       sim->getTraces()->add_trace(scheduler, id, sched_end);
     }
+    */
   }
 }
 

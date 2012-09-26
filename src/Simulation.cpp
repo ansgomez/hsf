@@ -24,7 +24,7 @@
  */
 
 Simulation::Simulation(string xml_path, int cpu, string nm) {
-  struct sched_param param = {0};
+  //  struct sched_param param = {0};
   name = nm;
 
   sim_time.tv_sec = 1;
@@ -41,7 +41,8 @@ Simulation::Simulation(string xml_path, int cpu, string nm) {
     pthread_exit(0);
   }
 
-  if (cpu==1)
+  //TODO: other options, and default
+  //  if (cpu==1)
   {
     //Set CPU affinity
     CPU_ZERO (&set);
@@ -62,6 +63,7 @@ Simulation::Simulation(string xml_path, int cpu, string nm) {
 void Simulation::initialize() {
   traces = new Trace(this);
 
+  //Idle should be the first thread to be created
   idle = new Idle(this);
 
   TDMA *sched = new TDMA(this, 1);
@@ -76,7 +78,7 @@ void Simulation::initialize() {
   wcet.tv_sec = 0;
 
   //add first worker
-  wcet.tv_nsec = 500000000; //1ms
+  wcet.tv_nsec = 5000000; //1ms
   t = new BusyWait(disp[0], wcet);
   w = new Worker(this, top_sched, 4, busy_wait);
   w->setLoad(t);
@@ -84,7 +86,7 @@ void Simulation::initialize() {
   disp[0]->setWorker(w);
 
   //add second worker
-  wcet.tv_nsec = 500000000; //2ms
+  wcet.tv_nsec = 5000000; //2ms
   t = new BusyWait(disp[1], wcet);
   w = new Worker(this, top_sched, 5, busy_wait);
   w->setLoad(t);

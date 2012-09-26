@@ -22,7 +22,7 @@ void Periodic::dispatch() {
 
   while (sim->isSimulating() ==  1) {
 
-#if _INFO == 1
+#if _INFO == 0
     cout << "Disp " << id << ": new job!\n";
 #endif  
 

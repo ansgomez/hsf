@@ -43,6 +43,7 @@ class Simulation {
   Idle *idle;
 
   cpu_set_t set;
+  struct sched_param param;
 
  public:
   /************** CONSTRUCTOR *************/
