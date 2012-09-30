@@ -10,6 +10,7 @@ class Dispatcher;
 class Parser;
 class Priorities;
 class Trace;
+class Statistics;
 class Scheduler;
 class Idle;
 
@@ -30,6 +31,9 @@ class Simulation {
   ///This object will hold all of the simulation's traces
   Trace *traces;
 
+  ///Thread RuntimeStatistics
+  Statistics *stats;
+
   ///This vector holds all of the relevant dispatchers
   vector<Dispatcher*> disp;
 
@@ -42,6 +46,7 @@ class Simulation {
   ///This is the idle thread
   Idle *idle;
 
+  ///Auxiliary variables for the main thread
   cpu_set_t set;
   struct sched_param param;
 
@@ -55,6 +60,7 @@ class Simulation {
 
   ///This function initializes all of the objects
   void initialize();
+  void initialize_periodic_tdma();
 
   ///This function begins the simulation
   void simulate();
@@ -76,5 +82,10 @@ class Simulation {
   ///This function returns the simulation's traces
   Trace* getTraces();
 
+  ///This function returns the simulation time
+  struct timespec getSim_time();
+
+  //This function return the simulation's statistics
+  Statistics* getStats();
 };
 #endif

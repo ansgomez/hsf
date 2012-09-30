@@ -8,17 +8,20 @@
 #include "Runnable.h"
 #include "Priorities.h"
 
-#include <stdio.h>
+#include <iostream>
 
 Worker::Worker(Simulation *s, Scheduler *sched, unsigned int _id, _task_load tl) : Runnable(s, _id) {
   sim = s;
   id = _id;
   scheduler = sched;
+  type = worker;
 
   sem_init(&wrapper_sem, 0, 0);
 }
 
 void Worker::new_job() {
+  //parent->new_job(this);
+  //cout << "+Worker " << id << " has sem posted\n";
   sem_post(&wrapper_sem);
 }
 
@@ -28,11 +31,13 @@ void Worker::wrapper() {
 
     sim->getTraces()->add_trace(worker, id, task_start);
 
-    if(load != NULL) {
-      load->fire();    
-    }
-    else {
-      printf("Worker error: load is null!\n");
+    if( sim->isSimulating() == 1) {
+      if(load != NULL) {
+	load->fire();    
+      }
+      else {
+	cout << "Worker error: load is null!\n";
+      }
     }
 
     sim->getTraces()->add_trace(worker, id, task_end);

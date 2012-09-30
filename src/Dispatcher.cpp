@@ -4,6 +4,7 @@
 #include "Worker.h"
 #include "Thread.h"
 #include "Priorities.h"
+#include "Enumerations.h"
 
 #include <time.h>
 #include <iostream>
@@ -16,12 +17,15 @@
 /*********** CONSTRUCTORS ***********/
 
 ///Contructor needs Simulation pointer, and a disp_id
-Dispatcher::Dispatcher (Simulation *s, unsigned int _id) : Thread(id)
+Dispatcher::Dispatcher (Simulation *s, unsigned int _id) : Thread(s,id)
 {
-  cout << "++New Dispatcher - " << id << "\n";
+#if _INFO == 1
+  cout << "++New Dispatcher - " << _id << "\n";
+#endif
 
   sim = s;
   id = _id;
+  type = dispatcher;
 
   //By default periodic
   periodicity = periodic;
@@ -73,7 +77,7 @@ void Dispatcher::dispatch() {
 
 void Dispatcher::activate() {
 
-#if _DEBUG == 0
+#if _DEBUG == 1
   cout << "Dispatcher " << id << " now has DISP_PR\n";
 #endif
 

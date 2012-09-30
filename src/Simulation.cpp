@@ -4,15 +4,18 @@
 #include "Dispatcher.h"
 #include "Scheduler.h"
 #include "Worker.h"
+#include "Aperiodic.h"
 #include "Periodic.h"
 #include "Parser.h"
 #include "Priorities.h"
 #include "Trace.h"
+#include "Statistics.h"
 #include "TDMA.h"
 #include "TimeUtil.h"
 #include "BusyWait.h"
 #include "Task.h"
 #include "Idle.h"
+#include "Operators.h"
 
 #include <iostream>
 #include <unistd.h>
@@ -27,8 +30,7 @@ Simulation::Simulation(string xml_path, int cpu, string nm) {
   //  struct sched_param param = {0};
   name = nm;
 
-  sim_time.tv_sec = 1;
-  sim_time.tv_nsec = 0;
+  sim_time =  Seconds(1);
 
   simulating = 0;
 
@@ -62,6 +64,55 @@ Simulation::Simulation(string xml_path, int cpu, string nm) {
 ///This function initializes all of the objects
 void Simulation::initialize() {
   traces = new Trace(this);
+  stats = new Statistics(this);
+
+  //Idle should be the first thread to be created
+  idle = new Idle(this);
+
+  TDMA *sched = new TDMA(this, 1);
+  top_sched = (Scheduler*) sched;
+
+  disp.push_back((Dispatcher*) new Aperiodic(this, 2));
+  disp.push_back((Dispatcher*) new Periodic(this, 3));
+
+  Worker *w;
+  BusyWait  *t;
+  struct timespec wcet;
+
+  //add first worker
+  wcet = Millis(5); //5 ms
+  t = new BusyWait(this, disp[0], wcet);
+  w = new Worker(this, top_sched, 4, busy_wait);
+  w->setLoad(t);
+  top_sched->add_load(w);
+  disp[0]->setWorker(w);
+
+  //add second worker
+  wcet = Millis(9); //10 ms
+  t = new BusyWait(this, disp[1], wcet);
+  w = new Worker(this, top_sched, 5, busy_wait);
+  w->setLoad(t);
+  top_sched->add_load(w);
+  disp[1]->setWorker(w);
+  
+  struct timespec ts;
+
+  //add timeslot 1
+  ts = Millis(10); //10 ms
+  sched->add_slot(ts);
+
+  //add timeslot 2
+  ts = Millis(20); //20 ms
+  sched->add_slot(ts);
+
+  cout << "HSF has been initialized: Aperiodic TDMA\n";
+}
+
+
+///This function initializes all of the objects
+void Simulation::initialize_periodic_tdma() {
+  traces = new Trace(this);
+  stats = new Statistics(this);
 
   //Idle should be the first thread to be created
   idle = new Idle(this);
@@ -79,15 +130,15 @@ void Simulation::initialize() {
 
   //add first worker
   wcet.tv_nsec = 5000000; //1ms
-  t = new BusyWait(disp[0], wcet);
+  t = new BusyWait(this, disp[0], wcet);
   w = new Worker(this, top_sched, 4, busy_wait);
   w->setLoad(t);
   top_sched->add_load(w);
   disp[0]->setWorker(w);
 
   //add second worker
-  wcet.tv_nsec = 5000000; //2ms
-  t = new BusyWait(disp[1], wcet);
+  wcet.tv_nsec = 10000000; //2ms
+  t = new BusyWait(this, disp[1], wcet);
   w = new Worker(this, top_sched, 5, busy_wait);
   w->setLoad(t);
   top_sched->add_load(w);
@@ -103,6 +154,8 @@ void Simulation::initialize() {
   //add timeslot 2
   ts.tv_nsec = 20000000; //20ms
   sched->add_slot(ts);
+
+  cout << "HSF has been initialized: Periodic TDMA\n";
 }
 
 ///This function sets the dispatchers to their 'active' priority.
@@ -128,18 +181,20 @@ void Simulation::simulate() {
   nanosleep(&sim_time, &rem);
 
   //Deactivate threads
+  cout << "**Done**\n";
   simulating = 0;  
   top_sched->deactivate();
 
   //Join all other threads
   join_all();
 
-  cout << "Stopped simulation\n";
+  //Save statistics to file
+  stats->to_file();
 
-  //Save traces to filex
+  //Save traces to file
   traces->to_file();
 
-  cout << "Saved simulation results...\n";
+  cout << "Results saved!\n";
 }
 
 ///This function waits for all other thread to join
@@ -168,4 +223,13 @@ string Simulation::getName() {
 
 Trace* Simulation::getTraces() {
   return traces;
+}
+
+Statistics* Simulation::getStats() {
+  return stats;
+}
+
+
+struct timespec Simulation::getSim_time() {
+  return sim_time;
 }

@@ -1,7 +1,6 @@
 #ifndef _BUSYWAIT_H
 #define _BUSYWAIT_H
 
-
 #include "Task.h"
 
 class BusyWait : public Task {
@@ -10,7 +9,7 @@ class BusyWait : public Task {
 
 
  public:
-    BusyWait(Dispatcher *disp, struct timespec wcet);
+    BusyWait(Simulation *s, Dispatcher *disp, struct timespec wcet);
 
     void fire();
 };

@@ -14,7 +14,7 @@
 Scheduler::Scheduler(Simulation *s, unsigned int _id) : Runnable(s, id){
   sim = s;
   id = _id;
-  thread_type = scheduler;
+  type = scheduler;
   active_index = -1;
 }
 
@@ -30,7 +30,14 @@ void Scheduler::wrapper() {
 
 ///This function rewrites the activate method to activate both the scheduler as well as its load
 void Scheduler::activate() {
+#if _INFO == 1
   cout << "Scheduler " << id << " is now active\n";
+#endif 
+
+  if(parent != NULL) {
+    //TODO add trace for non-top_sched deactivations
+  }
+
   pthread_getschedparam(thread, &policy, &thread_param);
   thread_param.sched_priority = Priorities::get_server_pr(0); //server priority
   pthread_setschedparam(thread, SCHED_FIFO, &thread_param);

@@ -1,7 +1,8 @@
 #include "Thread.h"
-#include "defines.h"
 
+#include "Simulation.h"
 #include "Priorities.h"
+#include "Statistics.h"
 
 #include <stdlib.h>
 #include <iostream>
@@ -12,8 +13,9 @@
  */
 
 ///Constructor needs nothing to create thread (with inactive priotity). Note that there should never be a simple Thread object because its wrapper function is null. (It should be called from a subclass)
-Thread::Thread(unsigned int _id) {
+Thread::Thread(Simulation *s, unsigned int _id) {
 
+  sim = s;
   id = _id;
 
   pthread_attr_init(&thread_attr);
@@ -48,11 +50,14 @@ unsigned int Thread::getId() {
 ///The runnable thread points to this static function. This function recieves a Thread object, and calls the wrapper function in that object
 void * Thread::static_wrapper(void * This)
 {
-  ((Thread *)This)->wrapper(); 
+  Thread *t = ((Thread*)This);
+  t->wrapper(); 
  
-  struct timespec t2;
-  clock_gettime(CLOCK_THREAD_CPUTIME_ID, &t2);
-  cout << "Thread " << ((Thread *)This)->id << " ran for " << t2.tv_sec*1000000+t2.tv_nsec/1000 << " micros\n";
+  struct timespec ts;
+  clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts);
+  
+  //Save the runtime statistic
+  t->sim->getStats()->add_stat(t->type, t->id, ts);
  
   pthread_exit(NULL);
   return NULL;

@@ -1,9 +1,13 @@
 #ifndef _THREAD_H
 #define _THREAD_H
 
+#include "Enumerations.h"
+
 #include <pthread.h>
 
 using namespace std;
+
+class Simulation;
 
 /********************************************************************************
  * CLASS DECLARATION
@@ -14,15 +18,18 @@ class Thread {
  protected:
 
   unsigned int id;
+  _thread_type type;
 
   int policy;
   pthread_t thread;
   pthread_attr_t thread_attr;
   struct sched_param thread_param;
 
+  Simulation* sim;
+
  public:
   ///Constructor needs nothing to create thread (with inactive priotity);
-  Thread(unsigned int _id);
+  Thread(Simulation *s, unsigned int _id);
 
   ///This function is called by the static wrapper. In the Worker object, it should point to fire(), and in the Scheduler object, it should point to schedule()
   virtual void wrapper();

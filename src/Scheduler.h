@@ -24,7 +24,7 @@ class Scheduler : public Runnable {
   vector<Runnable*> load;
 
   ///This variable holds the index of the currently active load
-  unsigned int active_index;
+  int active_index;
 
  public:
   /*********** CONSTRUCTOR ***********/

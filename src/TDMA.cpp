@@ -30,52 +30,32 @@ void TDMA::schedule(){
 #if _DEBUG == 1
   cout << "Began scheduling...\n";
 #endif
-  unsigned int c;
+
   while (sim->isSimulating() == 1) {
 
-    for(c=0;c<timeslots.size() && sim->isSimulating()==1;c++) {
+    for(active_index=0; active_index<(int)timeslots.size() && sim->isSimulating()==1;active_index++) {
  
-      sim->getTraces()->add_trace(scheduler, id, sched_start);
+      //sim->getTraces()->add_trace(scheduler, id, sched_start);
  
-      load[c]->activate();
- 
- #if _DEBUG == 0
-      cout << "Activated new Runnable " << c << "\n";
- #endif
-   
-      nanosleep(&timeslots[c], &rem);
-
-      load[c]->deactivate();
-
-      sim->getTraces()->add_trace(scheduler, id, sched_end);
-    }
-
-    /*
-    for(active_index=0; active_index<timeslots.size() && sim->isSimulating()==1; active_index++) {
-      sim->getTraces()->add_trace(scheduler, id, sched_start);
-
       load[active_index]->activate();
+ 
+ #if _DEBUG == 1
+      cout << "**Activated new Runnable " << load[active_index]->getId() << "**\n";
+ #endif
 
-#if _DEBUG == 0
-      cout << "Activated new Runnable " << active_index << "\n";
-#endif
-      //if(sim->isSimulating() == 1)
-      {
-	cout << "sleeping" << timeslots[active_index].tv_sec << ":" << timeslots[active_index].tv_nsec << "\n";
-	nanosleep(&timeslots[active_index], &rem);
-	cout << "woke up\n";
-      }
-  
+      //if(sim->isSimulating() == 1)   
+      nanosleep(&timeslots[active_index], &rem);
+
       load[active_index]->deactivate();
 
-      sim->getTraces()->add_trace(scheduler, id, sched_end);
+      //sim->getTraces()->add_trace(scheduler, id, sched_end);
     }
-    */
   }
 }
 
 ///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution.
 void TDMA::new_job(Worker * worker) {
+      cout << "Sched handled Worker " << worker->getId() << "'s new job\n";
   if (parent != NULL) {
     parent->new_job(worker);
   }
@@ -89,6 +69,9 @@ void TDMA::job_finished(int worker){
 
 
 void TDMA::add_slot(struct timespec slot) {
+#if _DEBUG == 1
   cout << "Added timeslot, new size: " << timeslots.size() << "\n";
+#endif
+ 
   timeslots.push_back(slot);
 }

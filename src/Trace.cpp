@@ -1,5 +1,4 @@
 #include "Trace.h"
-//#include "defines.h"
 
 #include "Enumerations.h"
 #include "Simulation.h"
@@ -31,8 +30,7 @@ Trace::Trace(Simulation *s) {
 }
 
 ///This function adds a trace to the vector
-void Trace::add_trace(const enum _thread_type & type, const unsigned int & t_id, const enum _task_action & act) {
-
+void Trace::add_trace(enum _thread_type type, unsigned int t_id, enum _task_action act) {
 #if _DEBUG == 1
   cout << "Adding a new trace\n";
 #endif
@@ -42,12 +40,14 @@ void Trace::add_trace(const enum _thread_type & type, const unsigned int & t_id,
       JobTrace jt;
       struct timespec aux;
 
-      //clock_gettime(CLOCK_REALTIME, &aux);
-      aux = TimeUtil::getTime(relative);
-      jt.setTrace(aux, type, t_id, act);
-
       sem_wait(&trace_sem);
-      traces.push_back(jt);
+      {
+	//clock_gettime(CLOCK_REALTIME, &aux);
+	aux = TimeUtil::getTime(relative);
+	jt.setTrace(aux, type, t_id, act);
+	
+	traces.push_back(jt);
+      }
       sem_post(&trace_sem);
     }
     else { //Trace array is full
@@ -65,9 +65,9 @@ void Trace::to_file() {
   cout << "Saving to file...\n";
 #endif
 
-  file.open(sim->getName().data());
+  file.open((sim->getName()+".csv").data());
 
-  for(unsigned int c=0;c<=traces.size();c++) {
+  for(unsigned int c=0;c<traces.size();c++) {
 
     aux = &traces[c];
 

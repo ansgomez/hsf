@@ -1,5 +1,6 @@
 #include "Task.h"
 #include "Dispatcher.h"
+#include "Simulation.h"
 
 #include <iostream>
 
@@ -8,7 +9,8 @@
  ********************************************************************************
  */
 
-Task::Task(Dispatcher *disp, _task_load load) {
+Task::Task(Simulation *s, Dispatcher *disp, _task_load load) {
+  sim = s;
   dispatcher = disp;
   task_load = load;
 }

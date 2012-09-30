@@ -19,5 +19,9 @@ class Periodic : public Dispatcher {
   /*********** INHERITED FUNCTIONS ***********/
   ///This function was a flagged loop that activates the Worker according to the task periodicity
   void dispatch();
+
+  /*********** GETTER AND SETTER FUNCTIONS ***********/
+  void setPeriod(struct timespec p);
+  struct timespec getPeriod();
 };
 #endif

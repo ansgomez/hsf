@@ -13,7 +13,7 @@
  ********************************************************************************
  */
 
-Runnable::Runnable(Simulation *s, unsigned int _id) : Thread(_id) {
+Runnable::Runnable(Simulation *s, unsigned int _id) : Thread(s,_id) {
   sim = s;
 }
 

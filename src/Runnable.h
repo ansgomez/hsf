@@ -21,8 +21,6 @@ class Runnable : public Thread {
   
   Scheduler* parent;
 
-  _thread_type thread_type;
-
  public:
   ///Constructor needs simulation pointer and an id
   Runnable(Simulation *s, unsigned int _id);

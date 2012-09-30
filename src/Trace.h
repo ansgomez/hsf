@@ -29,7 +29,7 @@ public:
   Trace(Simulation *s);
 
   ///This function adds a trace to the vector
-  void add_trace(const enum _thread_type & type, const unsigned int & t_id, const enum _task_action & act);
+  void add_trace(enum _thread_type type, unsigned int t_id, enum _task_action act);
 
   ///This function saves to custom csv file
   void to_file();

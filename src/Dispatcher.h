@@ -21,14 +21,14 @@ class Dispatcher : public Thread {
   protected:
 
   Simulation *sim;
-
-  Worker *worker;
   
   _task_periodicity periodicity;
   
   struct timespec offset;
     
  public:
+
+  Worker *worker;
 
   /*********** CONSTRUCTOR ***********/
   ///Contructor needs Simulation pointer, and a disp_id

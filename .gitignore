@@ -1,0 +1,13 @@
+#####  Binary files  #####
+bin/
+
+##### Trace files ######
+*.csv
+*.png
+
+metrics.sh
+last_revised.sh
+
+##### Documentation Files #####
+Doxyfile
+doc/

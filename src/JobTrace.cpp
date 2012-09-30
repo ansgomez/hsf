@@ -33,3 +33,8 @@ string JobTrace::toString() {
 struct timespec JobTrace::getTimestamp() {
   return timestamp;
 }
+
+
+_thread_type JobTrace::getType() {
+  return thread_type;
+}

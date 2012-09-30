@@ -3,8 +3,9 @@
 
 ///This enum describes what thread types can produce traces
 enum _thread_type {
-  dispatcher,
+  idle,
   scheduler,
+  dispatcher,
   server,
   worker
 };

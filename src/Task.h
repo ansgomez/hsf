@@ -6,6 +6,7 @@
 
 #include <time.h>
 
+class Simulation;
 class Dispatcher;
 
 /********************************************************************************
@@ -14,8 +15,10 @@ class Dispatcher;
  */
 
 class Task {
- private:
+ protected:
   Deadline deadline;
+
+  Simulation *sim;
 
   Dispatcher * dispatcher;
 
@@ -26,7 +29,7 @@ class Task {
   _task_load task_load;
 
  public:
-  Task(Dispatcher *disp, _task_load load);
+  Task(Simulation *s, Dispatcher *disp, _task_load load);
 
   virtual void fire();
 

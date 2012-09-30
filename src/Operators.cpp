@@ -52,3 +52,34 @@ int operator< (struct timespec a, struct timespec b) {
       return (0);
   }
 }
+
+
+///This function returns a timespec with the specified seconds
+struct timespec Seconds(unsigned int s) {
+  struct timespec aux;
+
+  aux.tv_sec = s;
+  aux.tv_nsec = 0;
+
+  return aux;
+}
+
+///This function returns a timespec with the specified milliseconds
+struct timespec Millis(unsigned int ms) {
+  struct timespec aux;
+
+  aux.tv_sec = 0;
+  aux.tv_nsec = ms*1000000;
+
+  return aux;
+}
+
+///This function returns a timespec with the specified microseconds
+struct timespec Micros(unsigned int us) {
+  struct timespec aux;
+
+  aux.tv_sec = 0;
+  aux.tv_nsec = us*1000;
+
+  return aux;
+}

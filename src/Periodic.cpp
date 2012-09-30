@@ -1,5 +1,4 @@
 #include "Periodic.h"
-//#include "defines.h"
 
 #include "Worker.h"
 #include "Simulation.h"
@@ -22,11 +21,11 @@ void Periodic::dispatch() {
 
   while (sim->isSimulating() ==  1) {
 
-#if _INFO == 0
-    cout << "Disp " << id << ": new job!\n";
+#if _INFO == 1
+    cout << "+Worker " << worker->getId() << " has new job!\n";
 #endif  
 
-    sim->getTraces()->add_trace(dispatcher, id, task_arrival);
+    sim->getTraces()->add_trace(dispatcher, worker->getId(), task_arrival);
 
     if(worker != NULL) {
       worker->new_job();

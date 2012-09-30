@@ -5,7 +5,7 @@
 
 int main() {
     
-  Simulation *sim = new Simulation("path", 1, "sim.csv");
+  Simulation *sim = new Simulation("path", 1, "simulation");
 
   sim->simulate();
 

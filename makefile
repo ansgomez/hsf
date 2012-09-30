@@ -14,7 +14,7 @@ SRCDIR=src
 #SOURCE FILES
 MAIN_SRC=main.cpp
 MJPEG_SRC=mjpeg processframe
-HSF_SRC= Aperiodic.cpp BusyWait.cpp Deadline.cpp Dispatcher.cpp Enumerations.cpp Idle.cpp JobTrace.cpp Periodic.cpp Priorities.cpp Runnable.cpp Scheduler.cpp Simulation.cpp Task.cpp TDMA.cpp Thread.cpp Trace.cpp TimeUtil.cpp Worker.cpp Operators.cpp
+HSF_SRC= Aperiodic.cpp BusyWait.cpp Deadline.cpp Dispatcher.cpp Enumerations.cpp Idle.cpp JobTrace.cpp Periodic.cpp Priorities.cpp Runnable.cpp Scheduler.cpp Simulation.cpp Task.cpp TDMA.cpp Thread.cpp Trace.cpp TimeUtil.cpp Worker.cpp Operators.cpp Statistics.cpp RuntimeStatistic.cpp
 
 #AUX VARIABLES
 EXEC=$(MAIN_SRC:.c=.out)
