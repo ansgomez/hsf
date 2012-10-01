@@ -58,7 +58,11 @@ Simulation::Simulation(string xml_path, int cpu, string nm) {
     perror("Error setting CPU affinity\n");
   }
 
-  initialize();
+  //Reserve some memory for vectors
+  disp.reserve(10);
+  worker_id.reserve(10);
+
+  initialize_periodic_tdma();
 }
 
 ///This function initializes all of the objects
@@ -193,8 +197,9 @@ void Simulation::simulate() {
 
   //Save traces to file
   traces->to_file();
+  traces->to_figure();
 
-  cout << "Results saved!\n";
+  cout << "All results have saved!\n";
 }
 
 ///This function waits for all other thread to join
@@ -213,6 +218,11 @@ void Simulation::join_all() {
   pthread_join(*(top_sched->getPthread()), NULL);
 }
 
+///This function should be called by the Worker constructor to 'register' its id
+void Simulation::add_worker_id(unsigned int _id) {
+  worker_id.push_back(_id);
+}
+
 int Simulation::isSimulating() {
   return simulating;
 }
@@ -229,6 +239,10 @@ Statistics* Simulation::getStats() {
   return stats;
 }
 
+///This function returns a vector of the worker id's
+vector<unsigned int>* Simulation::getWorker_id() {
+  return &worker_id;
+}
 
 struct timespec Simulation::getSim_time() {
   return sim_time;

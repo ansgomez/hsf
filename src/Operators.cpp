@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include <iostream>
+using namespace std;
+
 struct timespec operator+(struct timespec a, struct timespec b) {
   struct timespec *x = (struct timespec*) malloc(sizeof(struct timespec));
   x->tv_sec = a.tv_sec + b.tv_sec;
@@ -31,27 +34,32 @@ struct timespec operator-(struct timespec a, struct timespec b) {
   return *x;
 }
 
-int operator> (struct timespec a, struct timespec b) {
-  if (a.tv_sec > b.tv_sec) {
-    return (1);
-  } else {
-    if (a.tv_sec == b.tv_sec && a.tv_nsec > b.tv_nsec)
-      return (1);
-    else
-      return (0);
-  }
-}
-
-int operator< (struct timespec a, struct timespec b) {
+int operator < (struct timespec a, struct timespec b) {
   if (a.tv_sec < b.tv_sec) {
     return (1);
   } else {
-    if (a.tv_sec == b.tv_sec && a.tv_nsec < b.tv_nsec)
+    if (a.tv_sec == b.tv_sec && a.tv_nsec < b.tv_nsec) {
       return (1);
-    else
+    }
+    else {
       return (0);
+    }
   }
 }
+
+int operator > (struct timespec a, struct timespec b) {
+  if (a.tv_sec > b.tv_sec) {
+    return (1);
+  } else {
+    if (a.tv_sec == b.tv_sec && a.tv_nsec > b.tv_nsec) {
+      return (1);
+    }
+    else {
+      return (0);
+    }
+  }
+}
+
 
 
 ///This function returns a timespec with the specified seconds

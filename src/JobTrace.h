@@ -35,6 +35,12 @@ class JobTrace {
 
     ///This function returns the timestamp
     struct timespec getTimestamp();
+
+    ///This function returns the thread ID
+    unsigned int getId();
+
+    ///This function return the traced action
+    _task_action getAction();
 };
 
 #endif

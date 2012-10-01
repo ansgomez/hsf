@@ -46,6 +46,9 @@ class Simulation {
   ///This is the idle thread
   Idle *idle;
 
+  ///Auxiliary variable to the SimulationFigure
+  vector<unsigned int> worker_id;
+
   ///Auxiliary variables for the main thread
   cpu_set_t set;
   struct sched_param param;
@@ -74,6 +77,9 @@ class Simulation {
   ///This function waits for all other thread to join
   void join_all();
 
+  ///This function should be called by the Worker constructor to 'register' its id
+  void add_worker_id(unsigned int _id);
+
   /************** GETTER FUNCTIONS *************/
 
   ///This function returns the name of the simulation
@@ -81,6 +87,9 @@ class Simulation {
 
   ///This function returns the simulation's traces
   Trace* getTraces();
+
+  ///This function returns a vector of the worker id's
+  vector<unsigned int>* getWorker_id();
 
   ///This function returns the simulation time
   struct timespec getSim_time();

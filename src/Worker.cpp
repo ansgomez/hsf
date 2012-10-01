@@ -16,6 +16,9 @@ Worker::Worker(Simulation *s, Scheduler *sched, unsigned int _id, _task_load tl)
   scheduler = sched;
   type = worker;
 
+  //Register worker id with simulation
+  sim->add_worker_id(_id);
+
   sem_init(&wrapper_sem, 0, 0);
 }
 

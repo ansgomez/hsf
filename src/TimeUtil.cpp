@@ -58,3 +58,8 @@ void TimeUtil::setOffset()
   clock_gettime(CLOCK_REALTIME, &offset);
 }
 
+///Converts a timespce to unsigned long msecs
+unsigned long TimeUtil::convert_ms(struct timespec t1) {
+  unsigned long int ul = (unsigned long int) (t1.tv_sec)*1000 + (unsigned long int)(t1.tv_nsec)/1000000;
+  return ul;
+}

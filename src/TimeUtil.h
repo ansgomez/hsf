@@ -31,6 +31,9 @@ class TimeUtil {
   ///Converts a timespce to unsigned long usecs
   static unsigned long convert_us(struct timespec t1, enum _time_type t);
 
+  ///Converts a timespce to unsigned long msecs
+  static unsigned long convert_ms(struct timespec t1);
+
   //Sets the relative-time offset to current time
   static void setOffset();
 

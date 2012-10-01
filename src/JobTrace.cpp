@@ -28,13 +28,22 @@ string JobTrace::toString() {
   return out.str();
 }
 
-
 ///This function returns the timestamp
 struct timespec JobTrace::getTimestamp() {
   return timestamp;
 }
 
-
+///This function returns the thread type
 _thread_type JobTrace::getType() {
   return thread_type;
+}
+
+///This function returns the thread ID
+unsigned int JobTrace::getId() {
+  return thread_id;
+}
+
+///This function return the traced action
+_task_action JobTrace::getAction() {
+  return task_action;
 }

@@ -55,6 +55,8 @@ void Scheduler::deactivate() {
   if(active_index != -1) {
     load[active_index]->deactivate();
   }
+ 
+  //TODO if TDMA, must post to interrupt_sem
 
   //now the old deactivate() for itself
   sim->getTraces()->add_trace(scheduler, id, sched_end);

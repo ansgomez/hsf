@@ -5,9 +5,9 @@ struct timespec operator+(struct timespec a, struct timespec b);
 
 struct timespec operator-(struct timespec a, struct timespec b);
 
-int operator> (struct timespec a, struct timespec b);
+int operator>(struct timespec a, struct timespec b);
 
-int operator< (struct timespec a, struct timespec b);
+int operator<(struct timespec a, struct timespec b);
 
 ///This function returns a timespec with the specified seconds
 struct timespec Seconds(unsigned int s);

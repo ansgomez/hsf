@@ -5,6 +5,8 @@ bin/
 *.csv
 *.png
 
+*~
+
 metrics.sh
 last_revised.sh
 

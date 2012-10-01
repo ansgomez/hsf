@@ -20,19 +20,19 @@ HSF_SRC= Aperiodic.cpp BusyWait.cpp Deadline.cpp Dispatcher.cpp Enumerations.cpp
 EXEC=$(MAIN_SRC:.c=.out)
 MAIN=$(SRCDIR)/$(MAIN_SRC)
 
-all: $(HSF_SRC) $(EXEC)
+all: $(HSF_SRC) SIMFIG $(EXEC)
 
 hsf: $(HSF_SRC) 
 
 $(EXEC):  $(SRCDIR)/$(MAIN_SRC)
 	$(CXX) $(C_FLAGS) $(SRCDIR)/$@ -o $(OBJDIR)/$*.o $(C_ARG)
-	$(CXX) $(LFLAGS) $(OBJDIR)/*.o -o $(OBJDIR)/$*.out $(L_ARG)
+	$(CXX) $(LFLAGS) $(OBJDIR)/*.o $(MATHGL) -o $(OBJDIR)/$*.out $(L_ARG)
 
 $(MJPEG_SRC):
 	$(CXX) $(M_FLAGS) $(LIBDIR)/$@.c -o $(OBJDIR)/$@.o
 
-JOBTRACE: $(LIBDIR)/JobTrace.h $(LIBDIR)/JobTrace.c
-	$(CXX) -Wall -c $(LIBDIR)/JobTrace.c -o $(OBJDIR)/JobTrace.o
+SIMFIG: $(LIBDIR)/SimulationFigure.h $(LIBDIR)/SimulationFigure.cpp
+	$(CXX) -Wall -c $(LIBDIR)/SimulationFigure.cpp -o $(OBJDIR)/SimulationFigure.o
 
 $(HSF_SRC):
 	$(CXX) $(C_FLAGS) $(SRCDIR)/$@ -o $(OBJDIR)/$*.o $(C_ARG) 
