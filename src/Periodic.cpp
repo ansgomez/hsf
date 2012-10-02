@@ -44,3 +44,7 @@ void Periodic::dispatch() {
     worker->new_job();
   }
 }
+
+void Periodic::setPeriod(struct timespec p) {
+  period = p;
+}

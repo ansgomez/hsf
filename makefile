@@ -6,6 +6,8 @@ C_ARG=-lrt
 L_ARG=-ldl -lpthread -lrt # -lGLU -lGL -lSM -lICE -lX11 -lXext -lpng -lz -Wl-rpath
 LFLAGS= -lm 
 MATHGL= -rdynamic src/lib/mathgl/libmgl.so.6.0.0
+XML=xml/pugixml.cpp
+
 #Directories
 OBJDIR=bin
 LIBDIR=src/lib
@@ -14,13 +16,13 @@ SRCDIR=src
 #SOURCE FILES
 MAIN_SRC=main.cpp
 MJPEG_SRC=mjpeg processframe
-HSF_SRC= Aperiodic.cpp BusyWait.cpp Deadline.cpp Dispatcher.cpp Enumerations.cpp Idle.cpp JobTrace.cpp Periodic.cpp Priorities.cpp Runnable.cpp Scheduler.cpp Simulation.cpp Task.cpp TDMA.cpp Thread.cpp Trace.cpp TimeUtil.cpp Worker.cpp Operators.cpp Statistics.cpp RuntimeStatistic.cpp
+HSF_SRC= Aperiodic.cpp BusyWait.cpp Deadline.cpp Dispatcher.cpp Enumerations.cpp Idle.cpp JobTrace.cpp Periodic.cpp Priorities.cpp Runnable.cpp Scheduler.cpp Simulation.cpp Task.cpp TDMA.cpp Thread.cpp Trace.cpp TimeUtil.cpp Worker.cpp Operators.cpp Statistics.cpp RuntimeStatistic.cpp Parser.cpp
 
 #AUX VARIABLES
 EXEC=$(MAIN_SRC:.c=.out)
 MAIN=$(SRCDIR)/$(MAIN_SRC)
 
-all: $(HSF_SRC) SIMFIG $(EXEC)
+all: $(HSF_SRC) SIMFIG XML $(EXEC)
 
 hsf: $(HSF_SRC) 
 
@@ -33,6 +35,9 @@ $(MJPEG_SRC):
 
 SIMFIG: $(LIBDIR)/mathgl/SimulationFigure.h $(LIBDIR)/mathgl/SimulationFigure.cpp
 	$(CXX) -Wall -c $(LIBDIR)/mathgl/SimulationFigure.cpp -o $(OBJDIR)/SimulationFigure.o
+
+XML:
+	$(CXX) -Wall -c $(LIBDIR)/$(XML) -o $(OBJDIR)/pugixml.o
 
 $(HSF_SRC):
 	$(CXX) $(C_FLAGS) $(SRCDIR)/$@ -o $(OBJDIR)/$*.o $(C_ARG) 

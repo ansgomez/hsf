@@ -18,6 +18,8 @@ Thread::Thread(Simulation *s, unsigned int _id) {
   sim = s;
   id = _id;
 
+  cout << "Thread " << _id << " created\n";
+
   pthread_attr_init(&thread_attr);
   //creating the pthread
   if (pthread_create(&thread,&thread_attr, static_wrapper, this)) {
@@ -34,7 +36,7 @@ Thread::Thread(Simulation *s, unsigned int _id) {
 ///Should be overwritten by subclasses
 void Thread::wrapper() {
   //empty
-  cout << "Thread::wrapper - This should not print!\n";
+  cout << "Thread::wrapper (" << id << ") - This should not print!\n";
 }
 
 ///This function returns a pointer to the pthread

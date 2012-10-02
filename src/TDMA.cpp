@@ -22,8 +22,8 @@ using namespace std;
 /*********** CONSTRUCTOR ***********/
 ///Constructor needs pointer to simulation
 TDMA::TDMA(Simulation *s, unsigned int id, int level) : Scheduler(s, id, level) {
-  //empty
 
+  cout << "Creating TDMA with ID: " << id << endl;
   timing = 0;
   sem_init(&schedule_sem, 0, 1); //mutex semaphore
   sem_init(&preempt_sem, 0, 0); //sem used as signal

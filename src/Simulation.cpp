@@ -26,15 +26,12 @@
  ********************************************************************************
  */
 
-Simulation::Simulation(string xml_path, int cpu, string nm) {
+Simulation::Simulation(string _xml_path, int cpu, string nm) {
   //  struct sched_param param = {0};
   name = nm;
-
   sim_time = Seconds(1); //Millis(100); //
-
   simulating = 0;
-
-  //  cout << "Loading xml file...\n";
+  xml_path = _xml_path;
 
   //Set main process parameters
   param.sched_priority = Priorities::get_main_pr(); //highest priority
@@ -58,15 +55,28 @@ Simulation::Simulation(string xml_path, int cpu, string nm) {
     perror("Error setting CPU affinity\n");
   }
 
-  //Reserve some memory for vectors
-  disp.reserve(10);
-  worker_id.reserve(10);
-
   initialize();
+  //itialize_hierarchical_periodic_tdma();
 }
 
 void Simulation::initialize() {
-  initialize_hierarchical_periodic_tdma();
+  traces = new Trace(this);
+  stats = new Statistics(this);
+
+  //Idle should be the first thread to be created
+  idle = new Idle(this);
+
+  cout << "Loading xml file...\n";
+
+  Parser *parser = new Parser(this);
+
+  parser->parseFile(xml_path);
+
+  free(parser);
+
+  //Reserve some memory for vectors
+  disp.reserve(10);
+  worker_id.reserve(10);
 }
 
 ///This function initializes all of the objects with APERIODIC TDMA EXAMPLE
@@ -246,7 +256,7 @@ void Simulation::simulate() {
   cout << "**Done**\n";
   //top_sched->deactivate();
 
-  cout << "Waiting for threads to exit...";
+  cout << "Waiting for threads to exit...\n";
 
   //Join all other threads
   join_all();
@@ -308,4 +318,20 @@ vector<unsigned int>* Simulation::getWorker_id() {
 
 struct timespec Simulation::getSim_time() {
   return sim_time;
+}
+
+void Simulation::setName(string s) {
+  name = s;
+}
+
+void Simulation::setDuration(struct timespec d) {
+  sim_time = d;
+}
+
+void Simulation::setTopScheduler(Scheduler *sched) {
+  top_sched = sched;
+}
+
+void Simulation::addDispatcher(Dispatcher *d) {
+  disp.push_back(d);
 }

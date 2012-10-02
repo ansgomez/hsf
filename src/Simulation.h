@@ -53,6 +53,8 @@ class Simulation {
   cpu_set_t set;
   struct sched_param param;
 
+  string xml_path;
+
  public:
   /************** CONSTRUCTOR *************/
 
@@ -79,7 +81,7 @@ class Simulation {
   ///This function should be called by the Worker constructor to 'register' its id
   void add_worker_id(unsigned int _id);
 
-  /************** GETTER FUNCTIONS *************/
+  /************** GETTER AND SETTER FUNCTIONS *************/
 
   ///This function returns the name of the simulation
   string getName();
@@ -95,6 +97,11 @@ class Simulation {
 
   //This function return the simulation's statistics
   Statistics* getStats();
+
+  void setName(string s);
+  void setDuration(struct timespec d);
+  void setTopScheduler(Scheduler *sched);
+  void addDispatcher(Dispatcher *d);
 
   /****** TEMPORARY FUNCTIONS **********/
   void initialize_aperiodic_tdma();

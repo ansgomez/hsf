@@ -17,7 +17,7 @@
 /*********** CONSTRUCTORS ***********/
 
 ///Contructor needs Simulation pointer, and a disp_id
-Dispatcher::Dispatcher (Simulation *s, unsigned int _id) : Thread(s,id)
+Dispatcher::Dispatcher (Simulation *s, unsigned int _id) : Thread(s,_id)
 {
 #if _INFO == 1
   cout << "++New Dispatcher - " << _id << "\n";

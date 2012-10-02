@@ -11,7 +11,7 @@
  ********************************************************************************
  */
 
-Scheduler::Scheduler(Simulation *s, unsigned int _id, int _level) : Runnable(s, id){
+Scheduler::Scheduler(Simulation *s, unsigned int _id, int _level) : Runnable(s, _id){
   sim = s;
   id = _id;
   type = scheduler;
