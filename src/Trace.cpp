@@ -4,7 +4,7 @@
 #include "Simulation.h"
 #include "TimeUtil.h"
 #include "Operators.h"
-#include "lib/SimulationFigure.h"
+#include "lib/mathgl/SimulationFigure.h"
 
 #include <fstream>
 #include <iostream>

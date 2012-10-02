@@ -17,6 +17,9 @@ Statistics::Statistics(Simulation *s) {
 
 ///This function adds a trace to the vector
 void Statistics::add_stat(enum _thread_type type, unsigned int id, struct timespec ts) {
+#if _DEBUG==1
+  cout << "Added statistic!\n";
+#endif
   RuntimeStatistic *rs = new RuntimeStatistic(type, id, ts);
   stats.push_back(rs);
 }
@@ -26,7 +29,7 @@ void Statistics::to_file() {
   ofstream file;
   RuntimeStatistic *aux;
 
-#if _INFO == 1
+#if _INFO == 0
 cout << "Saving " << stats.size() << " stats to file...\n";
 #endif
 

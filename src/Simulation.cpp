@@ -246,11 +246,10 @@ void Simulation::simulate() {
   cout << "**Done**\n";
   //top_sched->deactivate();
 
-  cout << "Waiting for other threads...\n";
+  cout << "Waiting for threads to exit...";
 
-
-
-  cout << "All other threads have joined!\n";
+  //Join all other threads
+  join_all();
 
   cout << "Saving results...\n";
 
@@ -261,10 +260,8 @@ void Simulation::simulate() {
   traces->to_file();
   traces->to_figure();
 
-  //Join all other threads
-  join_all();
 
-  cout << "All results have saved!\n";
+  cout << "All results have been saved!\n";
 }
 
 ///This function waits for all other thread to join

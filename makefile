@@ -5,7 +5,7 @@ C_FLAGS=-Wall -pthread -c -g
 C_ARG=-lrt
 L_ARG=-ldl -lpthread -lrt # -lGLU -lGL -lSM -lICE -lX11 -lXext -lpng -lz -Wl-rpath
 LFLAGS= -lm 
-MATHGL= -rdynamic src/lib/libmgl.so.6.0.0
+MATHGL= -rdynamic src/lib/mathgl/libmgl.so.6.0.0
 #Directories
 OBJDIR=bin
 LIBDIR=src/lib
@@ -29,10 +29,10 @@ $(EXEC):  $(SRCDIR)/$(MAIN_SRC)
 	$(CXX) $(LFLAGS) $(OBJDIR)/*.o $(MATHGL) -o $(OBJDIR)/$*.out $(L_ARG)
 
 $(MJPEG_SRC):
-	$(CXX) $(M_FLAGS) $(LIBDIR)/$@.c -o $(OBJDIR)/$@.o
+	$(CXX) $(M_FLAGS) $(LIBDIR)/mjpeg/$@.c -o $(OBJDIR)/$@.o
 
-SIMFIG: $(LIBDIR)/SimulationFigure.h $(LIBDIR)/SimulationFigure.cpp
-	$(CXX) -Wall -c $(LIBDIR)/SimulationFigure.cpp -o $(OBJDIR)/SimulationFigure.o
+SIMFIG: $(LIBDIR)/mathgl/SimulationFigure.h $(LIBDIR)/mathgl/SimulationFigure.cpp
+	$(CXX) -Wall -c $(LIBDIR)/mathgl/SimulationFigure.cpp -o $(OBJDIR)/SimulationFigure.o
 
 $(HSF_SRC):
 	$(CXX) $(C_FLAGS) $(SRCDIR)/$@ -o $(OBJDIR)/$*.o $(C_ARG) 
