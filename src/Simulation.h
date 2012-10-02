@@ -63,7 +63,6 @@ class Simulation {
 
   ///This function initializes all of the objects
   void initialize();
-  void initialize_periodic_tdma();
 
   ///This function begins the simulation
   void simulate();
@@ -96,5 +95,11 @@ class Simulation {
 
   //This function return the simulation's statistics
   Statistics* getStats();
+
+  /****** TEMPORARY FUNCTIONS **********/
+  void initialize_aperiodic_tdma();
+  void initialize_periodic_tdma();
+  void initialize_hierarchical_periodic_tdma();
+
 };
 #endif

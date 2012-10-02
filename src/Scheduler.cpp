@@ -11,11 +11,12 @@
  ********************************************************************************
  */
 
-Scheduler::Scheduler(Simulation *s, unsigned int _id) : Runnable(s, id){
+Scheduler::Scheduler(Simulation *s, unsigned int _id, int _level) : Runnable(s, id){
   sim = s;
   id = _id;
   type = scheduler;
   active_index = -1;
+  level = _level;
 }
 
 ///This function adds a load to the scheduler (could be another scheduler, or a worker)

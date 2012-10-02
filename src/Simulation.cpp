@@ -62,18 +62,22 @@ Simulation::Simulation(string xml_path, int cpu, string nm) {
   disp.reserve(10);
   worker_id.reserve(10);
 
-  initialize_periodic_tdma();
+  initialize();
 }
 
-///This function initializes all of the objects
 void Simulation::initialize() {
+  initialize_hierarchical_periodic_tdma();
+}
+
+///This function initializes all of the objects with APERIODIC TDMA EXAMPLE
+void Simulation::initialize_aperiodic_tdma() {
   traces = new Trace(this);
   stats = new Statistics(this);
 
   //Idle should be the first thread to be created
   idle = new Idle(this);
 
-  TDMA *sched = new TDMA(this, 1);
+  TDMA *sched = new TDMA(this, 1, 0); //id, level
   top_sched = (Scheduler*) sched;
 
   disp.push_back((Dispatcher*) new Aperiodic(this, 2));
@@ -112,8 +116,7 @@ void Simulation::initialize() {
   cout << "HSF has been initialized: Aperiodic TDMA\n";
 }
 
-
-///This function initializes all of the objects
+///This function initializes all of the objects with APERIODIC TDMA EXAMPLE
 void Simulation::initialize_periodic_tdma() {
   traces = new Trace(this);
   stats = new Statistics(this);
@@ -121,7 +124,7 @@ void Simulation::initialize_periodic_tdma() {
   //Idle should be the first thread to be created
   idle = new Idle(this);
 
-  TDMA *sched = new TDMA(this, 1);
+  TDMA *sched = new TDMA(this, 1, 0); //id, level
   top_sched = (Scheduler*) sched;
 
   disp.push_back((Dispatcher*) new Periodic(this, 2));
@@ -161,6 +164,61 @@ void Simulation::initialize_periodic_tdma() {
   cout << "HSF has been initialized: Periodic TDMA\n";
 }
 
+///This function initializes all of the objects with APERIODIC TDMA EXAMPLE
+void Simulation::initialize_hierarchical_periodic_tdma() {
+  traces = new Trace(this);
+  stats = new Statistics(this);
+
+  //Idle should be the first thread to be created
+  idle = new Idle(this);
+
+
+  TDMA *sched0 = new TDMA(this, 1, 0); //id, level
+  top_sched = (Scheduler*) sched0;
+
+  TDMA *sched1 = new TDMA(this, 2, 1); //id, level
+  TDMA *sched2 = new TDMA(this, 3, 1); //id, level
+
+  top_sched->add_load(sched1);
+  top_sched->add_load(sched2);
+
+  disp.push_back((Dispatcher*) new Periodic(this, 4));
+  disp.push_back((Dispatcher*) new Periodic(this, 5));
+  disp.push_back((Dispatcher*) new Periodic(this, 6));
+  disp.push_back((Dispatcher*) new Periodic(this, 7));
+
+  Worker *w;
+  BusyWait  *t;
+  struct timespec wcet;
+
+  //add 4 workers
+  for(uint c=0;c<4;c++) {
+    wcet = Millis(5);
+    t = new BusyWait(this, disp[c], wcet);
+    w = new Worker(this, top_sched, 8+c, busy_wait);
+    w->setLoad(t);
+    disp[c]->setWorker(w);
+    if(c<2) {
+      sched1->add_load(w);
+    }
+    else {
+      sched2->add_load(w);
+    }
+  }
+
+  struct timespec ts;
+
+  for(uint c=0;c<2;c++) {
+    ts = Millis(10);
+    sched0->add_slot(ts);
+    ts = Millis(5);
+    sched1->add_slot(ts);
+    sched2->add_slot(ts);
+  }
+
+  cout << "HSF has been initialized: Hierarchical Periodic TDMA\n";
+}
+
 ///This function sets the dispatchers to their 'active' priority.
 void Simulation::activate_dispatchers() {
   for (unsigned int c=0;c<disp.size();c++) {
@@ -186,10 +244,15 @@ void Simulation::simulate() {
   //Deactivate threads
   simulating = 0;  
   cout << "**Done**\n";
-  top_sched->deactivate();
+  //top_sched->deactivate();
 
-  //Join all other threads
-  join_all();
+  cout << "Waiting for other threads...\n";
+
+
+
+  cout << "All other threads have joined!\n";
+
+  cout << "Saving results...\n";
 
   //Save statistics to file
   stats->to_file();
@@ -197,6 +260,9 @@ void Simulation::simulate() {
   //Save traces to file
   traces->to_file();
   traces->to_figure();
+
+  //Join all other threads
+  join_all();
 
   cout << "All results have saved!\n";
 }

@@ -23,7 +23,7 @@ class TDMA : public Scheduler {
  public:
   /*********** CONSTRUCTOR ***********/
   ///Constructor needs pointer to simulation
-  TDMA(Simulation *s, unsigned int id);
+  TDMA(Simulation *s, unsigned int id, int level);
 
   /*********** INHERITED FUNCTIONS ***********/
   ///This function performs the actual scheduling (figuring out the order of execution for its load)
@@ -33,7 +33,7 @@ class TDMA : public Scheduler {
   void new_job(Worker * worker);
 
   ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
-  void job_finished(int worker);
+  void job_finished(unsigned int worker_id);
 
   ///This function rewrites the activate method to activate both the scheduler(through its semaphores) as well as its load
   void activate();

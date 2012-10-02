@@ -16,6 +16,8 @@ Worker::Worker(Simulation *s, Scheduler *sched, unsigned int _id, _task_load tl)
   scheduler = sched;
   type = worker;
 
+  worker_activated = -1;
+
   //Register worker id with simulation
   sim->add_worker_id(_id);
 
@@ -54,8 +56,11 @@ void Worker::setLoad(Task *t) {
 
 ///This function set the current runnable to active, meaning that it has control of the CPU and should 'run'
 void Worker::activate() {
-
-  sim->getTraces()->add_trace(worker, id, sched_start);
+  //Trace 'active' only if it wasn't active before
+  if(worker_activated != 1) {
+    sim->getTraces()->add_trace(worker, id, sched_start);
+    worker_activated = 1;
+  }
 
   pthread_getschedparam(thread, &policy, &thread_param);
   thread_param.sched_priority = Priorities::get_active_pr(); //active priority
@@ -64,7 +69,10 @@ void Worker::activate() {
 
 ///This function set the current runnable to inactive, meaning that it has lost control of the CPU and has to stop running
 void Worker::deactivate() {
-  sim->getTraces()->add_trace(worker, id, sched_end);
+  if(worker_activated != 0) {
+    sim->getTraces()->add_trace(worker, id, sched_end);
+    worker_activated = 0;
+  }
 
   pthread_getschedparam(thread, &policy, &thread_param);
   thread_param.sched_priority = Priorities::get_inactive_pr(); //active priority

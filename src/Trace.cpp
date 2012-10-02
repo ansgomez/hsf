@@ -155,6 +155,7 @@ void Trace::to_figure() {
 	float x = (*(start_time+id*sizeof(unsigned int)))/1000;
 	sf->drawJob(id, x, TimeUtil::convert_ms(traces[c].getTimestamp()) );
       }
+
       break;
 
     case task_end:

@@ -26,11 +26,14 @@ class Scheduler : public Runnable {
   ///This variable holds the index of the currently active load
   int active_index;
 
+  ///This variable holds the level of the scheduler (helps assign correct hierarchical priority)
+  int level;
+
  public:
   /*********** CONSTRUCTOR ***********/
 
   ///Constructor needs pointer to simulation
-  Scheduler(Simulation *s, unsigned int _id);
+  Scheduler(Simulation *s, unsigned int _id, int level);
 
   /*********** INHERITED FUNCTIONS ***********/
 

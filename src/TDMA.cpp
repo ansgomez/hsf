@@ -21,7 +21,7 @@ using namespace std;
 
 /*********** CONSTRUCTOR ***********/
 ///Constructor needs pointer to simulation
-TDMA::TDMA(Simulation *s, unsigned int id) : Scheduler(s, id) {
+TDMA::TDMA(Simulation *s, unsigned int id, int level) : Scheduler(s, id, level) {
   //empty
 
   timing = 0;
@@ -43,7 +43,7 @@ void TDMA::schedule(){
 
   while (sim->isSimulating() == 1) {
 
-    for(active_index=0; active_index<(int)timeslots.size() && sim->isSimulating()==1;active_index++) {
+    for(active_index=0; active_index<(int)timeslots.size() && sim->isSimulating()==1; active_index++) {
 
       time_slot = timeslots[active_index];
 
@@ -105,7 +105,7 @@ void TDMA::activate() {
   //sim->getTraces()->add_trace(scheduler, id, sched_activate);
  
   pthread_getschedparam(thread, &policy, &thread_param);
-  thread_param.sched_priority = Priorities::get_server_pr(0); //server priority
+  thread_param.sched_priority = Priorities::get_sched_pr(level); //server priority
   pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
  
   //if there was an active load, reactivate it
@@ -148,8 +148,7 @@ void TDMA::new_job(Worker * worker) {
 
 
 ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
-void TDMA::job_finished(int worker){
-  //TODO, shouldn't it be unsigned int worker_id???
+void TDMA::job_finished(unsigned int worker_id){
   cout << " Sched handled Worker " << worker << "'s finished job!\n";
 }
 

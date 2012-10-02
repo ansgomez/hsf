@@ -9,11 +9,16 @@
  */
 
 int Priorities::get_main_pr() {
-  return 6+MAX_THREADS;
+  return 5+2*MAX_THREADS;
 }
 
-int Priorities::get_sched_pr() {
-  return 5+MAX_THREADS;
+int Priorities::get_sched_pr(int level) {
+  if(level<0 || level>=MAX_THREADS) {
+    return -1;
+  }
+  else {
+     return 5+MAX_THREADS+level; 
+  }
 }
 
 int Priorities::get_disp_pr() {
@@ -21,7 +26,7 @@ int Priorities::get_disp_pr() {
 }
 
 int Priorities::get_server_pr(int x) {
-  if ( x<0 || x>MAX_THREADS) {
+  if ( x<0 || x>=MAX_THREADS) {
     return -1;
   }
   else {
