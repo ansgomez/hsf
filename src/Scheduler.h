@@ -38,10 +38,10 @@ class Scheduler : public Runnable {
   void wrapper();
 
   ///This function rewrites the activate method to activate both the scheduler as well as its load
-  void activate();
+  virtual void activate();
 
   ///This function rewrites the deactivate method both the scheduler as well as its load
-  void deactivate();
+  virtual void deactivate();
 
   /*********** MEMBER FUNCTIONS ***********/
 

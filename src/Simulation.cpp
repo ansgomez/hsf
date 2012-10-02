@@ -30,7 +30,7 @@ Simulation::Simulation(string xml_path, int cpu, string nm) {
   //  struct sched_param param = {0};
   name = nm;
 
-  sim_time =  Seconds(1);
+  sim_time = Seconds(1); //Millis(100); //
 
   simulating = 0;
 
@@ -130,10 +130,9 @@ void Simulation::initialize_periodic_tdma() {
   Worker *w;
   BusyWait  *t;
   struct timespec wcet;
-  wcet.tv_sec = 0;
 
   //add first worker
-  wcet.tv_nsec = 5000000; //1ms
+  wcet = Millis(5); //5ms
   t = new BusyWait(this, disp[0], wcet);
   w = new Worker(this, top_sched, 4, busy_wait);
   w->setLoad(t);
@@ -141,7 +140,7 @@ void Simulation::initialize_periodic_tdma() {
   disp[0]->setWorker(w);
 
   //add second worker
-  wcet.tv_nsec = 10000000; //2ms
+  wcet = Millis(10); //2ms
   t = new BusyWait(this, disp[1], wcet);
   w = new Worker(this, top_sched, 5, busy_wait);
   w->setLoad(t);
@@ -152,11 +151,11 @@ void Simulation::initialize_periodic_tdma() {
   ts.tv_sec = 0;
 
   //add timeslot 1
-  ts.tv_nsec = 10000000; //10ms
+  ts = Millis(10); //10ms
   sched->add_slot(ts);
 
   //add timeslot 2
-  ts.tv_nsec = 20000000; //20ms
+  ts = Millis(20); //20ms
   sched->add_slot(ts);
 
   cout << "HSF has been initialized: Periodic TDMA\n";
@@ -185,8 +184,8 @@ void Simulation::simulate() {
   nanosleep(&sim_time, &rem);
 
   //Deactivate threads
-  cout << "**Done**\n";
   simulating = 0;  
+  cout << "**Done**\n";
   top_sched->deactivate();
 
   //Join all other threads

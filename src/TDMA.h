@@ -4,6 +4,8 @@
 #include "Scheduler.h"
 #include "Simulation.h"
 
+#include <semaphore.h>
+
 using namespace std;
 
 /********************************************************************************
@@ -14,6 +16,9 @@ using namespace std;
 class TDMA : public Scheduler {
  private:
   vector<struct timespec> timeslots; //There should be one timeslot per load
+
+  sem_t schedule_sem, preempt_sem;
+  int timing;
 
  public:
   /*********** CONSTRUCTOR ***********/
@@ -29,6 +34,12 @@ class TDMA : public Scheduler {
 
   ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
   void job_finished(int worker);
+
+  ///This function rewrites the activate method to activate both the scheduler(through its semaphores) as well as its load
+  void activate();
+
+  ///This function rewrites the deactivate method both the scheduler (through its semaphores) as well as its load
+  void deactivate();
 
   /*********** MEMBER FUNCTIONS ***********/
   ///This function adds a slot to the TDMA scheduler

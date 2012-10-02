@@ -30,6 +30,8 @@ void Scheduler::wrapper() {
 
 ///This function rewrites the activate method to activate both the scheduler as well as its load
 void Scheduler::activate() {
+  cout << "Scheduler::activate() - This should not print!\n";
+  /*
 #if _INFO == 1
   cout << "Scheduler " << id << " is now active\n";
 #endif 
@@ -38,19 +40,24 @@ void Scheduler::activate() {
     //TODO add trace for non-top_sched deactivations
   }
 
+  sim->getTraces()->add_trace(scheduler, id, sched_start);
+
   pthread_getschedparam(thread, &policy, &thread_param);
   thread_param.sched_priority = Priorities::get_server_pr(0); //server priority
   pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
 
   //if there was an active load, reactivate it
   if(active_index != -1) {
-    load[active_index]->deactivate();
+    load[active_index]->activate();
   }
+  */
 }
 
 
 ///This function rewrites the deactivate method to deactivate both the scheduler as well as its load
 void Scheduler::deactivate() {
+  cout << "Scheduler::deactivate() - This should not print!\n";
+  /*
   //first deactivate it's active load
   if(active_index != -1) {
     load[active_index]->deactivate();
@@ -64,6 +71,7 @@ void Scheduler::deactivate() {
   pthread_getschedparam(thread, &policy, &thread_param);
   thread_param.sched_priority = Priorities::get_inactive_pr(); //active priority
   pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
+  */
 }
 
 void Scheduler::schedule() {
