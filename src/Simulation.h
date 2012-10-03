@@ -90,7 +90,7 @@ class Simulation {
   Trace* getTraces();
 
   ///This function returns a vector of the worker id's
-  vector<unsigned int>* getWorker_id();
+  vector<unsigned int> getWorker_id();
 
   ///This function returns the simulation time
   struct timespec getSim_time();

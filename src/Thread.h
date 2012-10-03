@@ -35,7 +35,9 @@ class Thread {
   virtual void wrapper();
 
   ///This function returns a pointer to the pthread
-  pthread_t* getPthread();
+  //pthread_t* getPthread();
+  //
+  virtual void join();
 
   ///This function return the thread id
   unsigned int getId();

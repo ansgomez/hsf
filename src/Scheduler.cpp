@@ -27,6 +27,7 @@ void Scheduler::add_load(Runnable *new_load) {
 ///This is the pthread's wrapper function
 void Scheduler::wrapper() {
   schedule();
+  cout << "Scheduler " << id << " has exited Scheduler()\n";
 }
 
 ///This function rewrites the activate method to activate both the scheduler as well as its load
@@ -92,8 +93,24 @@ void Scheduler::job_finished(int worker) {
 
 
 ///This function waits for the scheduler's load to join
-void Scheduler::join_all() {
+void Scheduler::join() {
   for(unsigned int c=0; c<load.size(); c++) {
-    pthread_join(*(load[c]->getPthread()), NULL);
+
+#if _DEBUG==0
+    cout << "Sched: " << id << " waiting for load: " << c << endl;
+#endif
+
+    if( load[c] != NULL) {
+      load[c]->join();
+    }
+
+#if _DEBUG==0
+    cout << "Sched: " << id << " has joined load: " << c << endl;
+#endif
+
   }
+
+#if _DEBUG==0
+    cout << "Sched: " << id << " exiting join_all!\n";
+#endif
 }

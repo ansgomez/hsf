@@ -30,22 +30,22 @@ Parser::Parser(Simulation *_sim) {
 struct timespec Parser::parseTime(xml_node n) {
   int time = n.attribute("value").as_int();
   string units = n.attribute("units").value();
+  struct timespec ret;
 
   if(units == "sec") {
-    return Seconds(time);
+    ret = Seconds(time);
   }
-  if(units == "ms") {
-    return Millis(time);
+  else if(units == "ms") {
+    ret = Millis(time);
   }
-  if(units == "us") {
-    return Micros(time);
+  else if(units == "us") {
+    ret = Micros(time);
+  }
+  else {
+    cout << "Parser error: could not recognize time unit!\n";
   }
 
-  struct timespec x;
-  x.tv_sec = -1;
-  x.tv_nsec = -1;
-
-  return x;
+  return ret;
 }
 
 //This function extract information from an XML "worker" and returns its corresponding disp.
@@ -55,7 +55,9 @@ Dispatcher* Parser::parseDispatcher(xml_node disp_node, unsigned int *id) {
 
   *id = *id + 1;
 
+#if _INFO==1
   cout << "Creating Dispatcher " << *id << endl;
+#endif
 
   if(periodicity == "periodic") {
     Periodic *p = new Periodic(sim, *id);
@@ -79,7 +81,9 @@ Worker* Parser::parseWorker(xml_node worker_node, unsigned int *id) {
   if(load == "busy_wait") {
     Dispatcher *d = parseDispatcher(worker_node, id);
     *id = *id + 1;  
+#if _INFO==1
     cout << "Creating Worker " << *id << endl;
+#endif
     BusyWait *bw = new BusyWait(sim, d, parseTime(worker_node.child("wcet")));
     Scheduler *parent;
     worker = new Worker(sim, parent, *id, busy_wait);
@@ -95,7 +99,9 @@ Worker* Parser::parseWorker(xml_node worker_node, unsigned int *id) {
 
 ///This function receives and TDMA node, and parses its load
 Scheduler* Parser::parseTDMA(xml_node sched_node, unsigned int *id, int level) {
+#if _INFO==1
   cout << "Creating Scheduler " << *id << endl;
+#endif
   TDMA *sched = new TDMA(sim, *id, level);
 
   for (xml_node load = sched_node.first_child(); load; load = load.next_sibling()) {
@@ -116,7 +122,9 @@ Scheduler* Parser::parseTDMA(xml_node sched_node, unsigned int *id, int level) {
     else if( type == "scheduler" ) {
       string alg = load.attribute("algorithm").as_string();
 
+#if _INFO == 1
       cout << "Creating " << alg << " sub-scheduler\n";
+#endif
 
       if(alg == "TDMA") {
 	*id = *id +1;
@@ -159,7 +167,7 @@ void Parser::parseFile(string filePath) {
   xml_document doc;
   unsigned int id = 1;
 
-  if (!doc.load_file("hsf.xml") ) {
+  if (!doc.load_file(filePath.data()) ) {
     cout << "Could not find file...\n";
     return;
   }
@@ -184,5 +192,5 @@ cout << "Duration: " << sim_node.child("duration").attribute("value").as_int() <
   Scheduler *top = parseTDMA(top_sched, &id, 0);
   sim->setTopScheduler(top);
 
-  cout << "Simulation '" << sim_node.attribute("name").value() << "' has been loaded\n";
+  cout << " '" << sim_node.attribute("name").value() << "' has been loaded\n";
 }

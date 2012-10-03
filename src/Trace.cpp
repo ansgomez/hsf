@@ -14,7 +14,7 @@
 
 using namespace std;
 
-#define MAX_TRACES 1000
+#define MAX_TRACES 2000
 
 /********************************************************************************
  * CLASS DEFINITION
@@ -69,7 +69,7 @@ void Trace::to_file() {
   cout << "Saving to file...\n";
 #endif
 
-  file.open((sim->getName()+".csv").data());
+  file.open((sim->getName()+"_traces.csv").data());
 
   for(unsigned int c=0;c<traces.size();c++) {
 
@@ -88,12 +88,12 @@ void Trace::to_figure() {
   char label[30];
   char title[20];
   unsigned int c;
-  SimulationFigure *sf = new SimulationFigure;
-  vector<unsigned int> *worker_id = sim->getWorker_id();
+  SimulationFigure *sf = new SimulationFigure(sim->getName());
+  vector<unsigned int> worker_id = sim->getWorker_id();
   vector<unsigned int>::iterator it;
-  unsigned int id;
+  int id;
 
-  unsigned int n_threads = worker_id->size();
+  unsigned int n_threads = worker_id.size();
 
   unsigned int *start_sched_us = (unsigned int*) malloc(n_threads*sizeof(unsigned int));
   unsigned int *start_time =  (unsigned int*) malloc(n_threads*sizeof(unsigned int));
@@ -114,9 +114,8 @@ void Trace::to_figure() {
 
   //Iterate through traces and build job trace
   for(c=0; c<traces.size() ;c++) {
-
-    it = find(worker_id->begin(), worker_id->end(), traces[c].getId());
-    id = it-worker_id->begin();
+    it = find(worker_id.begin(), worker_id.end(), traces[c].getId());
+    id = (int) (it-worker_id.begin());
 
     if(traces[c].getTimestamp() > range)
       break;

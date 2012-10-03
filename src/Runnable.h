@@ -32,6 +32,5 @@ class Runnable : public Thread {
 
   ///This function set the current runnable to inactive, meaning that it has lost control of the CPU and has to stop running
   virtual void deactivate();
-
 };
 #endif

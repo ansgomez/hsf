@@ -30,7 +30,7 @@ int Priorities::get_server_pr(int x) {
     return -1;
   }
   else {
-    return 4+x;
+    return 4+2*MAX_THREADS-x;
   }
 }
 

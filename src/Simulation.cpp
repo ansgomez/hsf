@@ -20,6 +20,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <stdio.h>
+#include <pthread.h>
 
 /********************************************************************************
  * CLASS DEFINITION
@@ -66,7 +67,7 @@ void Simulation::initialize() {
   //Idle should be the first thread to be created
   idle = new Idle(this);
 
-  cout << "Loading xml file...\n";
+  cout << "Loading xml file...";
 
   Parser *parser = new Parser(this);
 
@@ -83,6 +84,7 @@ void Simulation::initialize() {
 void Simulation::initialize_aperiodic_tdma() {
   traces = new Trace(this);
   stats = new Statistics(this);
+  worker_id.clear();
 
   //Idle should be the first thread to be created
   idle = new Idle(this);
@@ -262,37 +264,59 @@ void Simulation::simulate() {
   join_all();
 
   cout << "Saving results...\n";
-
   //Save statistics to file
   stats->to_file();
-
   //Save traces to file
   traces->to_file();
-  traces->to_figure();
+  //Save figure to file
 
-
+  //TODO: figure out why this doesn't work!!!
+  //traces->to_figure();
   cout << "All results have been saved!\n";
 }
 
 ///This function waits for all other thread to join
 void Simulation::join_all() {
   //Wait for all dispatchers
+#if _DEBUG==0
+  cout << "Waiting for dispatchers...\n";
+#endif
+
   for(unsigned int c=0;c<disp.size();c++) {
-    pthread_join(*(disp[c]->getPthread()), NULL);
+    if(disp[c] != NULL) {
+      disp[c]->join();
+    }
   }
+
+#if _DEBUG==0
+  cout << "Waiting for idle...\n";
+#endif
    
-  //Wait for the idle thread (all other threads should be deactivated
-  pthread_join(*(idle->getPthread()), NULL);
+  if(idle != NULL) {
+    idle->join();
+  }
 
-  top_sched->join_all();
+#if _DEBUG==0
+  cout << "Waiting for top_sched...\n";
+#endif
 
-  //TODO: call functions that post to all semaphores
-  pthread_join(*(top_sched->getPthread()), NULL);
+  if(top_sched != NULL) {
+    cout << "M: All threads .";
+    top_sched->join();
+    cout << ".. have joined!\n";
+  }
+
+  cout << "Joined all!\n";
 }
 
 ///This function should be called by the Worker constructor to 'register' its id
 void Simulation::add_worker_id(unsigned int _id) {
+#if _INFO ==1
+  cout << "Adding Worker ID: " << _id << endl;
+#endif 
+
   worker_id.push_back(_id);
+
 }
 
 int Simulation::isSimulating() {
@@ -312,8 +336,8 @@ Statistics* Simulation::getStats() {
 }
 
 ///This function returns a vector of the worker id's
-vector<unsigned int>* Simulation::getWorker_id() {
-  return &worker_id;
+vector<unsigned int> Simulation::getWorker_id() {
+  return worker_id;
 }
 
 struct timespec Simulation::getSim_time() {

@@ -18,7 +18,9 @@ Thread::Thread(Simulation *s, unsigned int _id) {
   sim = s;
   id = _id;
 
+#if _INFO==0
   cout << "Thread " << _id << " created\n";
+#endif
 
   pthread_attr_init(&thread_attr);
   //creating the pthread
@@ -39,9 +41,14 @@ void Thread::wrapper() {
   cout << "Thread::wrapper (" << id << ") - This should not print!\n";
 }
 
+/*
 ///This function returns a pointer to the pthread
 pthread_t* Thread::getPthread() {
   return &thread;
+  }*/
+
+void Thread::join() {
+  pthread_join(thread, NULL);
 }
 
 ///This function return the thread id
@@ -54,7 +61,9 @@ void * Thread::static_wrapper(void * This)
 {
   Thread *t = ((Thread*)This);
   t->wrapper(); 
- 
+
+  cout << "Thread " << t->getId() << " has exited wrapper\n";
+
   struct timespec ts;
   clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts);
   

@@ -1,19 +1,23 @@
 #ifndef _SIMULATIONFIGURE_H
 #define _SIMULATIONFIGURE_H
 
+#include <stdlib.h>
 #include <time.h>
 #include <locale.h>
-#if !defined(_MSC_VER) && !defined(__BORLANDC__)
-#include <getopt.h>
-#endif
+#include <string>
 #include <vector>
 #include "mgl2/mgl.h"
 #include "mgl2/eval.h"
 
+#if !defined(_MSC_VER) && !defined(__BORLANDC__)
+#include <getopt.h>
+#endif
+
+using namespace std;
+
 #define MAX_PLOTS    10  //Max number of column plot in figure
 #define UNIT_WIDTH   100 //Hor. Pixels per time unit in picture
 #define PLOT_HEIGHT  300 //Vert. Pixels per plot in picture
-
 
 class SimulationFigure {
      
@@ -26,12 +30,13 @@ private:
    int         n_plots;         //Number of column plots in the figure
    double      x1, x2, y1, y2;  //Figure ranges
    double      plot_offset;     //Distance b/w colplots. in % of height
+   string      path;
 
    void setSize(int x, int y);
    void setRanges(double x1, double x2, double y1, double y2);
       
 public:
-   SimulationFigure();
+   SimulationFigure(string _path);
    void setNPlots(int n);
    void setTimeRange(double t);
 

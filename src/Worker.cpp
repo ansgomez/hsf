@@ -11,6 +11,10 @@
 #include <iostream>
 
 Worker::Worker(Simulation *s, Scheduler *sched, unsigned int _id, _task_load tl) : Runnable(s, _id) {
+#if _INFO == 1
+  cout << "Creating Worker with ID: " << _id << endl;
+#endif
+
   sim = s;
   id = _id;
   scheduler = sched;

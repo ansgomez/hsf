@@ -61,6 +61,6 @@ class Scheduler : public Runnable {
   virtual void job_finished(int worker);
 
   ///This function waits for the scheduler's load to join
-  void join_all();
+  void join();
 };
 #endif

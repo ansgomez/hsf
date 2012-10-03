@@ -3,7 +3,7 @@
 
 #include "lib/xml/pugixml.hpp"
 
-#include <string.h>
+#include <string>
 #include <time.h>
 
 using namespace std;

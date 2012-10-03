@@ -29,7 +29,7 @@ void Statistics::to_file() {
   ofstream file;
   RuntimeStatistic *aux;
 
-#if _INFO == 0
+#if _INFO == 1
 cout << "Saving " << stats.size() << " stats to file...\n";
 #endif
 

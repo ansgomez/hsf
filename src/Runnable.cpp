@@ -31,4 +31,3 @@ void Runnable::wrapper() {
   //empty
   cout << "Runnable::wrapper - This should not print!\n";
 }
-
