@@ -9,9 +9,11 @@
  */
 
 class Periodic : public Dispatcher {
+  /*********** VARIABLES ***********/
  private:
   struct timespec period;
 
+  /*********** CONSTRUCTOR ***********/
  public:
   ///Constructor needs simulation pointer, and id
   Periodic(Simulation *s, unsigned int id);
@@ -21,7 +23,9 @@ class Periodic : public Dispatcher {
   void dispatch();
 
   /*********** GETTER AND SETTER FUNCTIONS ***********/
+  ///This function sets the period
   void setPeriod(struct timespec p);
+  ///This function return the period
   struct timespec getPeriod();
 };
 #endif

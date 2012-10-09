@@ -3,12 +3,16 @@
 
 #include <time.h>
 
+///This operator adds two timespecs
 struct timespec operator+(struct timespec a, struct timespec b);
 
+///This operator subtracts two timespecs
 struct timespec operator-(struct timespec a, struct timespec b);
 
+///This operator compares two timespecs 
 int operator>(struct timespec a, struct timespec b);
 
+///This operator compares two timespecs
 int operator<(struct timespec a, struct timespec b);
 
 ///This function returns a timespec with the specified seconds

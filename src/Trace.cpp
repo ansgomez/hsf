@@ -21,7 +21,9 @@ using namespace std;
  ********************************************************************************
  */
 
-//Constructor requires a pointer to the simulation that the traces belong to
+/********************* CONSTRUCTOR *********************/
+
+///Constructor requires a pointer to the simulation that the traces belong to
 Trace::Trace(Simulation *s) {
   sim = s;
 
@@ -32,6 +34,8 @@ Trace::Trace(Simulation *s) {
   //Initialize semaphore to 1, so it acts like a mutex
   sem_init(&trace_sem, 0, 1);
 }
+
+/********************* MEMBER FUNCTIONS *********************/
 
 ///This function adds a trace to the vector
 void Trace::add_trace(enum _thread_type type, unsigned int t_id, enum _task_action act) {
@@ -46,7 +50,6 @@ void Trace::add_trace(enum _thread_type type, unsigned int t_id, enum _task_acti
 
       sem_wait(&trace_sem);
       {
-	//clock_gettime(CLOCK_REALTIME, &aux);
 	aux = TimeUtil::getTime(relative);
 	jt.setTrace(aux, type, t_id, act);
 	
@@ -122,6 +125,7 @@ void Trace::to_figure() {
 
     switch(traces[c].getAction()) {
     case task_arrival:
+      //TODO add label to aperiodic tasks...
       /*
       if( == aperiodic) 
 	{
@@ -145,7 +149,7 @@ void Trace::to_figure() {
       break;
 
     case sched_end:
-      if(true) { //jobtrace_sched_en == 1){
+      if(true) { 
 	float x = (*(start_sched_us+id*sizeof(unsigned int)))/1000;
 	sf->drawSched(id, x,TimeUtil::convert_ms(traces[c].getTimestamp()) );
       }

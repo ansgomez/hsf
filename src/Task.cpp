@@ -9,11 +9,15 @@
  ********************************************************************************
  */
 
+/********************* CONSTRUCTOR *********************/
+
 Task::Task(Simulation *s, Dispatcher *disp, _task_load load) {
   sim = s;
   dispatcher = disp;
   task_load = load;
 }
+
+/********************* MEMBER FUNCTIONS *********************/
 
 void Task::fire() {
   //empty

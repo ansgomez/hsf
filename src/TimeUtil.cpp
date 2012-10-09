@@ -10,8 +10,9 @@
  ********************************************************************************
  */
 
-struct timespec TimeUtil::start_time;
 struct timespec TimeUtil::offset;
+
+/********************* MEMBER FUNCTIONS *********************/
 
 ///This function returns a timespec with the current time
 struct timespec TimeUtil::getTime()

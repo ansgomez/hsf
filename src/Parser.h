@@ -21,10 +21,18 @@ class Dispatcher;
 
 ///This class takes care of parsing the XML file and instantiating all of the relevant objects.
 class Parser {
-
+  /*********** VARIABLES ***********/
  private:
+  ///Pointer to the simulation
   Simulation *sim;
   
+  /*********** CONSTRUCTOR ***********/
+ public:  
+  ///Constructor needs simulation pointer
+  Parser(Simulation *sim);
+
+  /*********** MEMBER FUNCTIONS ***********/
+ private:
   ///This function converts an XML "time" node to a timespec
   struct timespec parseTime(xml_node n);
 
@@ -34,13 +42,10 @@ class Parser {
   ///This function receives a Worker node, and it returns the initialized worker object
   Worker* parseWorker(xml_node worker, unsigned int *id);
 			     
-  //This function extract information from an XML "worker" and returns its corresponding disp.
+  ///This function extract information from an XML "worker" and returns its corresponding disp.
   Dispatcher* parseDispatcher(xml_node disp, unsigned int* id);
-  
- public:  
-  //Constructor needs simulation pointer
-  Parser(Simulation *sim);
 
+ public:
   ///This function receives the filepath and initiates the entire simulation
   void parseFile(string filePath);
 };

@@ -7,8 +7,8 @@ bin/
 
 *~
 
-metrics.sh
-last_revised.sh
+##### Metrics #####
+metrics/
 
 ##### Documentation Files #####
 Doxyfile

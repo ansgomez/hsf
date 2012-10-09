@@ -9,11 +9,15 @@
 
 using namespace std;
 
-///Contructor needs the simulation (for the name)
+/********************* CONSTRUCTOR *********************/
+
+///Contructor needs a pointer to the simulation
 Statistics::Statistics(Simulation *s) {
   sim = s;
   stats.reserve(30);
 }
+
+/********************* MEMBER FUNCTIONS *********************/
 
 ///This function adds a trace to the vector
 void Statistics::add_stat(enum _thread_type type, unsigned int id, struct timespec ts) {
@@ -30,13 +34,13 @@ void Statistics::to_file() {
   RuntimeStatistic *aux;
 
 #if _INFO == 1
-cout << "Saving " << stats.size() << " stats to file...\n";
+  cout << "Saving " << stats.size() << " stats to file...\n";
 #endif
 
- sort(stats.begin(), stats.end(), compareId());
-
+  sort(stats.begin(), stats.end(), compareId());
+ 
   file.open((sim->getName()+"_stats.csv").data());
-
+ 
   for(unsigned int c=0;c<stats.size();c++) {
 
     aux = stats[c];

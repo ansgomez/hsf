@@ -16,11 +16,15 @@ class Simulation;
  */
 
 class Scheduler : public Runnable {
+  /*********** VARIABLES ***********/
  protected:
+  ///Pointer to simulation
   Simulation *sim;
 
+  ///This variable stores the type of scheduler
   _sched_type sched_type;
 
+  ///This vector stores all of the runnables it controls (it's load)
   vector<Runnable*> load;
 
   ///This variable holds the index of the currently active load
@@ -29,10 +33,9 @@ class Scheduler : public Runnable {
   ///This variable holds the level of the scheduler (helps assign correct hierarchical priority)
   int level;
 
- public:
   /*********** CONSTRUCTOR ***********/
-
-  ///Constructor needs pointer to simulation
+ public:
+  ///Constructor needs pointer to simulation as well as the scheduler's id and hierarchical level
   Scheduler(Simulation *s, unsigned int _id, int level);
 
   /*********** INHERITED FUNCTIONS ***********/

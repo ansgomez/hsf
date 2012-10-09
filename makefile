@@ -37,7 +37,7 @@ SIMFIG: $(LIBDIR)/mathgl/SimulationFigure.h $(LIBDIR)/mathgl/SimulationFigure.cp
 	$(CXX) -Wall -c $(LIBDIR)/mathgl/SimulationFigure.cpp -o $(OBJDIR)/SimulationFigure.o
 
 XML:
-	$(CXX) -Wall -c $(LIBDIR)/$(XML) -o $(OBJDIR)/pugixml.o
+	$(CXX) -Wall -c $(LIBDIR)/$(XML) -o $(OBJDIR)/pugixml.o 
 
 $(HSF_SRC):
 	$(CXX) $(C_FLAGS) $(SRCDIR)/$@ -o $(OBJDIR)/$*.o $(C_ARG) 
@@ -48,4 +48,3 @@ run:
 clean:
 	rm -fr $(OBJDIR)/$(EXEC)
 	rm -fr $(OBJDIR)/*.o
-

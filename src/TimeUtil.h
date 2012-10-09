@@ -6,18 +6,17 @@
 #include <time.h>
 #include <stdlib.h>
 
-
 /********************************************************************************
  * CLASS DECLARATION
  ********************************************************************************
  */
 
-
 class TimeUtil {
   public:
-  static struct timespec start_time;
+  ///This variable holds the (absolute) time at which the simulation started (used to calculate relative time)
   static struct timespec offset;
 
+  /*********** MEMBER FUNCTIONS ***********/
   public:
   ///This function returns a timespec with the current time
   static struct timespec getTime();
@@ -39,7 +38,4 @@ class TimeUtil {
 
 };
 
-
 #endif
-
-

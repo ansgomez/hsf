@@ -26,9 +26,9 @@
  * CLASS DEFINITION
  ********************************************************************************
  */
-
+/********************* CONSTRUCTOR *********************/
+  ///Constructor needs the path to xml and the cpu_set
 Simulation::Simulation(string _xml_path, int cpu, string nm) {
-  //  struct sched_param param = {0};
   name = nm;
   sim_time = Seconds(1); //Millis(100); //
   simulating = 0;
@@ -57,9 +57,11 @@ Simulation::Simulation(string _xml_path, int cpu, string nm) {
   }
 
   initialize();
-  //itialize_hierarchical_periodic_tdma();
 }
 
+/********************* MEMBER FUNCTIONS *********************/
+
+///This function initializes all of the objects
 void Simulation::initialize() {
   traces = new Trace(this);
   stats = new Statistics(this);
@@ -80,157 +82,6 @@ void Simulation::initialize() {
   worker_id.reserve(10);
 }
 
-///This function initializes all of the objects with APERIODIC TDMA EXAMPLE
-void Simulation::initialize_aperiodic_tdma() {
-  traces = new Trace(this);
-  stats = new Statistics(this);
-  worker_id.clear();
-
-  //Idle should be the first thread to be created
-  idle = new Idle(this);
-
-  TDMA *sched = new TDMA(this, 1, 0); //id, level
-  top_sched = (Scheduler*) sched;
-
-  disp.push_back((Dispatcher*) new Aperiodic(this, 2));
-  disp.push_back((Dispatcher*) new Periodic(this, 3));
-
-  Worker *w;
-  BusyWait  *t;
-  struct timespec wcet;
-
-  //add first worker
-  wcet = Millis(5); //5 ms
-  t = new BusyWait(this, disp[0], wcet);
-  w = new Worker(this, top_sched, 4, busy_wait);
-  w->setLoad(t);
-  top_sched->add_load(w);
-  disp[0]->setWorker(w);
-
-  //add second worker
-  wcet = Millis(9); //10 ms
-  t = new BusyWait(this, disp[1], wcet);
-  w = new Worker(this, top_sched, 5, busy_wait);
-  w->setLoad(t);
-  top_sched->add_load(w);
-  disp[1]->setWorker(w);
-  
-  struct timespec ts;
-
-  //add timeslot 1
-  ts = Millis(10); //10 ms
-  sched->add_slot(ts);
-
-  //add timeslot 2
-  ts = Millis(20); //20 ms
-  sched->add_slot(ts);
-
-  cout << "HSF has been initialized: Aperiodic TDMA\n";
-}
-
-///This function initializes all of the objects with APERIODIC TDMA EXAMPLE
-void Simulation::initialize_periodic_tdma() {
-  traces = new Trace(this);
-  stats = new Statistics(this);
-
-  //Idle should be the first thread to be created
-  idle = new Idle(this);
-
-  TDMA *sched = new TDMA(this, 1, 0); //id, level
-  top_sched = (Scheduler*) sched;
-
-  disp.push_back((Dispatcher*) new Periodic(this, 2));
-  disp.push_back((Dispatcher*) new Periodic(this, 3));
-
-  Worker *w;
-  BusyWait  *t;
-  struct timespec wcet;
-
-  //add first worker
-  wcet = Millis(5); //5ms
-  t = new BusyWait(this, disp[0], wcet);
-  w = new Worker(this, top_sched, 4, busy_wait);
-  w->setLoad(t);
-  top_sched->add_load(w);
-  disp[0]->setWorker(w);
-
-  //add second worker
-  wcet = Millis(10); //2ms
-  t = new BusyWait(this, disp[1], wcet);
-  w = new Worker(this, top_sched, 5, busy_wait);
-  w->setLoad(t);
-  top_sched->add_load(w);
-  disp[1]->setWorker(w);
-  
-  struct timespec ts;
-  ts.tv_sec = 0;
-
-  //add timeslot 1
-  ts = Millis(10); //10ms
-  sched->add_slot(ts);
-
-  //add timeslot 2
-  ts = Millis(20); //20ms
-  sched->add_slot(ts);
-
-  cout << "HSF has been initialized: Periodic TDMA\n";
-}
-
-///This function initializes all of the objects with APERIODIC TDMA EXAMPLE
-void Simulation::initialize_hierarchical_periodic_tdma() {
-  traces = new Trace(this);
-  stats = new Statistics(this);
-
-  //Idle should be the first thread to be created
-  idle = new Idle(this);
-
-
-  TDMA *sched0 = new TDMA(this, 1, 0); //id, level
-  top_sched = (Scheduler*) sched0;
-
-  TDMA *sched1 = new TDMA(this, 2, 1); //id, level
-  TDMA *sched2 = new TDMA(this, 3, 1); //id, level
-
-  top_sched->add_load(sched1);
-  top_sched->add_load(sched2);
-
-  disp.push_back((Dispatcher*) new Periodic(this, 4));
-  disp.push_back((Dispatcher*) new Periodic(this, 5));
-  disp.push_back((Dispatcher*) new Periodic(this, 6));
-  disp.push_back((Dispatcher*) new Periodic(this, 7));
-
-  Worker *w;
-  BusyWait  *t;
-  struct timespec wcet;
-
-  //add 4 workers
-  for(uint c=0;c<4;c++) {
-    wcet = Millis(5);
-    t = new BusyWait(this, disp[c], wcet);
-    w = new Worker(this, top_sched, 8+c, busy_wait);
-    w->setLoad(t);
-    disp[c]->setWorker(w);
-    if(c<2) {
-      sched1->add_load(w);
-    }
-    else {
-      sched2->add_load(w);
-    }
-  }
-
-  struct timespec ts;
-
-  for(uint c=0;c<2;c++) {
-    ts = Millis(10);
-    sched0->add_slot(ts);
-    ts = Millis(5);
-    sched1->add_slot(ts);
-    sched2->add_slot(ts);
-  }
-
-  cout << "HSF has been initialized: Hierarchical Periodic TDMA\n";
-}
-
 ///This function sets the dispatchers to their 'active' priority.
 void Simulation::activate_dispatchers() {
   for (unsigned int c=0;c<disp.size();c++) {
@@ -238,6 +89,7 @@ void Simulation::activate_dispatchers() {
   }
 }
 
+///This function begins the simulation
 void Simulation::simulate() {
   struct timespec rem;
   cout << "**Simulating**\n" ;
@@ -258,7 +110,9 @@ void Simulation::simulate() {
   cout << "**Done**\n";
   //top_sched->deactivate();
 
+#if _INFO==1
   cout << "Waiting for threads to exit...\n";
+#endif
 
   //Join all other threads
   join_all();
@@ -270,7 +124,7 @@ void Simulation::simulate() {
   traces->to_file();
   //Save figure to file
 
-  //TODO: figure out why this doesn't work!!!
+  //For experimentation, figures are unnecessary
   //traces->to_figure();
   cout << "All results have been saved!\n";
 }
@@ -278,7 +132,7 @@ void Simulation::simulate() {
 ///This function waits for all other thread to join
 void Simulation::join_all() {
   //Wait for all dispatchers
-#if _DEBUG==0
+#if _DEBUG==1
   cout << "Waiting for dispatchers...\n";
 #endif
 
@@ -288,7 +142,7 @@ void Simulation::join_all() {
     }
   }
 
-#if _DEBUG==0
+#if _DEBUG==1
   cout << "Waiting for idle...\n";
 #endif
    
@@ -296,17 +150,17 @@ void Simulation::join_all() {
     idle->join();
   }
 
-#if _DEBUG==0
+#if _DEBUG==1
   cout << "Waiting for top_sched...\n";
 #endif
 
   if(top_sched != NULL) {
-    cout << "M: All threads .";
     top_sched->join();
-    cout << ".. have joined!\n";
   }
 
+#if _INFO==1
   cout << "Joined all!\n";
+#endif
 }
 
 ///This function should be called by the Worker constructor to 'register' its id
@@ -319,18 +173,29 @@ void Simulation::add_worker_id(unsigned int _id) {
 
 }
 
+///This function tells if there is currently a simulation
 int Simulation::isSimulating() {
   return simulating;
 }
 
+///This function adds dispatchers to the simulation object
+void Simulation::addDispatcher(Dispatcher *d) {
+  disp.push_back(d);
+}
+
+/********************* GETTER AND SETTER FUNCTIONS *********************/
+
+///This function returns the name of the simulation
 string Simulation::getName() {
   return name;
 }
 
+///This function returns the simulation's traces
 Trace* Simulation::getTraces() {
   return traces;
 }
 
+///This function return the simulation's statistics
 Statistics* Simulation::getStats() {
   return stats;
 }
@@ -340,22 +205,22 @@ vector<unsigned int> Simulation::getWorker_id() {
   return worker_id;
 }
 
+///This function returns the simulation time
 struct timespec Simulation::getSim_time() {
   return sim_time;
 }
 
+///This function sets the name of the simulation
 void Simulation::setName(string s) {
   name = s;
 }
 
+///This function sets the duration of the simulation
 void Simulation::setDuration(struct timespec d) {
   sim_time = d;
 }
 
+///This function sets the top schedulerxs
 void Simulation::setTopScheduler(Scheduler *sched) {
   top_sched = sched;
-}
-
-void Simulation::addDispatcher(Dispatcher *d) {
-  disp.push_back(d);
 }

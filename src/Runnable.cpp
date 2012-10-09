@@ -13,9 +13,13 @@
  ********************************************************************************
  */
 
+/********************* CONSTRUCTOR *********************/
+
 Runnable::Runnable(Simulation *s, unsigned int _id) : Thread(s,_id) {
   sim = s;
 }
+
+/********************* INHERITED FUNCTIONS *********************/
 
 ///This function set the current runnable to active, meaning that it has control of the CPU and should 'run'
 void Runnable::activate() {
@@ -27,6 +31,7 @@ void Runnable::deactivate() {
   cout << "Runnable::deactivate - This should not print!\n";
 }
 
+///This function will be executed by the pthread
 void Runnable::wrapper() {
   //empty
   cout << "Runnable::wrapper - This should not print!\n";

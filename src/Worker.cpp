@@ -10,6 +10,13 @@
 
 #include <iostream>
 
+/********************************************************************************
+ * CLASS DEFINITION
+ ********************************************************************************
+ */
+
+/********************* CONSTRUCTOR *********************/
+
 Worker::Worker(Simulation *s, Scheduler *sched, unsigned int _id, _task_load tl) : Runnable(s, _id) {
 #if _INFO == 1
   cout << "Creating Worker with ID: " << _id << endl;
@@ -28,11 +35,7 @@ Worker::Worker(Simulation *s, Scheduler *sched, unsigned int _id, _task_load tl)
   sem_init(&wrapper_sem, 0, 0);
 }
 
-void Worker::new_job() {
-  //parent->new_job(this);
-  //cout << "+Worker " << id << " has sem posted\n";
-  sem_post(&wrapper_sem);
-}
+/********************* INHERITED FUNCTIONS *********************/
 
 void Worker::wrapper() {
   while (sim->isSimulating() == 1) {
@@ -52,11 +55,6 @@ void Worker::wrapper() {
     sim->getTraces()->add_trace(worker, id, task_end);
   }
 }
-
-void Worker::setLoad(Task *t) {
-  load = t;
-}
-
 
 ///This function set the current runnable to active, meaning that it has control of the CPU and should 'run'
 void Worker::activate() {
@@ -81,4 +79,19 @@ void Worker::deactivate() {
   pthread_getschedparam(thread, &policy, &thread_param);
   thread_param.sched_priority = Priorities::get_inactive_pr(); //active priority
   pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
+}
+
+/********************* MEMBER FUNCTIONS *********************/
+
+void Worker::setLoad(Task *t) {
+  load = t;
+}
+
+void Worker::new_job() {
+#if _INFO==1
+  cout << "+Worker " << id << " has sem posted\n";
+#endif
+  //TODO register the new job even to the parent scheduler
+  //parent->new_job(this);
+  sem_post(&wrapper_sem);
 }

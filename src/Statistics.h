@@ -11,29 +11,39 @@
 
 using namespace std;
 
-class Statistics {
- private:
-  vector<RuntimeStatistic*> stats;
-  Simulation * sim;
+/********************************************************************************
+ * CLASS DECLARATION
+ ********************************************************************************
+ */
 
+class Statistics {
+  /*********** VARIABLES ***********/
+ private:
+  ///Pointer to the simulation
+  Simulation * sim;
+  ///This vector holds all of the simulation's runtime statistics
+  vector<RuntimeStatistic*> stats;
+
+  /*********** CONSTRUCTOR ***********/
  public:
   ///Contructor needs the simulation (for the name)
   Statistics(Simulation *s);
 
+  /*********** MEMBER FUNCTIONS ***********/
   ///This function adds a trace to the vector
   void add_stat(enum _thread_type type, unsigned int t_id, struct timespec ts);
 
   ///This function helps sort the vector by ID
-struct compareId {
-  bool operator()(RuntimeStatistic *a, RuntimeStatistic *b) {
-    if (a->getId() < b->getId() ) {
-      return true;
+  struct compareId {
+    bool operator()(RuntimeStatistic *a, RuntimeStatistic *b) {
+      if (a->getId() < b->getId() ) {
+	return true;
+      }
+      else {
+	return false;
+      }
     }
-    else {
-      return false;
-    }
-  }
-};
+  };
 
   ///This function saves to custom csv file
   void to_file();

@@ -12,9 +12,13 @@
  ********************************************************************************
  */
 
+/********************* CONSTRUCTOR *********************/
+
 Periodic::Periodic(Simulation *s, unsigned int id) : Dispatcher(s,id) {
   period =  Millis(20);
 }
+
+/********************* INHERITED FUNCTIONS *********************/
 
 void Periodic::dispatch() {
   struct timespec rem;
@@ -39,12 +43,14 @@ void Periodic::dispatch() {
     }
   }
 
-  //Free worker from blocking (doesn't affect workers while they have inactive priority -> only when the simulation has ended
+  //Free worker from blocking (doesn't affect workers while they have
+  //inactive priority -> only when the simulation has ended)
   if(worker != NULL) {
     worker->new_job();
   }
 }
 
+///This function sets the dispatcher's period
 void Periodic::setPeriod(struct timespec p) {
   period = p;
 }

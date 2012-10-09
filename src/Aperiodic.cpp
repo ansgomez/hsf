@@ -12,9 +12,14 @@
  ********************************************************************************
  */
 
+/********************* CONSTRUCTOR *********************/
+
+///Constructor needs a pointer to simulation and id
 Aperiodic::Aperiodic(Simulation *s, unsigned int id) : Dispatcher(s,id) {
   release_time = Millis(5); //default release time is 5 ms
 }
+
+/********************* INHERITED FUNCTIONS *********************/
 
 ///This function was a flagged loop that activates the Worker according to the task periodicity
 void Aperiodic::dispatch() {
@@ -47,9 +52,14 @@ void Aperiodic::dispatch() {
   }
 }
 
+/********************* GETTER AND SETTER FUNCTIONS *********************/
+
+///This function sets the release time for the aperiodic dispatcher
 void Aperiodic::setRelease(struct timespec r) {
   release_time = r;
 }
+
+///This function returns the release time
 struct timespec Aperiodic::getRelease() {
   return release_time;
 }

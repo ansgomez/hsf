@@ -14,9 +14,9 @@
  ********************************************************************************
  */
 
-/*********** CONSTRUCTORS ***********/
+/********************* CONSTRUCTOR *********************/
 
-///Contructor needs Simulation pointer, and a disp_id
+///Constructor needs Simulation pointer, and a disp_id
 Dispatcher::Dispatcher (Simulation *s, unsigned int _id) : Thread(s,_id)
 {
 #if _INFO == 1
@@ -37,26 +37,29 @@ Dispatcher::Dispatcher (Simulation *s, unsigned int _id) : Thread(s,_id)
   worker = NULL;
 }
 
-/*********** SETTER FUNCTIONS ***********/
+/********************* SETTER FUNCTIONS *********************/
+///This function sets the worker
 void Dispatcher::setWorker(Worker *w) {
   worker = w;
 }
 
+///This function sets the dispatcher's periodicity
 void Dispatcher::setPeriodicity(_task_periodicity t) {
   periodicity = t;
 }
 
+///This function sets the dispatcher's offset
 void Dispatcher::setOffset(struct timespec o) {
   offset = o;
 }
 
-/*********** INHERITED FUNCTIONS ***********/
+/********************* INHERITED FUNCTIONS *********************/
 ///This is the pthread's wrapper function
 void Dispatcher::wrapper() {
   start();
 }
 
-/*********** MEMBER FUNCTIONS ***********/
+/********************* MEMBER FUNCTIONS *********************/
 
 ///This function waits for offset, and then calls dispatch -> which has the flagged loop.
 void Dispatcher::start() {
@@ -70,11 +73,13 @@ void Dispatcher::start() {
   dispatch();
 }
 
+///This virtual function should be implemented by the subclasses
 void Dispatcher::dispatch() {
   //empty
   cout << "Dispatcher::dispatch - This should not print!\n";
 }
 
+///This function sets the dispatcher's priority to DISP_PR
 void Dispatcher::activate() {
 
 #if _DEBUG == 1

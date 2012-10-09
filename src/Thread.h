@@ -15,37 +15,51 @@ class Simulation;
  */
 
 class Thread {
+  /*********** VARIABLES ***********/
  protected:
-
-  unsigned int id;
-  _thread_type type;
-
-  int policy;
-  pthread_t thread;
-  pthread_attr_t thread_attr;
-  struct sched_param thread_param;
-
+  ///Pointer to the simulation
   Simulation* sim;
 
+  ///Thread id - a unique value among all threads in a simulation
+  unsigned int id;
+
+  ///Type indicates wether the thread is a scheduler, worker, dispatcher, server, or idle
+  _thread_type type;
+
+  ///This is an auxiliary variable to set the thread's priority
+  int policy;
+
+  ///The actual pthread variable
+  pthread_t thread;
+
+  ///Auxiliary variable to set the thread's attributes
+  pthread_attr_t thread_attr;
+
+  ///Auxiliary variable to the set the thread's parameters
+  struct sched_param thread_param;
+
+  /*********** CONSTRUCTOR ***********/
  public:
   ///Constructor needs nothing to create thread (with inactive priotity);
   Thread(Simulation *s, unsigned int _id);
 
+  /*********** MEMBER FUNCTIONS ***********/
   ///This function is called by the static wrapper. In the Worker object, it should point to fire(), and in the Scheduler object, it should point to schedule()
   virtual void wrapper();
 
-  ///This function returns a pointer to the pthread
-  //pthread_t* getPthread();
-  //
+  ///Calling this function will block the calling thread until this thread exits
   virtual void join();
-
-  ///This function return the thread id
-  unsigned int getId();
 
  private:
   ///The runnable thread points to this static function. This function recieves a Runnable object, and calls
   ///the wrapper function in that object
   static void * static_wrapper(void * This);
+
+
+  /*********** GETTER FUNCTIONS ***********/
+ public:
+  ///This function returns the thread id
+  unsigned int getId();
 
 };
 #endif

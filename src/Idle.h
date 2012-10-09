@@ -5,18 +5,28 @@
 
 class Simulation;
 
-class Idle : public Thread {
- private:
+/********************************************************************************
+ * CLASS DECLARATION
+ ********************************************************************************
+ */
 
+class Idle : public Thread {
+  /*********** VARIABLES ***********/
+ private:
+  ///Pointer to simulation
   Simulation *sim;
 
-  public:
+  /*********** CONSTRUCTOR ***********/
+ public:
   ///Constructor needs simulation pointer
-    Idle(Simulation *s);
+  Idle(Simulation *s);
 
-    ///This function contains the flagged loop.
-    void run();
-    
-    void wrapper();
+  /*********** MEMBER FUNCTIONS ***********/
+  ///This function contains the flagged loop.
+  void run();
+  
+  /*********** INHERITED FUNCTIONS ***********/
+  ///This function is inherited from Thread, and will call the run() function
+  void wrapper();
 };
 #endif

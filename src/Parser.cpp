@@ -21,10 +21,14 @@ using namespace pugi;
  ********************************************************************************
  */
 
+/********************* CONSTRUCTOR *********************/
+
 //Constructor needs simulation pointer
 Parser::Parser(Simulation *_sim) {
   sim = _sim;
 }
+
+/********************* MEMBER FUNCTIONS *********************/
 
 //This function converts an XML "time" node to a timespec
 struct timespec Parser::parseTime(xml_node n) {
@@ -128,6 +132,7 @@ Scheduler* Parser::parseTDMA(xml_node sched_node, unsigned int *id, int level) {
 
       if(alg == "TDMA") {
 	*id = *id +1;
+
 #if _DEBUG==1
 	cout << "New Sched Runnable {\n";
 #endif
@@ -143,18 +148,16 @@ Scheduler* Parser::parseTDMA(xml_node sched_node, unsigned int *id, int level) {
     }//end of scheduler
 
     //TODO: only iterate through children of type runnable
-    /*
-    else {
-      cout << "Parser error - Load " << *id << " was not a recognizable Runnable (" << type << ")\n";
-    }*/
   }
   
   //TIME SLOTS
   xml_node time_slots = sched_node.child("time_slots");
   for (xml_node slot = time_slots.first_child(); slot; slot = slot.next_sibling()) {
+
 #if _DEBUG == 1
     cout << "L" << level << ": Time slot: " << slot.attribute("value").value() << " " << slot.attribute("units").value() << endl;
 #endif
+
     sched->add_slot(parseTime(slot));
   }
 
@@ -177,16 +180,16 @@ void Parser::parseFile(string filePath) {
 #if _INFO==1
 cout << "Simulation name: " << sim_node.attribute("name").value() << endl; 
 #endif
+
   sim->setName(sim_node.attribute("name").value());
 
 #if _INFO==1
 cout << "Duration: " << sim_node.child("duration").attribute("value").as_int() << " " << sim_node.child("duration").attribute("units").value() << endl;
 #endif
+
   sim->setDuration(parseTime(sim_node.child("duration")));
 
   xml_node top_sched = sim_node.child("runnable");
-
-  //cout << "Top Scheduler:" << top_sched.attribute("algorithm").value() << endl;
 
   //if TDMA
   Scheduler *top = parseTDMA(top_sched, &id, 0);

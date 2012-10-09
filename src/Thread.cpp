@@ -12,13 +12,15 @@
  ********************************************************************************
  */
 
+/********************* CONSTRUCTOR *********************/
+
 ///Constructor needs nothing to create thread (with inactive priotity). Note that there should never be a simple Thread object because its wrapper function is null. (It should be called from a subclass)
 Thread::Thread(Simulation *s, unsigned int _id) {
 
   sim = s;
   id = _id;
 
-#if _INFO==0
+#if _INFO==1
   cout << "Thread " << _id << " created\n";
 #endif
 
@@ -35,18 +37,15 @@ Thread::Thread(Simulation *s, unsigned int _id) {
   pthread_setschedparam(thread, SCHED_FIFO, &thread_param);	  
 }
 
+/********************* MEMBER FUNCTIONS *********************/
+
 ///Should be overwritten by subclasses
 void Thread::wrapper() {
   //empty
   cout << "Thread::wrapper (" << id << ") - This should not print!\n";
 }
 
-/*
-///This function returns a pointer to the pthread
-pthread_t* Thread::getPthread() {
-  return &thread;
-  }*/
-
+///This function blocks the calling thread until this thread exits
 void Thread::join() {
   pthread_join(thread, NULL);
 }
@@ -62,7 +61,9 @@ void * Thread::static_wrapper(void * This)
   Thread *t = ((Thread*)This);
   t->wrapper(); 
 
+#if _INFO==1
   cout << "Thread " << t->getId() << " has exited wrapper\n";
+#endif
 
   struct timespec ts;
   clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts);

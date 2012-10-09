@@ -139,7 +139,6 @@ void TDMA::deactivate() {
 
 }
 
-
 ///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution.
 void TDMA::new_job(Worker * worker) {
   cout << "Sched handled Worker " << worker->getId() << "'s new job\n";
@@ -148,13 +147,14 @@ void TDMA::new_job(Worker * worker) {
   }
 }
 
-
 ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
 void TDMA::job_finished(unsigned int worker_id){
   cout << " Sched handled Worker " << worker << "'s finished job!\n";
 }
 
+/********************* MEMBER FUNCTIONS *********************/
 
+///This function adds a timeslot to the scheduler. They are assigned in the same order as the load is defined
 void TDMA::add_slot(struct timespec slot) {
 #if _DEBUG == 1
   cout << "Added timeslot, new size: " << timeslots.size() << "\n";

@@ -1,11 +1,10 @@
-//#include "defines.h"
 #include <iostream>
 
 #include "Simulation.h"
 
 int main() {
     
-  Simulation *sim = new Simulation("hsf1.xml", 1, "simulation");
+  Simulation *sim = new Simulation("hsf.xml", 1, "simulation");
 
   sim->simulate();
 

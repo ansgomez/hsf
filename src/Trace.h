@@ -19,15 +19,25 @@ class Simulation;
 
 class Trace {
 private:
-  vector<JobTrace> traces;
+  /*********** VARIABLES ***********/
+  ///Pointer to the simulation
   Simulation * sim;
+
+  ///This vector will hold all of the simulation's traces
+  vector<JobTrace> traces;
+
+  ///Auxiliary variable to indicate if the trace vector was filled
   int trace_full;
+
+  ///Semaphore to protect writing to the trace vector
   sem_t trace_sem;
 
+  /*********** CONSTRUCTOR ***********/
 public:
   ///Contructor
   Trace(Simulation *s);
 
+  /*********** MEMBER FUNCTIONS ***********/
   ///This function adds a trace to the vector
   void add_trace(enum _thread_type type, unsigned int t_id, enum _task_action act);
 

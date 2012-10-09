@@ -14,14 +14,15 @@ using namespace std;
  */
 
 class TDMA : public Scheduler {
+  /*********** VARIABLES ***********/
  private:
   vector<struct timespec> timeslots; //There should be one timeslot per load
 
   sem_t schedule_sem, preempt_sem;
   int timing;
 
- public:
   /*********** CONSTRUCTOR ***********/
+ public:
   ///Constructor needs pointer to simulation
   TDMA(Simulation *s, unsigned int id, int level);
 

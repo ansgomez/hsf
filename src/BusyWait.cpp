@@ -15,9 +15,14 @@ using namespace std;
  ********************************************************************************
  */
 
+/********************* CONSTRUCTOR *********************/
+
+///The constructor requires a pointer to the simulation, its own dispatcher, and the WCET
 BusyWait::BusyWait(Simulation *s, Dispatcher *disp, struct timespec wcet) : Task(s, disp, busy_wait) {
   WCET = wcet;
 }
+
+/********************* MEMEBER FUNCTIONS *********************/
 
 void BusyWait::fire() {
 #if _DEBUG == 1

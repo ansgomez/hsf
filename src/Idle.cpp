@@ -6,6 +6,8 @@
 
 #include <iostream>
 
+/********************* CONSTRUCTOR *********************/
+
 ///The constructor needs the simulation pointer
 Idle::Idle(Simulation *s) : Thread(s,0) {
   sim = s;
@@ -16,6 +18,8 @@ Idle::Idle(Simulation *s) : Thread(s,0) {
   thread_param.sched_priority = Priorities::get_idle_pr(); 
   pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
 }
+
+/********************* MEMBER FUNCTIONS *********************/
 
 ///This function contains the flagged loop.
 void Idle::run() {
@@ -30,6 +34,8 @@ void Idle::run() {
   cout << "Exiting Idle thread\n";
 #endif  
 }
+
+/********************* INHERITED FUNCTIONS *********************/
 
 ///This inherited function will only call run()
 void Idle::wrapper() {
