@@ -5,7 +5,8 @@ C_FLAGS=-Wall -pthread -c -g
 C_ARG=-lrt
 L_ARG=-ldl -lpthread -lrt # -lGLU -lGL -lSM -lICE -lX11 -lXext -lpng -lz -Wl-rpath
 LFLAGS= -lm 
-MATHGL= -rdynamic src/lib/mathgl/libmgl.so.6.0.0
+ARCH := $(shell getconf LONG_BIT)
+MATHGL= -rdynamic src/lib/mathgl/libmgl.$(ARCH).so.6.0.0
 XML=xml/pugixml.cpp
 
 #Directories

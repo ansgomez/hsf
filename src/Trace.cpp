@@ -14,7 +14,7 @@
 
 using namespace std;
 
-#define MAX_TRACES 2000
+#define MAX_TRACES 10000
 
 /********************************************************************************
  * CLASS DEFINITION
@@ -71,6 +71,10 @@ void Trace::to_file() {
 #if _INFO == 1
   cout << "Saving to file...\n";
 #endif
+
+  if(trace_full == 1) {
+    cout << "Trace array is full (traces might have been lost!)\n";
+  }
 
   file.open((sim->getName()+"_traces.csv").data());
 

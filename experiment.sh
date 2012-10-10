@@ -6,9 +6,13 @@ if [ -a simulation_output.csv ]
     mv simulation_output.csv old_simulation_output.csv
 fi
 
-for i in {2..40}
+#foreach XML, simulate and analyze
+for i in {2..10}
 do
-    php xml.php $i > hsf.xml
-    bin/main.out
-    octave -qf metrics/analysis ../simulation
+    sudo php xml.php $i > hsf.xml
+    sudo bin/main.out
+    sudo octave -qf metrics/analysis ../simulation
 done
+
+#After experimenting, plot results
+sudo octave -qf metrics/plotting ../simulation

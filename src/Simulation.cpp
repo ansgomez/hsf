@@ -41,15 +41,23 @@ Simulation::Simulation(string _xml_path, int cpu, string nm) {
     pthread_exit(0);
   }
 
-  //TODO: other options, and default
+  int n_cpus = sysconf( _SC_NPROCESSORS_ONLN );
+  //TODO: other options
   //  if (cpu==1)
   {
     //Set CPU affinity
-    CPU_ZERO (&set);
-    CPU_CLR (0, &set);
-    CPU_CLR (1, &set);
-    CPU_CLR (2, &set);
-    CPU_SET (3, &set);
+     CPU_ZERO (&set);
+
+     for(int i=0;i<n_cpus;i++) {
+       //Set only the last CPU
+       if(i==n_cpus-1) {
+	 CPU_SET (i, &set);
+       }
+       //By default, clear CPU from the set
+       else {
+	 CPU_CLR (i, &set);
+       }
+     }
   }
 
   if (pthread_setaffinity_np(pthread_self(), sizeof (cpu_set_t), &set) <0) {

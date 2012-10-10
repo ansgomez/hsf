@@ -4,196 +4,46 @@
 
 <runnable type="scheduler" algorithm="TDMA">
 	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
+     		<period value="100"  units="ms" />
      		<wcet value="10" units="ms" />
    	</runnable>
 	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
+     		<period value="100"  units="ms" />
      		<wcet value="10" units="ms" />
    	</runnable>
 	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
+     		<period value="100"  units="ms" />
      		<wcet value="10" units="ms" />
    	</runnable>
 	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
+     		<period value="100"  units="ms" />
      		<wcet value="10" units="ms" />
    	</runnable>
 	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
+     		<period value="100"  units="ms" />
      		<wcet value="10" units="ms" />
    	</runnable>
 	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
+     		<period value="100"  units="ms" />
      		<wcet value="10" units="ms" />
    	</runnable>
 	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
+     		<period value="100"  units="ms" />
      		<wcet value="10" units="ms" />
    	</runnable>
 	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
+     		<period value="100"  units="ms" />
      		<wcet value="10" units="ms" />
    	</runnable>
 	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
+     		<period value="100"  units="ms" />
      		<wcet value="10" units="ms" />
    	</runnable>
 	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="400"  units="ms" />
+     		<period value="100"  units="ms" />
      		<wcet value="10" units="ms" />
    	</runnable>
    	<time_slots>
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
      		<time_slot value="10"  units="ms" />
      		<time_slot value="10"  units="ms" />
      		<time_slot value="10"  units="ms" />

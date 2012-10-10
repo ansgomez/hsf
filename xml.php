@@ -1,11 +1,11 @@
 <simulation name="simulation">
 
-<duration units="sec" value="10" />
+<duration units="sec" value="1" />
 
 <runnable type="scheduler" algorithm="TDMA">
 <?php
 //Variables
-   $slot = 10;//$argv[1];
+$slot = 10;//$argv[1];
 $n_jobs = $argv[1];
 $period = $n_jobs*$slot;
 
