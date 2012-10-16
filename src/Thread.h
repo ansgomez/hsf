@@ -42,6 +42,7 @@ class Thread {
  public:
   ///Constructor needs nothing to create thread (with inactive priotity);
   Thread(Simulation *s, unsigned int _id);
+  ~Thread();
 
   /*********** MEMBER FUNCTIONS ***********/
   ///This function is called by the static wrapper. In the Worker object, it should point to fire(), and in the Scheduler object, it should point to schedule()
@@ -54,7 +55,6 @@ class Thread {
   ///The runnable thread points to this static function. This function recieves a Runnable object, and calls
   ///the wrapper function in that object
   static void * static_wrapper(void * This);
-
 
   /*********** GETTER FUNCTIONS ***********/
  public:

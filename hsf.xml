@@ -1,60 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <simulation name="simulation">
-
-<duration units="sec" value="1" />
-
-<runnable type="scheduler" algorithm="TDMA">
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="100"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="100"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="100"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="100"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="100"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="100"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="100"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="100"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="100"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-	<runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="100"  units="ms" />
-     		<wcet value="10" units="ms" />
-   	</runnable>
-   	<time_slots>
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-     		<time_slot value="10"  units="ms" />
-   	</time_slots>
-</runnable>
-
+   <duration value="1" units="sec" />
+   <runnable type="scheduler" algorithm="TDMA">
+      <runnable type="scheduler" algorithm="TDMA">
+         <runnable type="scheduler" algorithm="TDMA">
+            <runnable type="scheduler" algorithm="TDMA">
+               <runnable type="worker" periodicity="periodic" load="busy_wait">
+                  <period value="160" units="ms" />
+                  <wcet value="9" units="ms" />
+               </runnable>
+               <runnable type="worker" periodicity="periodic" load="busy_wait">
+                  <period value="160" units="ms" />
+                  <wcet value="9" units="ms" />
+               </runnable>
+               <time_slots>
+                  <time_slot value="10" units="ms" />
+                  <time_slot value="10" units="ms" />
+               </time_slots>
+            </runnable>
+            <runnable type="scheduler" algorithm="TDMA">
+               <runnable type="worker" periodicity="periodic" load="busy_wait">
+                  <period value="160" units="ms" />
+                  <wcet value="9" units="ms" />
+               </runnable>
+               <runnable type="worker" periodicity="periodic" load="busy_wait">
+                  <period value="160" units="ms" />
+                  <wcet value="9" units="ms" />
+               </runnable>
+               <time_slots>
+                  <time_slot value="10" units="ms" />
+                  <time_slot value="10" units="ms" />
+               </time_slots>
+            </runnable>
+            <time_slots>
+               <time_slot value="20" units="ms" />
+               <time_slot value="20" units="ms" />
+            </time_slots>
+         </runnable>
+         <runnable type="scheduler" algorithm="TDMA">
+            <runnable type="scheduler" algorithm="TDMA">
+               <runnable type="worker" periodicity="periodic" load="busy_wait">
+                  <period value="160" units="ms" />
+                  <wcet value="9" units="ms" />
+               </runnable>
+               <runnable type="worker" periodicity="periodic" load="busy_wait">
+                  <period value="160" units="ms" />
+                  <wcet value="9" units="ms" />
+               </runnable>
+               <time_slots>
+                  <time_slot value="10" units="ms" />
+                  <time_slot value="10" units="ms" />
+               </time_slots>
+            </runnable>
+            <runnable type="scheduler" algorithm="TDMA">
+               <runnable type="worker" periodicity="periodic" load="busy_wait">
+                  <period value="160" units="ms" />
+                  <wcet value="9" units="ms" />
+               </runnable>
+               <runnable type="worker" periodicity="periodic" load="busy_wait">
+                  <period value="160" units="ms" />
+                  <wcet value="9" units="ms" />
+               </runnable>
+               <time_slots>
+                  <time_slot value="10" units="ms" />
+                  <time_slot value="10" units="ms" />
+               </time_slots>
+            </runnable>
+            <time_slots>
+               <time_slot value="20" units="ms" />
+               <time_slot value="20" units="ms" />
+            </time_slots>
+         </runnable>
+         <time_slots>
+            <time_slot value="40" units="ms" />
+            <time_slot value="40" units="ms" />
+         </time_slots>
+      </runnable>
+      <runnable type="scheduler" algorithm="TDMA">
+         <runnable type="scheduler" algorithm="TDMA">
+            <runnable type="scheduler" algorithm="TDMA">
+               <runnable type="worker" periodicity="periodic" load="busy_wait">
+                  <period value="160" units="ms" />
+                  <wcet value="9" units="ms" />
+               </runnable>
+               <runnable type="worker" periodicity="periodic" load="busy_wait">
+                  <period value="160" units="ms" />
+                  <wcet value="9" units="ms" />
+               </runnable>
+               <time_slots>
+                  <time_slot value="10" units="ms" />
+                  <time_slot value="10" units="ms" />
+               </time_slots>
+            </runnable>
+            <runnable type="scheduler" algorithm="TDMA">
+               <runnable type="worker" periodicity="periodic" load="busy_wait">
+                  <period value="160" units="ms" />
+                  <wcet value="9" units="ms" />
+               </runnable>
+               <runnable type="worker" periodicity="periodic" load="busy_wait">
+                  <period value="160" units="ms" />
+                  <wcet value="9" units="ms" />
+               </runnable>
+               <time_slots>
+                  <time_slot value="10" units="ms" />
+                  <time_slot value="10" units="ms" />
+               </time_slots>
+            </runnable>
+            <time_slots>
+               <time_slot value="20" units="ms" />
+               <time_slot value="20" units="ms" />
+            </time_slots>
+         </runnable>
+         <runnable type="scheduler" algorithm="TDMA">
+            <runnable type="scheduler" algorithm="TDMA">
+               <runnable type="worker" periodicity="periodic" load="busy_wait">
+                  <period value="160" units="ms" />
+                  <wcet value="9" units="ms" />
+               </runnable>
+               <runnable type="worker" periodicity="periodic" load="busy_wait">
+                  <period value="160" units="ms" />
+                  <wcet value="9" units="ms" />
+               </runnable>
+               <time_slots>
+                  <time_slot value="10" units="ms" />
+                  <time_slot value="10" units="ms" />
+               </time_slots>
+            </runnable>
+            <runnable type="scheduler" algorithm="TDMA">
+               <runnable type="worker" periodicity="periodic" load="busy_wait">
+                  <period value="160" units="ms" />
+                  <wcet value="9" units="ms" />
+               </runnable>
+               <runnable type="worker" periodicity="periodic" load="busy_wait">
+                  <period value="160" units="ms" />
+                  <wcet value="9" units="ms" />
+               </runnable>
+               <time_slots>
+                  <time_slot value="10" units="ms" />
+                  <time_slot value="10" units="ms" />
+               </time_slots>
+            </runnable>
+            <time_slots>
+               <time_slot value="20" units="ms" />
+               <time_slot value="20" units="ms" />
+            </time_slots>
+         </runnable>
+         <time_slots>
+            <time_slot value="40" units="ms" />
+            <time_slot value="40" units="ms" />
+         </time_slots>
+      </runnable>
+      <time_slots>
+         <time_slot value="80" units="ms" />
+         <time_slot value="80" units="ms" />
+      </time_slots>
+   </runnable>
 </simulation>
+

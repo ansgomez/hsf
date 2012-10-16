@@ -56,13 +56,6 @@ void Dispatcher::setOffset(struct timespec o) {
 /********************* INHERITED FUNCTIONS *********************/
 ///This is the pthread's wrapper function
 void Dispatcher::wrapper() {
-  start();
-}
-
-/********************* MEMBER FUNCTIONS *********************/
-
-///This function waits for offset, and then calls dispatch -> which has the flagged loop.
-void Dispatcher::start() {
   struct timespec rem;
 
   //if offset != 0, sleep before dispatching
@@ -71,7 +64,13 @@ void Dispatcher::start() {
   }
 
   dispatch();
+
+#if _INFO == 1
+  cout << "Dispatcher " << id << " exiting wrapper...\n";
+#endif
 }
+
+/********************* MEMBER FUNCTIONS *********************/
 
 ///This virtual function should be implemented by the subclasses
 void Dispatcher::dispatch() {

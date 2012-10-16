@@ -77,7 +77,7 @@ void Simulation::initialize() {
   //Idle should be the first thread to be created
   idle = new Idle(this);
 
-  cout << "Loading xml file...";
+  cout << "Loading xml file...\n";
 
   Parser *parser = new Parser(this);
 
@@ -115,8 +115,9 @@ void Simulation::simulate() {
 
   //Deactivate threads
   simulating = 0;  
-  cout << "**Done**\n";
+  cout << "***Done***\n";
   //top_sched->deactivate();
+  //sleep(3);
 
 #if _INFO==1
   cout << "Waiting for threads to exit...\n";
@@ -158,6 +159,7 @@ void Simulation::join_all() {
     idle->join();
   }
 
+  //Wait for top_sched
 #if _DEBUG==1
   cout << "Waiting for top_sched...\n";
 #endif

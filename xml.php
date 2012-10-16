@@ -5,7 +5,8 @@
 <runnable type="scheduler" algorithm="TDMA">
 <?php
 //Variables
-$slot = 10;//$argv[1];
+$slot = 10;
+$wcet = 9;
 $n_jobs = $argv[1];
 $period = $n_jobs*$slot;
 
@@ -14,7 +15,7 @@ for($i=0;$i<$n_jobs;$i++) {
 ?>
 	<runnable type="worker" periodicity="periodic" load="busy_wait">
      		<period value="<?php echo $period; ?>"  units="ms" />
-     		<wcet value="<?php echo $slot; ?>" units="ms" />
+     		<wcet value="<?php echo $wcet; ?>" units="ms" />
    	</runnable>
 <?php
 }

@@ -48,6 +48,13 @@ void Periodic::dispatch() {
   if(worker != NULL) {
     worker->new_job();
   }
+  else {
+    cout << "Dispatcher::dispatch - Worker NULL problem\n";
+  }
+
+#if _INFO == 1
+  cout << "Dispatcher " << id << " is exiting dispatch()\n";
+#endif
 }
 
 ///This function sets the dispatcher's period

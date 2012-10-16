@@ -13,6 +13,9 @@
 
 #include <iostream>
 
+#define _INFO 0
+#define _DEBUG 0
+
 using namespace std;
 using namespace pugi;
 

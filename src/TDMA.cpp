@@ -38,27 +38,34 @@ void TDMA::schedule(){
   struct timespec timeA, timeB, time_slot, aux;
   bool exit = false;
   int ret;
+  active_index = -1;
 
 #if _DEBUG == 1
   cout << "Began scheduling...\n";
 #endif
 
   while (sim->isSimulating() == 1) {
-
+    
     for(active_index=0; active_index<(int)timeslots.size() && sim->isSimulating()==1; active_index++) {
 
       time_slot = timeslots[active_index];
 
       exit = false;
 
-      while(exit == false &&  sim->isSimulating()==1) {
+      while(exit == false && sim->isSimulating()==1) {
 
 	sem_wait(&schedule_sem);
+
+	//If simulation ended while asleep, break
+	if(sim->isSimulating()==0)
+	  break;
 
 	//start timing
 	clock_gettime(CLOCK_REALTIME, &timeA);
 
-	load[active_index]->activate();
+	if(load[active_index] != NULL) {
+	  load[active_index]->activate();
+	}
  
 #if _DEBUG == 1
 	cout << "**Activated new Runnable " << load[active_index]->getId() << " for " << time_slot.tv_sec << "." << time_slot.tv_nsec << "**\n";
@@ -68,14 +75,20 @@ void TDMA::schedule(){
 	ret = sem_timedwait(&preempt_sem, &aux);
 	timing = 0;
 
-	load[active_index]->deactivate();
+	//If simulation ended while asleep, break
+	if(sim->isSimulating()==0)
+	  break;
+
+	if(load[active_index] != NULL) {
+	  load[active_index]->deactivate();
+	}
 
 	//If the call timedout
 	if(ret == -1) {
 	  //if timeslot was exhausted, pass on to the next time slot
 	  if(errno == ETIMEDOUT) {
 #if _DEBUG == 1
-	    cout << "Timeslot expired!\n";
+	    cout << "S: " << id << " - Timeslot expired!\n";
 #endif
 	    sem_post(&schedule_sem);
 	    exit = true;
@@ -89,14 +102,22 @@ void TDMA::schedule(){
 	}
 	//If the call received a signal, it is being deactivated
 	else {
-	  //cout << "Decreasing time_slot\n";
+#if _DEBUG == 1
+	  cout << "S: " << id << " - Decreasing time_slot\n";
+#endif
 	  clock_gettime(CLOCK_REALTIME, &timeB);
 	  time_slot = time_slot - (timeB-timeA);
 	  sem_post(&schedule_sem);
         }
       }//end of while(exit==false)
     }//end of foreach(timeslot)
+
+    active_index = -1;
   }//end of while(simulating)
+
+#if _INFO == 1
+  cout << "Exiting schedule function - Thread " << id << endl;
+#endif
 }//end of function
 
 ///This function rewrites the activate method to activate both the scheduler(through its semaphores) as well as its load - this runs in the dispatcher thread

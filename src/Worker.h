@@ -51,6 +51,9 @@ class Worker : public Runnable {
   ///This function give the worker thread the INACTIVE_PR priority
   void deactivate();
 
+  ///Thisfunction joins the calling thread with the object's pthread
+  void join();
+
   /*********** MEMBER FUNCTIONS ***********/
   ///This function will be called by the dispatcher thread, and will post to the wrapper_sem
   void new_job();

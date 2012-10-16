@@ -36,3 +36,9 @@ void Runnable::wrapper() {
   //empty
   cout << "Runnable::wrapper - This should not print!\n";
 }
+
+///This function joins the calling thread with the object's pthread
+void Runnable::join() {
+  //empty
+  cout << "Runnable::join - This should not print!\n";
+}

@@ -34,10 +34,32 @@ void Scheduler::activate() {
   cout << "Scheduler::activate() - This should not print!\n";
 }
 
-
 ///This function rewrites the deactivate method to deactivate both the scheduler as well as its load
 void Scheduler::deactivate() {
   cout << "Scheduler::deactivate() - This should not print!\n";
+}
+
+///This function rewrites the join method to account for the scheduler's load (they are all joined)
+void Scheduler::join() {
+  for(unsigned int c=0; c<load.size(); c++) {
+
+#if _DEBUG==1
+    cout << "Sched: " << id << " waiting for load: " << c << endl;
+#endif
+
+    if( load[c] != NULL) {
+      load[c]->join();
+    }
+
+#if _DEBUG==1
+    cout << "Sched: " << id << " has joined load: " << c << endl;
+#endif
+
+  }
+
+#if _DEBUG==1
+    cout << "Sched: " << id << " exiting join_all!\n";
+#endif
 }
 
 /********************* MEMBER FUNCTIONS *********************/
@@ -63,27 +85,4 @@ void Scheduler::new_job(Worker *w) {
 void Scheduler::job_finished(int worker) {
   //empty
   cout << "Scheduler::job_finished - This should not print!\n";
-}
-
-///This function waits for the scheduler's load to join
-void Scheduler::join() {
-  for(unsigned int c=0; c<load.size(); c++) {
-
-#if _DEBUG==1
-    cout << "Sched: " << id << " waiting for load: " << c << endl;
-#endif
-
-    if( load[c] != NULL) {
-      load[c]->join();
-    }
-
-#if _DEBUG==1
-    cout << "Sched: " << id << " has joined load: " << c << endl;
-#endif
-
-  }
-
-#if _DEBUG==1
-    cout << "Sched: " << id << " exiting join_all!\n";
-#endif
 }

@@ -47,5 +47,5 @@ run:
 	sudo $(OBJDIR)/$(EXEC)
 
 clean:
-	rm -fr $(OBJDIR)/$(EXEC)
+	rm -fr $(OBJDIR)/*.out
 	rm -fr $(OBJDIR)/*.o

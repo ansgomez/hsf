@@ -48,9 +48,10 @@ void Trace::add_trace(enum _thread_type type, unsigned int t_id, enum _task_acti
       JobTrace jt;
       struct timespec aux;
 
+	aux = TimeUtil::getTime(relative);
+
       sem_wait(&trace_sem);
       {
-	aux = TimeUtil::getTime(relative);
 	jt.setTrace(aux, type, t_id, act);
 	
 	traces.push_back(jt);

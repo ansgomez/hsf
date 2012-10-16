@@ -49,6 +49,9 @@ class Scheduler : public Runnable {
   ///This function rewrites the deactivate method both the scheduler as well as its load
   virtual void deactivate();
 
+  ///This function rewrites the join method to account for the scheduler's load (they are all joined)
+  void join();
+
   /*********** MEMBER FUNCTIONS ***********/
 
   ///This function adds a load to the scheduler (could be another scheduler, or a worker)
@@ -62,8 +65,5 @@ class Scheduler : public Runnable {
 
   ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
   virtual void job_finished(int worker);
-
-  ///This function waits for the scheduler's load to join
-  void join();
 };
 #endif

@@ -29,7 +29,7 @@ void BusyWait::fire() {
   cout << "+Worker " << dispatcher->worker->getId() << " began execution\n";
 #endif
 
-  unsigned int start, end, count=0;
+  unsigned int start, end, count=0, wcet_us = TimeUtil::convert_us(WCET);
   
   start = TimeUtil::convert_us(TimeUtil::getTime());
 
@@ -41,7 +41,7 @@ void BusyWait::fire() {
       count += 100;
       start = end;
     }
-  } while ( count < TimeUtil::convert_us(WCET) && sim->isSimulating()==1 ); 
+  } while ( count < wcet_us && sim->isSimulating()==1 ); 
 
 #if _DEBUG == 1
   cout << "-Worker " << dispatcher->worker->getId() << " finished execution\n";
