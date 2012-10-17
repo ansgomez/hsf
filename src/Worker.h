@@ -34,9 +34,6 @@ class Worker : public Runnable {
   ///Semaphore to control the call to the fire() function
   sem_t wrapper_sem;
 
-  ///Auxiliary variable to avoid multle traces
-  int worker_activated;
-
   /*********** CONSTRUCTOR ***********/
  public:
   Worker(Simulation *s, Scheduler *sched, unsigned int id, _task_load tl);

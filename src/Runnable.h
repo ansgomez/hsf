@@ -29,6 +29,9 @@ class Runnable : public Thread {
   ///Pointer to the scheduler that this runnable belongs to
   Scheduler* parent;
 
+  ///Auxiliary variable to hold the state of runnable
+  _runnable_state state;
+
   /*********** CONSTRUCTOR ***********/
  public:
   ///Constructor needs simulation pointer and an id

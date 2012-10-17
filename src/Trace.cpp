@@ -14,7 +14,7 @@
 
 using namespace std;
 
-#define MAX_TRACES 10000
+#define MAX_TRACES 50000
 
 /********************************************************************************
  * CLASS DEFINITION

@@ -48,4 +48,11 @@ enum _time_type {
   relative
 };
 
+
+///This enumeration describs the two runnable states
+enum _runnable_state {
+  activated,
+  deactivated
+};
+
 #endif

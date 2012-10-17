@@ -29,8 +29,6 @@ Worker::Worker(Simulation *s, Scheduler *sched, unsigned int _id, _task_load tl)
   scheduler = sched;
   type = worker;
 
-  worker_activated = -1;
-
   //Register worker id with simulation
   sim->add_worker_id(_id);
 
@@ -71,33 +69,38 @@ void Worker::wrapper() {
 
 ///This function set the current runnable to active, meaning that it has control of the CPU and should 'run'
 void Worker::activate() {
-  if(id==47)
-    cout << "*Worker 47 is activated @t=" << TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
-
-  //Trace 'active' only if it wasn't active before
-  if(worker_activated != 1) {
+  //If worker is already active, nothing to do
+  if(state == deactivated) {
+    /*
+    if(id==47)
+      cout << "*Worker 47 is activated @t=" << TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
+    */
+    //Trace 'active' only if it wasn't active before
     sim->getTraces()->add_trace(worker, id, sched_start);
-    worker_activated = 1;
-  }
 
-  pthread_getschedparam(thread, &policy, &thread_param);
-  thread_param.sched_priority = Priorities::get_active_pr(); //active priority
-  pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
+    pthread_getschedparam(thread, &policy, &thread_param);
+    thread_param.sched_priority = Priorities::get_active_pr(); //active priority
+    pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
+    
+    state = activated;
+  }
 }
 
 ///This function set the current runnable to inactive, meaning that it has lost control of the CPU and has to stop running
 void Worker::deactivate() {
-  if(id==47)
-    cout << "*Worker 47 is deactivated @t=" << TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
-
-  if(worker_activated != 0) {
+  if(state == activated ) {
+    /*
+    if(id==47)
+      cout << "*Worker 47 is deactivated @t=" << TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
+    */
     sim->getTraces()->add_trace(worker, id, sched_end);
-    worker_activated = 0;
-  }
+    
+    pthread_getschedparam(thread, &policy, &thread_param);
+    thread_param.sched_priority = Priorities::get_inactive_pr(); //active priority
+    pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
 
-  pthread_getschedparam(thread, &policy, &thread_param);
-  thread_param.sched_priority = Priorities::get_inactive_pr(); //active priority
-  pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
+    state = deactivated;
+  }
 }
 
 ///Thisfunction joins the calling thread with the object's pthread

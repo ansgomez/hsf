@@ -7,6 +7,7 @@
 #include "Operators.h"
 #include "Trace.h"
 #include "Priorities.h"
+#include "TimeUtil.h"
 
 #include <time.h>
 #include <iostream>
@@ -68,7 +69,7 @@ void TDMA::schedule(){
 	}
  
 #if _DEBUG == 1
-	cout << "**Activated new Runnable " << load[active_index]->getId() << " for " << time_slot.tv_sec << "." << time_slot.tv_nsec << "**\n";
+	cout << "**S: " << id << " activated new Runnable " << load[active_index]->getId() << " for " << TimeUtil::convert_us(time_slot)/1000 << " ms @t="<< TimeUtil::convert_us(TimeUtil::getTime(), relative) << " **\n";
 #endif
 	aux = timeA + time_slot;
 	timing = 1;
@@ -83,12 +84,16 @@ void TDMA::schedule(){
 	  load[active_index]->deactivate();
 	}
 
+#if _DEBUG == 1
+	cout << "**S: " << id << " deactivated new Runnable " << load[active_index]->getId() << " @t="<< TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
+#endif
+
 	//If the call timedout
 	if(ret == -1) {
 	  //if timeslot was exhausted, pass on to the next time slot
 	  if(errno == ETIMEDOUT) {
 #if _DEBUG == 1
-	    cout << "S: " << id << " - Timeslot expired!\n";
+	cout << "S: " << id << " - Timeslot expired! @t="<< TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
 #endif
 	    sem_post(&schedule_sem);
 	    exit = true;
@@ -103,7 +108,7 @@ void TDMA::schedule(){
 	//If the call received a signal, it is being deactivated
 	else {
 #if _DEBUG == 1
-	  cout << "S: " << id << " - Decreasing time_slot\n";
+	cout << "S: " << id << " - Decreasing time_slot @t="<< TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
 #endif
 	  clock_gettime(CLOCK_REALTIME, &timeB);
 	  time_slot = time_slot - (timeB-timeA);
@@ -122,42 +127,50 @@ void TDMA::schedule(){
 
 ///This function rewrites the activate method to activate both the scheduler(through its semaphores) as well as its load - this runs in the dispatcher thread
 void TDMA::activate() {
-  sem_post(&schedule_sem);
+  if(state == deactivated) {
+    sem_post(&schedule_sem);
+    
+    //SCHED activation is not traced
+    //sim->getTraces()->add_trace(scheduler, id, sched_activate);
+    
+    pthread_getschedparam(thread, &policy, &thread_param);
+    thread_param.sched_priority = Priorities::get_sched_pr(level); //server priority
+    pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
+    /*
+    //if there was an active load, reactivate it
+    if(active_index != -1) {
+      load[active_index]->activate();
+      }*/
 
-  //SCHED activation is not traced
-  //sim->getTraces()->add_trace(scheduler, id, sched_activate);
- 
-  pthread_getschedparam(thread, &policy, &thread_param);
-  thread_param.sched_priority = Priorities::get_sched_pr(level); //server priority
-  pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
- 
-  //if there was an active load, reactivate it
-  if(active_index != -1) {
-    load[active_index]->activate();
+    state = activated;
   }
 }
 
 ///This function rewrites the deactivate method both the scheduler (through its semaphores) as well as its load
 void TDMA::deactivate() {
-  if(timing == 1) {
-    sem_post(&preempt_sem);
+  if(state == activated) {
+
+    if(timing == 1) {
+      sem_post(&preempt_sem);
+    }
+
+    sem_wait(&schedule_sem);
+    /*
+    //if there was an active load, deactivate it
+    if(active_index != -1) {
+      load[active_index]->deactivate();
+      }*/
+
+    //SCHED deactivation is not traced
+    //sim->getTraces()->add_trace(scheduler, id, sched_deactivate);
+    
+    //now decrease the priority
+    pthread_getschedparam(thread, &policy, &thread_param);
+    thread_param.sched_priority = Priorities::get_inactive_pr(); //active priority
+    pthread_setschedparam(thread, SCHED_FIFO, &thread_param);  
+
+    state = deactivated;
   }
-
-  sem_wait(&schedule_sem);
-
-  //if there was an active load, deactivate it
-  if(active_index != -1) {
-    load[active_index]->deactivate();
-  }
-
-  //SCHED deactivation is not traced
-  //sim->getTraces()->add_trace(scheduler, id, sched_deactivate);
-
-  //now decrease the priority
-  pthread_getschedparam(thread, &policy, &thread_param);
-  thread_param.sched_priority = Priorities::get_inactive_pr(); //active priority
-  pthread_setschedparam(thread, SCHED_FIFO, &thread_param);  
-
 }
 
 ///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution.
