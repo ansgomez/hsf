@@ -45,14 +45,7 @@ void Worker::wrapper() {
 
     if( sim->isSimulating() == 1) {
       if(load != NULL) {
-	if(id==47)
-	  cout << "+Worker 47 is firing @t=" << TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
-
 	load->fire();    
-
-	if(id==47)
-	  cout << "-Worker 47 finished @t=" << TimeUtil::convert_us(TimeUtil::getTime(),relative) << endl;
-
       }
       else {
 	cout << "Worker error: load is null!\n";

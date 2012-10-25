@@ -1,5 +1,5 @@
 <?php
-$slot = 10; //$argv[1];
+$slot = 40; //$argv[1];
 $wcet = 9;
 $levels = $argv[1];
 $n_jobs = pow(2,$levels);
@@ -8,7 +8,7 @@ $period = $n_jobs*$slot;
 
 <simulation name="simulation">
 
-<duration value="1" units="sec" />
+<duration value="5" units="sec" />
 
 <?php
    sched_node($levels, $period, $slot, $wcet);
@@ -37,8 +37,8 @@ function sched_node($level, $period, $slot, $wcet) {
    sched_node($level-1, $period, $slot, $wcet);
 ?>
    <time_slots>
-      <time_slot value="<?php echo pow(2,$level-1)*$slot; ?>"  units="ms" />
-      <time_slot value="<?php echo pow(2,$level-1)*$slot; ?>"  units="ms" />
+      <time_slot value="<?php echo pow(2,$level-1)*$slot*1.5; ?>"  units="ms" />
+      <time_slot value="<?php echo pow(2,$level-1)*$slot*1.5; ?>"  units="ms" />
    </time_slots>
 <?php
    echo "</runnable>\n";

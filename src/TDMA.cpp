@@ -29,6 +29,7 @@ TDMA::TDMA(Simulation *s, unsigned int id, int level) : Scheduler(s, id, level) 
 
   timing = 0;
   sem_init(&schedule_sem, 0, 1); //mutex semaphore
+  sem_init(&timing_sem, 0, 1); //mutex semaphore
   sem_init(&preempt_sem, 0, 0); //sem used as signal
 }
 
@@ -38,7 +39,7 @@ TDMA::TDMA(Simulation *s, unsigned int id, int level) : Scheduler(s, id, level) 
 void TDMA::schedule(){
   struct timespec timeA, timeB, time_slot, aux;
   bool exit = false;
-  int ret;
+  int ret, err_no;
   active_index = -1;
 
 #if _DEBUG == 1
@@ -58,10 +59,14 @@ void TDMA::schedule(){
 	sem_wait(&schedule_sem);
 
 	//If simulation ended while asleep, break
-	if(sim->isSimulating()==0)
+	if(sim->isSimulating()==0) {
+	  sem_post(&schedule_sem);
 	  break;
+	}
 
 	//start timing
+	sem_wait(&timing_sem);
+
 	clock_gettime(CLOCK_REALTIME, &timeA);
 
 	if(load[active_index] != NULL) {
@@ -72,13 +77,16 @@ void TDMA::schedule(){
 	cout << "**S: " << id << " activated new Runnable " << load[active_index]->getId() << " for " << TimeUtil::convert_us(time_slot)/1000 << " ms @t="<< TimeUtil::convert_us(TimeUtil::getTime(), relative) << " **\n";
 #endif
 	aux = timeA + time_slot;
-	timing = 1;
+
 	ret = sem_timedwait(&preempt_sem, &aux);
-	timing = 0;
+	err_no = errno;
+	sem_post(&timing_sem);
 
 	//If simulation ended while asleep, break
-	if(sim->isSimulating()==0)
+	if(sim->isSimulating()==0) {
+	  sem_post(&schedule_sem);
 	  break;
+	}
 
 	if(load[active_index] != NULL) {
 	  load[active_index]->deactivate();
@@ -91,18 +99,23 @@ void TDMA::schedule(){
 	//If the call timedout
 	if(ret == -1) {
 	  //if timeslot was exhausted, pass on to the next time slot
-	  if(errno == ETIMEDOUT) {
+	  if(err_no == ETIMEDOUT) {
 #if _DEBUG == 1
-	cout << "S: " << id << " - Timeslot expired! @t="<< TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
+	    cout << "S: " << id << " - Timeslot expired! @t="<< TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
 #endif
 	    sem_post(&schedule_sem);
 	    exit = true;
 	  }
-	  else if (errno==EINVAL) {
+	  else if (err_no==EINVAL) {
 	    cout << "TDMA::schedule: EINVAL ERROR\n";
 	  }
+	  else if (err_no==EAGAIN) {
+	    //exit = true;
+	    //sem_post(&schedule_sem);
+	    cout << "TDMA::schedule: EAGAIN ERROR\n";
+	  }
 	  else {
-	    cout << "TDMA::schedule: semaphore error\n";
+	    cout << "TDMA::schedule: semaphore error (" << errno << ") - " << strerror(errno) << "\n";
 	  }
 	}
 	//If the call received a signal, it is being deactivated
@@ -130,17 +143,9 @@ void TDMA::activate() {
   if(state == deactivated) {
     sem_post(&schedule_sem);
     
-    //SCHED activation is not traced
-    //sim->getTraces()->add_trace(scheduler, id, sched_activate);
-    
     pthread_getschedparam(thread, &policy, &thread_param);
     thread_param.sched_priority = Priorities::get_sched_pr(level); //server priority
     pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
-    /*
-    //if there was an active load, reactivate it
-    if(active_index != -1) {
-      load[active_index]->activate();
-      }*/
 
     state = activated;
   }
@@ -148,22 +153,29 @@ void TDMA::activate() {
 
 ///This function rewrites the deactivate method both the scheduler (through its semaphores) as well as its load
 void TDMA::deactivate() {
-  if(state == activated) {
+  int sts, err_no;
 
-    if(timing == 1) {
-      sem_post(&preempt_sem);
+  if(state == activated) {
+    sts = sem_trywait(&timing_sem);
+    //err_no = errno;
+
+    //If the scheduler isn't timing, no need to do anything (just wait for sem to be freed)
+    if (sts == 0) {
+      //empty
+      sts = 0;
+      sem_post(&timing_sem);
     }
+    else { //if (err_no == EAGAIN) {
+      //If the scheduler has timing_sem locked, then it must be preempted
+      sem_post(&preempt_sem);
+      //errno = -1;
+    } /*
+    else {
+      perror("sem_trywait() failure");
+      } */
 
     sem_wait(&schedule_sem);
-    /*
-    //if there was an active load, deactivate it
-    if(active_index != -1) {
-      load[active_index]->deactivate();
-      }*/
 
-    //SCHED deactivation is not traced
-    //sim->getTraces()->add_trace(scheduler, id, sched_deactivate);
-    
     //now decrease the priority
     pthread_getschedparam(thread, &policy, &thread_param);
     thread_param.sched_priority = Priorities::get_inactive_pr(); //active priority

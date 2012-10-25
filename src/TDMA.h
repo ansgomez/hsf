@@ -5,6 +5,10 @@
 #include "Simulation.h"
 
 #include <semaphore.h>
+#include <stdio.h>
+#include <errno.h>
+#include <string.h>
+
 
 using namespace std;
 
@@ -18,7 +22,7 @@ class TDMA : public Scheduler {
  private:
   vector<struct timespec> timeslots; //There should be one timeslot per load
 
-  sem_t schedule_sem, preempt_sem;
+  sem_t schedule_sem, preempt_sem, timing_sem;
   int timing;
 
   /*********** CONSTRUCTOR ***********/
