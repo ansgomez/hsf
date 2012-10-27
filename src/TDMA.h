@@ -22,7 +22,7 @@ class TDMA : public Scheduler {
  private:
   vector<struct timespec> timeslots; //There should be one timeslot per load
 
-  sem_t schedule_sem, preempt_sem, timing_sem;
+  sem_t schedule_sem, preempt_sem, timing_sem, activation_sem;
   int timing;
 
   /*********** CONSTRUCTOR ***********/

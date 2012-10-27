@@ -30,6 +30,7 @@ TDMA::TDMA(Simulation *s, unsigned int id, int level) : Scheduler(s, id, level) 
   timing = 0;
   sem_init(&schedule_sem, 0, 1); //mutex semaphore
   sem_init(&timing_sem, 0, 1); //mutex semaphore
+  sem_init(&activation_sem, 0, 1); //mutex semaphore
   sem_init(&preempt_sem, 0, 0); //sem used as signal
 }
 
@@ -99,20 +100,20 @@ void TDMA::schedule(){
 	//If the call timedout
 	if(ret == -1) {
 	  //if timeslot was exhausted, pass on to the next time slot
-	  if(err_no == ETIMEDOUT) {
+	  if(errno == ETIMEDOUT) {
 #if _DEBUG == 1
 	    cout << "S: " << id << " - Timeslot expired! @t="<< TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
 #endif
 	    sem_post(&schedule_sem);
 	    exit = true;
 	  }
-	  else if (err_no==EINVAL) {
+	  else if (errno==EINVAL) {
 	    cout << "TDMA::schedule: EINVAL ERROR\n";
 	  }
-	  else if (err_no==EAGAIN) {
+	  else if (errno==EAGAIN) {
 	    //exit = true;
 	    //sem_post(&schedule_sem);
-	    cout << "TDMA::schedule: EAGAIN ERROR\n";
+	    //cout << "TDMA::schedule: EAGAIN ERROR\n";
 	  }
 	  else {
 	    cout << "TDMA::schedule: semaphore error (" << errno << ") - " << strerror(errno) << "\n";
@@ -141,6 +142,8 @@ void TDMA::schedule(){
 ///This function rewrites the activate method to activate both the scheduler(through its semaphores) as well as its load - this runs in the dispatcher thread
 void TDMA::activate() {
   if(state == deactivated) {
+    sem_wait(&activation_sem);
+
     sem_post(&schedule_sem);
     
     pthread_getschedparam(thread, &policy, &thread_param);
@@ -148,6 +151,8 @@ void TDMA::activate() {
     pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
 
     state = activated;
+    
+    sem_post(&activation_sem);
   }
 }
 
@@ -156,6 +161,8 @@ void TDMA::deactivate() {
   int sts, err_no;
 
   if(state == activated) {
+    sem_wait(&activation_sem);
+
     sts = sem_trywait(&timing_sem);
     //err_no = errno;
 
@@ -182,6 +189,7 @@ void TDMA::deactivate() {
     pthread_setschedparam(thread, SCHED_FIFO, &thread_param);  
 
     state = deactivated;
+    sem_post(&activation_sem);
   }
 }
 
