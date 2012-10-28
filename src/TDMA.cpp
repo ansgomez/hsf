@@ -141,7 +141,8 @@ void TDMA::schedule(){
 
 ///This function rewrites the activate method to activate both the scheduler(through its semaphores) as well as its load - this runs in the dispatcher thread
 void TDMA::activate() {
-  if(state == deactivated) {
+  // if(state == deactivated) 
+    {
     sem_wait(&activation_sem);
 
     sem_post(&schedule_sem);
@@ -160,7 +161,8 @@ void TDMA::activate() {
 void TDMA::deactivate() {
   int sts, err_no;
 
-  if(state == activated) {
+  // if(state == activated)
+    {
     sem_wait(&activation_sem);
 
     sts = sem_trywait(&timing_sem);
