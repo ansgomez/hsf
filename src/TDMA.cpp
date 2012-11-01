@@ -28,7 +28,7 @@ TDMA::TDMA(Simulation *s, unsigned int id, int level) : Scheduler(s, id, level) 
 #endif
 
   timing = 0;
-  sem_init(&schedule_sem, 0, 1); //mutex semaphore
+  sem_init(&schedule_sem, 0, 0); //mutex semaphore
   sem_init(&timing_sem, 0, 1); //mutex semaphore
   sem_init(&activation_sem, 0, 1); //mutex semaphore
   sem_init(&preempt_sem, 0, 0); //sem used as signal
@@ -73,15 +73,25 @@ void TDMA::schedule(){
 	if(load[active_index] != NULL) {
 	  load[active_index]->activate();
 	}
- 
-#if _DEBUG == 1
-	cout << "**S: " << id << " activated new Runnable " << load[active_index]->getId() << " for " << TimeUtil::convert_us(time_slot)/1000 << " ms @t="<< TimeUtil::convert_us(TimeUtil::getTime(), relative) << " **\n";
-#endif
+
 	aux = timeA + time_slot;
+
+	if(level==0) {
+	  cout << "TopSched: timeA - " << TimeUtil::convert_us(timeA, relative) << " | time_slot - " << TimeUtil::convert_us(time_slot) << " | aux - " << TimeUtil::convert_us(aux, relative) << " @t=" << TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
+	}
 
 	ret = sem_timedwait(&preempt_sem, &aux);
 	err_no = errno;
 	sem_post(&timing_sem);
+
+	if(level==1) {
+	  cout << "Level 1 exited timedwait! (returned " << ret << ") @t=" << TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
+	}
+
+
+	if(level==0) {
+	  cout << "Top Level exited timedwait! (returned " << ret << ") @t=" << TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
+	}
 
 	//If simulation ended while asleep, break
 	if(sim->isSimulating()==0) {
@@ -89,21 +99,22 @@ void TDMA::schedule(){
 	  break;
 	}
 
+	if(level==0) {
+	  cout << "Top Level posted schedule_sem! @t=" << TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
+	}	
+
 	if(load[active_index] != NULL) {
 	  load[active_index]->deactivate();
 	}
 
-#if _DEBUG == 1
-	cout << "**S: " << id << " deactivated new Runnable " << load[active_index]->getId() << " @t="<< TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
-#endif
+	if(level==0) {
+	  cout << "TopSched: return value - " << ret << " @t=" << TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
+	}
 
 	//If the call timedout
 	if(ret == -1) {
 	  //if timeslot was exhausted, pass on to the next time slot
 	  if(err_no == ETIMEDOUT) {
-#if _DEBUG == 1
-	    cout << "S: " << id << " - Timeslot expired! @t="<< TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
-#endif
 	    sem_post(&schedule_sem);
 	    exit = true;
 	  }
@@ -113,7 +124,7 @@ void TDMA::schedule(){
 	  else if (err_no==EAGAIN) {
 	    //exit = true;
 	    //sem_post(&schedule_sem);
-	    //cout << "TDMA::schedule: EAGAIN ERROR\n";
+	    cout << "TDMA::schedule: EAGAIN ERROR\n";
 	  }
 	  else {
 	    cout << "TDMA::schedule: semaphore error (" << errno << ") - " << strerror(errno) << "\n";
@@ -121,11 +132,17 @@ void TDMA::schedule(){
 	}
 	//If the call received a signal, it is being deactivated
 	else {
-#if _DEBUG == 1
-	cout << "S: " << id << " - Decreasing time_slot @t="<< TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
-#endif
 	  clock_gettime(CLOCK_REALTIME, &timeB);
 	  time_slot = time_slot - (timeB-timeA);
+	  
+	  if(time_slot < Millis(0)) {
+	    exit = true;
+	  }
+
+	  if(level==1) {
+	    cout << "Slot preempted\n";
+	  }
+
 	  sem_post(&schedule_sem);
         }
       }//end of while(exit==false)
@@ -163,10 +180,18 @@ void TDMA::deactivate() {
 
   //if(state == activated)
     {
+
     sem_wait(&activation_sem);
 
+    if(level==1) {
+      cout << "Top Level woke up at activation_sem! @t=" << TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
+    }
+
     sts = sem_trywait(&timing_sem);
-    //err_no = errno;
+
+    if(level==1) {
+      cout << "Top Level activation_sem return " << sts << endl;
+    }
 
     //If the scheduler isn't timing, no need to do anything (just wait for sem to be freed)
     if (sts == 0) {
@@ -174,16 +199,20 @@ void TDMA::deactivate() {
       sts = 0;
       sem_post(&timing_sem);
     }
-    else { //if (err_no == EAGAIN) {
+    else { 
       //If the scheduler has timing_sem locked, then it must be preempted
       sem_post(&preempt_sem);
       //errno = -1;
-    } /*
-    else {
-      perror("sem_trywait() failure");
-      } */
+    } 
 
+    if(level==1) {
+      cout << "Top Level dectivation @t-" << TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
+    }
     sem_wait(&schedule_sem);
+
+    if(level==1) {
+      cout << "Top Level dectivation after sem_wait @t-" << TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
+    }
 
     //now decrease the priority
     pthread_getschedparam(thread, &policy, &thread_param);

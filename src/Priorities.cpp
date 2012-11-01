@@ -19,7 +19,7 @@ int Priorities::get_sched_pr(int level) {
     return -1;
   }
   else {
-     return 5+MAX_THREADS+level; 
+     return 5+2*MAX_THREADS-level; 
   }
 }
 
