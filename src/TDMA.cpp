@@ -100,17 +100,17 @@ void TDMA::schedule(){
 	//If the call timedout
 	if(ret == -1) {
 	  //if timeslot was exhausted, pass on to the next time slot
-	  if(errno == ETIMEDOUT) {
+	  if(err_no == ETIMEDOUT) {
 #if _DEBUG == 1
 	    cout << "S: " << id << " - Timeslot expired! @t="<< TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
 #endif
 	    sem_post(&schedule_sem);
 	    exit = true;
 	  }
-	  else if (errno==EINVAL) {
+	  else if (err_no==EINVAL) {
 	    cout << "TDMA::schedule: EINVAL ERROR\n";
 	  }
-	  else if (errno==EAGAIN) {
+	  else if (err_no==EAGAIN) {
 	    //exit = true;
 	    //sem_post(&schedule_sem);
 	    //cout << "TDMA::schedule: EAGAIN ERROR\n";
@@ -161,7 +161,7 @@ void TDMA::activate() {
 void TDMA::deactivate() {
   int sts, err_no;
 
-  // if(state == activated)
+  //if(state == activated)
     {
     sem_wait(&activation_sem);
 

@@ -20,8 +20,8 @@ $period = $n_jobs*$slot;
 function workers($period, $slot, $wcet) {
 ?>
    <runnable type="worker" periodicity="periodic" load="busy_wait">
-     		<period value="<?php echo $period; ?>"  units="ms" />
-     		<wcet value="<?php echo $wcet; ?>" units="ms" />
+     		<period <?php timespec($period); ?> />
+     		<wcet <?php timespec($wcet); ?> />
    </runnable>  
 <?php
 }
@@ -37,10 +37,22 @@ function sched_node($level, $period, $slot, $wcet) {
    sched_node($level-1, $period, $slot, $wcet);
 ?>
    <time_slots>
-      <time_slot value="<?php echo pow(2,$level-1)*$slot*1.5; ?>"  units="ms" />
-      <time_slot value="<?php echo pow(2,$level-1)*$slot*1.5; ?>"  units="ms" />
+      <time_slot <?php timespec(pow(2,$level-1)*$slot*1.5); ?> />
+      <time_slot <?php timespec(pow(2,$level-1)*$slot*1.5); ?> />
    </time_slots>
 <?php
    echo "</runnable>\n";
+}
+?>
+
+<?php
+function timespec($ms) {
+   if($ms > 999) {
+      $sec = ceil($ms/1000);
+   ?> value="<?php echo $sec; ?>" units="sec"<?php
+   }
+   else {
+   ?> value="<?php echo $ms; ?>" units="ms"<?php
+   }
 }
 ?>
