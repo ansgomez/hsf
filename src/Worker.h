@@ -11,6 +11,8 @@ class Scheduler;
 class Simulation;
 class Task;
 
+using namespace std;
+
 /********************************************************************************
  * CLASS DECLARATION
  ********************************************************************************
@@ -25,14 +27,23 @@ class Worker : public Runnable {
   ///Pointer to the task to be executed by the worker
   Task *load;
   
-  ///Type of task load (busy-wait, video)
+  ///Type of task load (busy_wait, video)
   enum _task_load task_load;
+
+  ///Vector to hold arrival times of active tasks
+  Vector<struct timespec> arrival_times;
   
   ///Pointer to the scheduler handling this worker
   Scheduler * scheduler;
 
   ///Semaphore to control the call to the fire() function
   sem_t wrapper_sem;
+
+  ///Semaphore to control the activation/deactivation of the thread
+  sem_t activation_sem;
+
+  ///Semaphore to control access to the deadline vector
+  sem_t deadline_sem;
 
   /*********** CONSTRUCTOR ***********/
  public:
@@ -53,9 +64,12 @@ class Worker : public Runnable {
 
   /*********** MEMBER FUNCTIONS ***********/
   ///This function will be called by the dispatcher thread, and will post to the wrapper_sem
-  void new_job();
+  void new_job(struct timespec realtiveDeadline);
 
-  /*********** SETTER FUNCTIONS ***********/
+  /*********** GETTER AND SETTER FUNCTIONS ***********/
+  ///This function returns the task's criteria
+  Criteria getCriteria();
+
   ///This function sets the worker's task
   void setLoad(Task *t);
 };

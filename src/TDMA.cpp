@@ -1,5 +1,4 @@
 #include "TDMA.h"
-//#include "defines.h"
 
 #include "Scheduler.h"
 #include "Runnable.h"
@@ -27,11 +26,14 @@ TDMA::TDMA(Simulation *s, unsigned int id, int level) : Scheduler(s, id, level) 
   cout << "Creating TDMA with ID: " << id << endl;
 #endif
 
-  timing = 0;
-  sem_init(&schedule_sem, 0, 0); //mutex semaphore
+  sem_init(&schedule_sem, 0, 0); //mutex semaphore -> initialized to 0 because of activate()
   sem_init(&timing_sem, 0, 1); //mutex semaphore
   sem_init(&activation_sem, 0, 1); //mutex semaphore
   sem_init(&preempt_sem, 0, 0); //sem used as signal
+
+  state = deactivated;
+  active_index = -1;
+  sched_type = tdma;
 }
 
 /*********** INHERITED FUNCTIONS ***********/
@@ -76,27 +78,9 @@ void TDMA::schedule(){
 
 	aux = timeA + time_slot;
 
-#if _DEBUG==1
-	if(level==0) {
-	  cout << "TopSched: timeA - " << TimeUtil::convert_us(timeA, relative) << " | time_slot - " << TimeUtil::convert_us(time_slot) << " | aux - " << TimeUtil::convert_us(aux, relative) << " @t=" << TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
-	}
-#endif
-
 	ret = sem_timedwait(&preempt_sem, &aux);
 	err_no = errno;
 	sem_post(&timing_sem);
-
-#if _DEBUG==1
-	if(level==1) {
-	  cout << "Level 1 exited timedwait! (returned " << ret << ") @t=" << TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
-	}
-#endif
-
-#if _DEBUG==1
-	if(level==0) {
-	  cout << "Top Level exited timedwait! (returned " << ret << ") @t=" << TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
-	}
-#endif
 
 	//If simulation ended while asleep, break
 	if(sim->isSimulating()==0) {
@@ -104,21 +88,9 @@ void TDMA::schedule(){
 	  break;
 	}
 
-#if _DEBUG==1
-	if(level==0) {
-	  cout << "Top Level posted schedule_sem! @t=" << TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
-	}
-#endif	
-
 	if(load[active_index] != NULL) {
 	  load[active_index]->deactivate();
 	}
-
-#if _DEBUG==1
-	if(level==0) {
-	  cout << "TopSched: return value - " << ret << " @t=" << TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
-	}
-#endif
 
 	//If the call timedout
 	if(ret == -1) {
@@ -131,8 +103,6 @@ void TDMA::schedule(){
 	    cout << "TDMA::schedule: EINVAL ERROR\n";
 	  }
 	  else if (err_no==EAGAIN) {
-	    //exit = true;
-	    //sem_post(&schedule_sem);
 	    cout << "TDMA::schedule: EAGAIN ERROR\n";
 	  }
 	  else {
@@ -156,15 +126,12 @@ void TDMA::schedule(){
     active_index = -1;
   }//end of while(simulating)
 
-#if _INFO == 1
-  cout << "Exiting schedule function - Thread " << id << endl;
-#endif
 }//end of function
 
 ///This function rewrites the activate method to activate both the scheduler(through its semaphores) as well as its load - this runs in the dispatcher thread
 void TDMA::activate() {
   if(state == activated) {
-    cout << "TDMA::activate - already activated!\n";
+    cout << "TDMA::activate error - already activated!\n";
   }
 
   sem_wait(&activation_sem);
@@ -185,63 +152,36 @@ void TDMA::deactivate() {
   int sts, err_no;
 
   if(state == deactivated) {
-    cout << "TDMA::deactivate - already deactivated!\n";
+    cout << "TDMA::deactivate error - already deactivated!\n";
   }
 
   sem_wait(&activation_sem);
 
-#if _DEBUG==1
-  if(level==1) {
-  cout << "Top Level woke up at activation_sem! @t=" << TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
-}
-#endif
-
   sts = sem_trywait(&timing_sem);
-
-#if _DEBUG==1
-  if(level==1) {
-    cout << "Top Level activation_sem return " << sts << endl;
-  }
-#endif
 
   //If the scheduler isn't timing, no need to do anything (just wait for sem to be freed)
   if (sts == 0) {
-    //empty
-    sts = 0;
     sem_post(&timing_sem);
   }
   else { 
     //If the scheduler has timing_sem locked, then it must be preempted
-      sem_post(&preempt_sem);
-      //errno = -1;
-    } 
+    sem_post(&preempt_sem);
+  } 
 
-#if _DEBUG==1
-    if(level==1) {
-      cout << "Top Level dectivation @t-" << TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
-    }
-#endif
+  sem_wait(&schedule_sem);
 
-    sem_wait(&schedule_sem);
-
-#if _DEBUG==1
-    if(level==1) {
-      cout << "Top Level dectivation after sem_wait @t-" << TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
-    }
-#endif
-
-    //now decrease the priority
-    pthread_getschedparam(thread, &policy, &thread_param);
-    thread_param.sched_priority = Priorities::get_inactive_pr(); //active priority
-    pthread_setschedparam(thread, SCHED_FIFO, &thread_param);  
-
-    state = deactivated;
-    sem_post(&activation_sem);
+  //now decrease the priority
+  pthread_getschedparam(thread, &policy, &thread_param);
+  thread_param.sched_priority = Priorities::get_inactive_pr(); //active priority
+  pthread_setschedparam(thread, SCHED_FIFO, &thread_param);  
+  
+  state = deactivated;
+  sem_post(&activation_sem);
 }
 
 ///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution.
 void TDMA::new_job(Worker * worker) {
-  cout << "Sched handled Worker " << worker->getId() << "'s new job\n";
+  //cout << "Sched handled Worker " << worker->getId() << "'s new job\n";
   if (parent != NULL) {
     parent->new_job(worker);
   }
@@ -249,10 +189,27 @@ void TDMA::new_job(Worker * worker) {
 
 ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
 void TDMA::job_finished(unsigned int worker_id){
-  cout << " Sched handled Worker " << worker << "'s finished job!\n";
+  //cout << " Sched handled Worker " << worker << "'s finished job!\n";
+  if (parent != NULL) {
+    parent->job_finished(worker);
+  }
 }
 
-/********************* MEMBER FUNCTIONS *********************/
+///This function rewrites the join method to account for the scheduler's load (they are all joined)
+void TDMA::join() {
+  for(unsigned int c=0; c<load.size(); c++) {
+    if( load[c] != NULL) {
+      load[c]->join();
+    }
+  }
+}
+
+/*********** MEMBER FUNCTIONS ***********/
+
+///This function adds a load to the scheduler (could be another scheduler, or a worker)
+void Scheduler::add_load(Runnable *new_load) {
+  load.push_back(new_load);
+}
 
 ///This function adds a timeslot to the scheduler. They are assigned in the same order as the load is defined
 void TDMA::add_slot(struct timespec slot) {

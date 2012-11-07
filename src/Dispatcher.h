@@ -25,6 +25,9 @@ class Dispatcher : public Thread {
   ///Periodicity of the task to be dispatched
   _task_periodicity periodicity;
   
+  ///This is the (constant) relative deadline of the associated task
+  struct timepsec relativeDeadline;
+
   ///When this is set, the dispatcher will sleep for the specified time before beginning to dispatch
   struct timespec offset;
     
@@ -47,7 +50,11 @@ class Dispatcher : public Thread {
   ///This function assignes DISP_PR to the thread
   void activate();  
 
-  /*********** SETTER FUNCTIONS ***********/
+  /*********** GETTER AND SETTER FUNCTIONS ***********/
+  ///This function gets the relative deadline
+  struct timespec getRelativeDeadline();
+  ///This function sets the relative deadline
+  void setRelativeDeadline(struct timespec aux);
   ///This function sets the associated worker
   void setWorker(Worker *w);
   ///This function sets the tasks's periodicity

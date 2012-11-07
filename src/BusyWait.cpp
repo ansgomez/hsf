@@ -40,14 +40,8 @@ void BusyWait::fire() {
     if( (end - start) > 100) {
       count += 100;
       start = end;
-
-      //if(count % 9000 == 0)
-      //cout << "Count: " << count << " - WCET " << wcet_us << endl;
     }
   } while ( count < wcet_us && sim->isSimulating()==1 ); 
 
-#if _DEBUG == 1
-  cout << "-Worker " << dispatcher->worker->getId() << " finished execution@t="<< TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
-#endif
-
+  //TODO if(now() > deadline()) -> add to missed_deadlines
 }

@@ -37,7 +37,17 @@ Dispatcher::Dispatcher (Simulation *s, unsigned int _id) : Thread(s,_id)
   worker = NULL;
 }
 
-/********************* SETTER FUNCTIONS *********************/
+/********************* GETTER AND SETTER FUNCTIONS *********************/
+///This function gets the relative deadline
+struct timespec getRelativeDeadline() {
+  return relativeDeadline;
+}
+
+///This function sets the relative deadline
+void setRelativeDeadline(struct timespec aux) {
+  relativeDeadline = aux;
+}
+
 ///This function sets the worker
 void Dispatcher::setWorker(Worker *w) {
   worker = w;

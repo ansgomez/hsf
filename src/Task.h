@@ -20,17 +20,8 @@ class Task {
   ///Pointer to the simulation
   Simulation *sim;
 
-  ///The task's deadline, if any
-  Deadline deadline;
-
   ///Pointer to the task's dispatcher
-  Dispatcher * dispatcher;
-
-  ///Variable holding the latests job's arrival time
-  struct timespec arrival_time;
-
-  ///Variable holding the task's assigned priority (if any)
-  unsigned int priority;
+  Dispatcher *dispatcher;
 
   ///Varible describing the task's type of load (video, busy_wait)
   _task_load task_load;
@@ -41,6 +32,8 @@ class Task {
   Task(Simulation *s, Dispatcher *disp, _task_load load);
 
   /*********** MEMBER FUNCTIONS ***********/
+
+  ///This function performs one task (whether it's decoding one frame, or one busy-wait loop)
   virtual void fire();
 
 };

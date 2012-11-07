@@ -16,6 +16,8 @@
 
 Periodic::Periodic(Simulation *s, unsigned int id) : Dispatcher(s,id) {
   period =  Millis(20);
+
+  relativeDeadline = period;
 }
 
 /********************* INHERITED FUNCTIONS *********************/
@@ -25,14 +27,10 @@ void Periodic::dispatch() {
 
   while (sim->isSimulating() ==  1) {
 
-#if _INFO == 1
-    cout << "+Worker " << worker->getId() << " has new job!\n";
-#endif  
-
     sim->getTraces()->add_trace(dispatcher, worker->getId(), task_arrival);
 
     if(worker != NULL) {
-      worker->new_job();
+      worker->new_job(relativeDeadline);
     }
     else {
       cout << "Dispatcher error: worker is null!\n";
@@ -43,10 +41,9 @@ void Periodic::dispatch() {
     }
   }
 
-  //Free worker from blocking (doesn't affect workers while they have
-  //inactive priority -> only when the simulation has ended)
+  //Free worker from blocking. This runs only when the simulation has ended
   if(worker != NULL) {
-    worker->new_job();
+    worker->new_job(relativeDeadline);
   }
   else {
     cout << "Dispatcher::dispatch - Worker NULL problem\n";
@@ -60,4 +57,11 @@ void Periodic::dispatch() {
 ///This function sets the dispatcher's period
 void Periodic::setPeriod(struct timespec p) {
   period = p;
+
+  relativeDeadline = period;
+}
+
+///This function returns the period
+struct timespec Periodic::getPeriod() {
+  return period;
 }

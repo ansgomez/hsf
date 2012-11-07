@@ -24,12 +24,6 @@ class Scheduler : public Runnable {
   ///This variable stores the type of scheduler
   _sched_type sched_type;
 
-  ///This vector stores all of the runnables it controls (it's load)
-  vector<Runnable*> load;
-
-  ///This variable holds the index of the currently active load
-  int active_index;
-
   ///This variable holds the level of the scheduler (helps assign correct hierarchical priority)
   int level;
 
@@ -50,20 +44,20 @@ class Scheduler : public Runnable {
   virtual void deactivate();
 
   ///This function rewrites the join method to account for the scheduler's load (they are all joined)
-  void join();
+  virtual void join();
 
   /*********** MEMBER FUNCTIONS ***********/
-
-  ///This function adds a load to the scheduler (could be another scheduler, or a worker)
-  void add_load(Runnable *new_load);
 
   ///This function performs the actual scheduling (figuring out the order of execution for its load)
   virtual void schedule();
 
   ///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution.
-  virtual void new_job(Worker *worker);
+  virtual void new_job(Runnable *ojb);
+
+  ///This function handles a job that had been queued by the worker. The worker object is thus already in the scheduler's queue, but now has a different schedulable criteria (and thus requires a change in the scheduling queue).
+  void Scheduler::renew_job(int runnable_id);
 
   ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
-  virtual void job_finished(int worker);
+  virtual void job_finished(int runnable_id);
 };
 #endif

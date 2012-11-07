@@ -1,5 +1,4 @@
 #include "Worker.h"
-//#include "defines.h"
 
 #include "Scheduler.h"
 #include "Trace.h"
@@ -17,7 +16,7 @@
  ********************************************************************************
  */
 
-/********************* CONSTRUCTOR *********************/
+/*********** CONSTRUCTOR ***********/
 
 Worker::Worker(Simulation *s, Scheduler *sched, unsigned int _id, _task_load tl) : Runnable(s, _id) {
 #if _INFO == 1
@@ -32,10 +31,12 @@ Worker::Worker(Simulation *s, Scheduler *sched, unsigned int _id, _task_load tl)
   //Register worker id with simulation
   sim->add_worker_id(_id);
 
-  sem_init(&wrapper_sem, 0, 0);
+  sem_init(&wrapper_sem, 0, 0); //signal semaphore
+  sem_init(&activation_sem, 0, 1); //mutex semaphore
+  sem_init(&deadline_sem, 0, 1); //mutex semaphore
 }
 
-/********************* INHERITED FUNCTIONS *********************/
+/*********** INHERITED FUNCTIONS ***********/
 
 void Worker::wrapper() {
   while (sim->isSimulating() == 1) {
@@ -53,78 +54,108 @@ void Worker::wrapper() {
     }
 
     sim->getTraces()->add_trace(worker, id, task_end);
-  }
 
-#if _INFO == 1 
-  cout << "Worker " << id << " exiting Worker::wrapper\n";
-#endif
+    //remove arrival_time from schedulable criteria
+    job_finished();
+  }
 }
 
 ///This function set the current runnable to active, meaning that it has control of the CPU and should 'run'
 void Worker::activate() {
-  //If worker is already active, nothing to do
-  if(state == deactivated) {
-    /*
-    if(id==47)
-      cout << "*Worker 47 is activated @t=" << TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
-    */
-    //Trace 'active' only if it wasn't active before
-    sim->getTraces()->add_trace(worker, id, sched_start);
-
-    pthread_getschedparam(thread, &policy, &thread_param);
-    thread_param.sched_priority = Priorities::get_active_pr(); //active priority
-    pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
-    
-    state = activated;
+  if(state == activated) {
+    cout << "Worker::activate error - already active!\n";
   }
+
+  sem_wait(&activation_sem);
+
+  sim->getTraces()->add_trace(worker, id, sched_start);
+
+  pthread_getschedparam(thread, &policy, &thread_param);
+  thread_param.sched_priority = Priorities::get_active_pr();
+  pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
+  
+  state = activated;
+
+  sem_post(&activation_sem);
 }
 
 ///This function set the current runnable to inactive, meaning that it has lost control of the CPU and has to stop running
 void Worker::deactivate() {
-  if(state == activated ) {
-    /*
-    if(id==47)
-      cout << "*Worker 47 is deactivated @t=" << TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
-    */
-    sim->getTraces()->add_trace(worker, id, sched_end);
-    
-    pthread_getschedparam(thread, &policy, &thread_param);
-    thread_param.sched_priority = Priorities::get_inactive_pr(); //active priority
-    pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
-
-    state = deactivated;
+  if(state == deactivated ) {
+    cout << "Worker::deactivate error - already deactivated!\n";
   }
+
+  sem_wait(&activation_sem);
+  
+  sim->getTraces()->add_trace(worker, id, sched_end);
+    
+  pthread_getschedparam(thread, &policy, &thread_param);
+  thread_param.sched_priority = Priorities::get_inactive_pr();
+  pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
+  
+  state = deactivated;
+
+  sem_post(&activation_sem);
 }
 
-///Thisfunction joins the calling thread with the object's pthread
+///This function joins the calling thread with the object's pthread
 void Worker::join() {
-#if _INFO == 1
-  cout << "W: Attempting to joining thread " << id << endl;
-#endif
-
-  /*
-  if(thread==NULL) 
-    cout << "Worker::join - NULL PROBLEM\n";
-  */
-
   pthread_join(thread, NULL);
-
-#if _INFO == 1
-  cout << "W: Successfully joined thread " << id << endl;
-#endif
 }
 
-/********************* MEMBER FUNCTIONS *********************/
+/*********** MEMBER FUNCTIONS ***********/
+
+///This function will be called by the dispatcher thread, and will post to the wrapper_sem
+void Worker::new_job(struct timespec realtiveDeadline) {
+
+  sem_wait(&deadline_sem);
+  deadlines.push_back(TimeUtil::getTime() + relativeDeadline);
+
+  //If there were no active jobs before, register event
+  if(deadlines.size() == 1) {
+    //Update schedulable criteria
+    criteria->setDeadline(deadlines[0]);
+
+    //Notify parent of new arrival
+    parent->new_job(this);
+  }
+  //Otherwise, the worker is already executing a job and when that finished, the next job will be renewed with the scheduler
+
+  sem_post(&deadline_sem);
+
+  //Post to worker thread
+  sem_post(&wrapper_sem);
+}
+
+///This function erases the head of the active_queue, and updates any pending events
+void Worker::job_finished() {
+
+  if(sim->isSimulating != 1) {
+    return;
+  }
+
+  sem_wait(&deadline_sem);
+
+  //Erase old deadline from vector
+  deadlines.erase(deadlines.begin());
+
+  //If there are any jobs left on queue, register new head
+  if(deadlines.size() > 0) {
+    //Update objeect's schedulable criteria
+    criteria->setDeadline(deadlines[0]);
+
+    //Notify parent of new head
+    parent->renew_job(this);
+  }
+  //If no jobs are pending, remove from parent
+  else {
+    //Remove job from parents' queue
+    parent->job_finished(id);
+  }
+
+  sem_wait(&deadline_sem);
+}
 
 void Worker::setLoad(Task *t) {
   load = t;
-}
-
-void Worker::new_job() {
-#if _INFO==1
-  cout << "+Worker " << id << " has sem posted\n";
-#endif
-  //TODO register the new job even to the parent scheduler
-  //parent->new_job(this);
-  sem_post(&wrapper_sem);
 }

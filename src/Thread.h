@@ -24,7 +24,7 @@ class Thread {
   unsigned int id;
 
   ///Type indicates wether the thread is a scheduler, worker, dispatcher, server, or idle
-  _thread_type type;
+  _thread_type thread_type;
 
   ///This is an auxiliary variable to set the thread's priority
   int policy;

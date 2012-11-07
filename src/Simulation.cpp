@@ -87,7 +87,7 @@ void Simulation::initialize() {
 
   //Reserve some memory for vectors
   disp.reserve(10);
-  worker_id.reserve(10);
+  worker_id.reserve(32);
 }
 
 ///This function sets the dispatchers to their 'active' priority.
@@ -116,25 +116,22 @@ void Simulation::simulate() {
   //Deactivate threads
   simulating = 0;  
   cout << "***Done***\n";
-  //top_sched->deactivate();
-  //sleep(3);
-
-#if _INFO==1
-  cout << "Waiting for threads to exit...\n";
-#endif
 
   //Join all other threads
   join_all();
 
   cout << "Saving results...\n";
+
   //Save statistics to file
   stats->to_file();
+
   //Save traces to file
   traces->to_file();
-  //Save figure to file
 
+  //Save figure to file
   //For experimentation, figures are unnecessary
   //traces->to_figure();
+
   cout << "All results have been saved!\n";
 }
 

@@ -8,6 +8,7 @@
 class Simulation;
 class Scheduler;
 class Task;
+class Criteria;
 
 /********************************************************************************
  * CLASS DECLARATION
@@ -20,14 +21,14 @@ class Runnable : public Thread {
   ///Pointer to simulation
   Simulation *sim;
   
-  ///Runnable's current deadline. Might be used by a higher level scheduler's algorithm
-  Deadline deadline;
+  ///Runnable's schedulable criteria (this is the criteria used to schedule it)
+  Criteria *criteria;
   
   ///Pointer to Task currently being 'executed' by the runnable
-  Task* current_task;
+  Task *current_task;
   
   ///Pointer to the scheduler that this runnable belongs to
-  Scheduler* parent;
+  Scheduler *parent;
 
   ///Auxiliary variable to hold the state of runnable
   _runnable_state state;
@@ -49,5 +50,12 @@ class Runnable : public Thread {
 
   ///This function joins the calling thread with the object's pthread
   void join();
+
+  /*********** GETTERS AND SETTERS ***********/
+  ///This function return the runnable's schedulable criteria
+  Criteria* getCriteria();
+
+  ///This function sets the runnable's parent
+  void setParent(Runnable *p);
 };
 #endif

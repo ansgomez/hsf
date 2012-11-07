@@ -24,14 +24,14 @@ using namespace pugi;
  ********************************************************************************
  */
 
-/********************* CONSTRUCTOR *********************/
+/*********** CONSTRUCTOR ***********/
 
 //Constructor needs simulation pointer
 Parser::Parser(Simulation *_sim) {
   sim = _sim;
 }
 
-/********************* MEMBER FUNCTIONS *********************/
+/*********** MEMBER FUNCTIONS ***********/
 
 //This function converts an XML "time" node to a timespec
 struct timespec Parser::parseTime(xml_node n) {
@@ -106,43 +106,29 @@ Worker* Parser::parseWorker(xml_node worker_node, unsigned int *id) {
 
 ///This function receives and TDMA node, and parses its load
 Scheduler* Parser::parseTDMA(xml_node sched_node, unsigned int *id, int level) {
-#if _INFO==1
-  cout << "Creating Scheduler " << *id << endl;
-#endif
+
   TDMA *sched = new TDMA(sim, *id, level);
 
+  //iterate through all of the children nodes
   for (xml_node load = sched_node.first_child(); load; load = load.next_sibling()) {
     string type = load.attribute("type").as_string();
 
+    //If child is worker, parse a worker
     if( type == "worker" ) {
-      //*id = *id +1;
-
-#if _DEBUG == 1
-      cout << "L" << level << ": Worker - load:" << load.attribute("load").value() << endl;
-#endif
-
       Worker *w = parseWorker(load, id);
 
       sched->add_load((Runnable*) w);
 
-    }//end of worker
+    }
+    //If child is scheduler, parse the correct scheduler
     else if( type == "scheduler" ) {
       string alg = load.attribute("algorithm").as_string();
-
-#if _INFO == 1
-      cout << "Creating " << alg << " sub-scheduler\n";
-#endif
 
       if(alg == "TDMA") {
 	*id = *id +1;
 
-#if _DEBUG==1
-	cout << "New Sched Runnable {\n";
-#endif
 	Scheduler *s = parseTDMA(load, id, level+1);
-#if _DEBUG==1
-	cout << "}\n";
-#endif
+
 	sched->add_load((Runnable*) s);
       }//end of tdma
       else {
@@ -156,11 +142,6 @@ Scheduler* Parser::parseTDMA(xml_node sched_node, unsigned int *id, int level) {
   //TIME SLOTS
   xml_node time_slots = sched_node.child("time_slots");
   for (xml_node slot = time_slots.first_child(); slot; slot = slot.next_sibling()) {
-
-#if _DEBUG == 1
-    cout << "L" << level << ": Time slot: " << slot.attribute("value").value() << " " << slot.attribute("units").value() << endl;
-#endif
-
     sched->add_slot(parseTime(slot));
   }
 
@@ -173,25 +154,20 @@ void Parser::parseFile(string filePath) {
   xml_document doc;
   unsigned int id = 1;
 
+  //Load file
   if (!doc.load_file(filePath.data()) ) {
     cout << "Could not find file...\n";
     return;
   }
 
+  //Create parent xml_node
   xml_node sim_node = doc.child("simulation");
 
-#if _INFO==1
-cout << "Simulation name: " << sim_node.attribute("name").value() << endl; 
-#endif
-
+  //Set parent (simulation) attributes
   sim->setName(sim_node.attribute("name").value());
-
-#if _INFO==1
-cout << "Duration: " << sim_node.child("duration").attribute("value").as_int() << " " << sim_node.child("duration").attribute("units").value() << endl;
-#endif
-
   sim->setDuration(parseTime(sim_node.child("duration")));
 
+  //Create top_sched node
   xml_node top_sched = sim_node.child("runnable");
 
   //if TDMA

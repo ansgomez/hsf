@@ -27,6 +27,7 @@ Thread::Thread(Simulation *s, unsigned int _id) {
 #endif
 
   pthread_attr_init(&thread_attr);
+
   //creating the pthread
   if (pthread_create(&thread,&thread_attr, static_wrapper, this)) {
     cout << "Error creating thread\n";
@@ -53,21 +54,7 @@ void Thread::wrapper() {
 
 ///This function blocks the calling thread until this thread exits
 void Thread::join() {
-
-#if _INFO == 1
-  cout << "Attempting to joining thread " << id << endl;
-#endif
-
-  /*
-  if(thread==NULL) 
-    cout << "Thread::Join - NULL PROBLEM\n";
-  */
-
   pthread_join(thread, NULL);
-
-#if _INFO == 1
-  cout << "Successfully joined thread " << id << endl;
-#endif
 }
 
 ///This function return the thread id
@@ -81,21 +68,11 @@ void * Thread::static_wrapper(void * This)
   Thread *t = ((Thread*)This);
   t->wrapper(); 
 
-  /*
-  if(t==NULL) {
-    cout << "Thread::Static_Wrapper - DEFINATELY A PROBLEM\n";
-  }
-  */
-
-#if _INFO==1
-  cout << "Thread " << t->getId() << " has exited wrapper\n";
-#endif
-
   struct timespec ts;
   clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts);
  
   //Save the runtime statistic
-  t->sim->getStats()->add_stat(t->type, t->id, ts);
+  t->sim->getStats()->add_stat(t->thread_type, t->id, ts);
 
   pthread_exit(NULL);
   return NULL;

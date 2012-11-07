@@ -25,7 +25,9 @@ enum _sched_type {
   cbs,
   edf,
   dbs,
-  rm
+  rm,
+  fifo,
+  fp
 };
 
 ///This enumeration descibes the possible task models

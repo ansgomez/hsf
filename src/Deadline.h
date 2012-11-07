@@ -1,10 +1,11 @@
 #ifndef _DEADLINE_H
 #define _DEADLINE_H
 
+#include <time.h>
 
 class Deadline {
   private:
-    long absolute_time;
+    struct timespec absolute_time;
 
 };
 #endif

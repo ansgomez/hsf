@@ -1,8 +1,14 @@
 #ifndef _CBS_QUEUE_H
 #define _CBS_QUEUE_H
 
-
 class Deadline;
+class CBS;
+class Task;
+
+struct cbs_job {
+  CBS *server;
+  Task *task;
+};
 
 class CBS_Queue {
   private:
@@ -14,9 +20,8 @@ class CBS_Queue {
 
 
   public:
-    void enqueue(const unsigned int & id, const struct timespec & arrival_time, const Deadline & deadline);
+    void enqueue(unsigned int id, struct timespec arrival_time);
 
-    void dequeue(const unsigned int & id);
-
+    void dequeue(unsigned int id);
 };
 #endif

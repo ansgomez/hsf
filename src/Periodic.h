@@ -25,7 +25,7 @@ class Periodic : public Dispatcher {
   /*********** GETTER AND SETTER FUNCTIONS ***********/
   ///This function sets the period
   void setPeriod(struct timespec p);
-  ///This function return the period
+  ///This function returns the period
   struct timespec getPeriod();
 };
 #endif
