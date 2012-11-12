@@ -25,6 +25,9 @@ class Simulation {
   ///This variable stores the path to the XML input file
   string xml_path;
 
+  ///This attribute indicate if the simulation is initialized
+  int initialized;
+
   ///This attribute indicates if there is currently a simulation
   int simulating;  
 
@@ -68,6 +71,9 @@ class Simulation {
 
   ///This function begins the simulation
   void simulate();
+
+  ///This function tells whether the simulation is initialized (used to synchronize threads during X11_init()
+  int isInitialized();
 
   ///This function tells if there is currently a simulation
   int isSimulating();

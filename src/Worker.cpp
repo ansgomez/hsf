@@ -39,6 +39,9 @@ Worker::Worker(Simulation *s, Scheduler *sched, unsigned int _id, _task_load tl)
 /*********** INHERITED FUNCTIONS ***********/
 
 void Worker::wrapper() {
+  //Wait until the simulation is initialized
+  while(sim->isInitialized() == 0);
+
   while (sim->isSimulating() == 1) {
     sem_wait(&wrapper_sem);
 
@@ -100,6 +103,9 @@ void Worker::deactivate() {
 
 ///This function joins the calling thread with the object's pthread
 void Worker::join() {
+  //Post to sem in case worker is blocked
+  sem_post(&wrapper_sem);
+
   pthread_join(thread, NULL);
 }
 

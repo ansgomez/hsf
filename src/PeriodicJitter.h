@@ -13,6 +13,9 @@ class PeriodicJitter : public Dispatcher {
   ///The dispatcher's jitter
   struct timespec jitter;
 
+  ///Auxiliary variable to keep track of delta Period
+  struct timespec deltaPeriod;
+
   /*********** CONSTRUCTOR ***********/
  public:
   ///Constructor needs simulation pointer, and id

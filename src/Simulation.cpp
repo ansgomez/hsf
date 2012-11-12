@@ -31,6 +31,7 @@
 Simulation::Simulation(string _xml_path, int cpu, string nm) {
   name = nm;
   sim_time = Seconds(1); //Millis(100); //
+  initialized = 0;
   simulating = 0;
   xml_path = _xml_path;
 
@@ -178,6 +179,11 @@ void Simulation::add_worker_id(unsigned int _id) {
 
   worker_id.push_back(_id);
 
+}
+
+///This function tells if the simulation is initialized
+int Simulation::isInitialized() {
+  return initialized;
 }
 
 ///This function tells if there is currently a simulation

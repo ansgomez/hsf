@@ -68,6 +68,9 @@ void Dispatcher::setOffset(struct timespec o) {
 void Dispatcher::wrapper() {
   struct timespec rem;
 
+  //Wait until the simulation is initialized
+  while(sim->isInitialized() == 0);
+
   //if offset != 0, sleep before dispatching
   if(offset.tv_nsec != 0 || offset.tv_sec !=0) {
     nanosleep(&offset, &rem);

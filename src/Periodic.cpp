@@ -41,6 +41,9 @@ void Periodic::dispatch() {
     }
   }
 
+
+  //TODO: Verify is the code below can be erased -> worker::join now takes care of unblocking the worker
+
   //Free worker from blocking. This runs only when the simulation has ended
   if(worker != NULL) {
     worker->new_job(relativeDeadline);

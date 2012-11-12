@@ -5,6 +5,30 @@
 
 using namespace std;
 
+struct timespec operator*(double a, struct timespec b) {
+  struct timespec *x = (struct timespec*) malloc(sizeof(struct timespec));
+  
+  if(a < 0) {
+     x->tv_sec = a * b.tv_sec;
+     x->tv_nsec = -1*a * b.tv_nsec;  
+     
+     if(b.tv_sec == 0) {
+        x->tv_nsec = -1 * x->tv_nsec;
+     }
+  }
+  else {
+     x->tv_sec = a * b.tv_sec;
+     x->tv_nsec = a * b.tv_nsec;
+  }
+  
+  if(x->tv_nsec > 999999999) {
+     x->tv_sec ++;
+     x->tv_nsec = x->tv_nsec - 1000000000;
+  }
+  
+  return *x;
+}
+
 struct timespec operator+(struct timespec a, struct timespec b) {
   struct timespec *x = (struct timespec*) malloc(sizeof(struct timespec));
   x->tv_sec = a.tv_sec + b.tv_sec;
@@ -14,15 +38,20 @@ struct timespec operator+(struct timespec a, struct timespec b) {
     x->tv_sec ++;
     x->tv_nsec = x->tv_nsec - 1000000000;
   }
+  else if (x->tv_nsec < 0) {
+    x->tv_sec --;
+    x->tv_nsec = x->tv_nsec + 1000000000;
+  }
 
   return *x;
 }
+
 
 struct timespec operator-(struct timespec a, struct timespec b) {
   struct timespec *x = (struct timespec*) malloc(sizeof(struct timespec));
   x->tv_sec = a.tv_sec - b.tv_sec;
 
-  if (  a.tv_nsec <  b.tv_nsec) {
+  if (  a.tv_nsec <  b.tv_nsec && x->tv_sec > 0) {
     x->tv_sec = x->tv_sec-1;
     x->tv_nsec = a.tv_nsec - b.tv_nsec + 1000000000; 
   }
@@ -32,6 +61,8 @@ struct timespec operator-(struct timespec a, struct timespec b) {
 
   return *x;
 }
+
+
 
 int operator < (struct timespec a, struct timespec b) {
   if (a.tv_sec < b.tv_sec) {
@@ -73,8 +104,15 @@ struct timespec Seconds(__time_t s) {
 struct timespec Millis(long int ms) {
   struct timespec aux;
 
-  aux.tv_sec = 0;
-  aux.tv_nsec = ms*1000000;
+
+  if(ms < 1000) {
+    aux.tv_sec = 0;
+    aux.tv_nsec = ms*1000000;
+  }
+  else {
+    aux.tv_sec = (int) (ms/1000);
+    aux.tv_nsec = (ms-aux.tv_sec*1000)*1000000;
+  }
 
   return aux;
 }
@@ -83,8 +121,14 @@ struct timespec Millis(long int ms) {
 struct timespec Micros(long int us) {
   struct timespec aux;
 
-  aux.tv_sec = 0;
-  aux.tv_nsec = us*1000;
+  if(us < 1000000) {
+    aux.tv_sec = 0;
+    aux.tv_nsec = us*1000;
+  }
+  else {
+    aux.tv_sec = (int) (us/1000000);
+    aux.tv_nsec = (us-aux.tv_sec*1000000)*1000;
+  }
 
   return aux;
 }

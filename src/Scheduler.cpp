@@ -25,6 +25,10 @@ Scheduler::Scheduler(Simulation *s, unsigned int _id, int _level) : Runnable(s, 
 
 ///This is the pthread's wrapper function
 void Scheduler::wrapper() {
+
+  //Wait until the simulation is initialized
+  while(sim->isInitialized() == 0);
+
   schedule();
 }
 

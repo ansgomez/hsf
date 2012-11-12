@@ -7,6 +7,7 @@
 #include "Trace.h"
 #include "Priorities.h"
 #include "TimeUtil.h"
+#include "VectorUtil.h"
 
 #include <time.h>
 #include <iostream>
@@ -53,7 +54,8 @@ void EDF::schedule() {
     //Add any new jobs to the active queue
     sem_wait(&newjob_sem);
     while(newjob_queue.size() > 0) {
-      //ordered insert
+      insertSortedDeadline(active_queue, newjob_queue[c]);
+      newjob_queue.erase(newjob_queue.begin());
     }
     sem_post(&newjob_sem);
 
