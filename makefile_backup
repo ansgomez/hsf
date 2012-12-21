@@ -1,0 +1,47 @@
+#Main compiler/linker variables
+CXX=g++
+M_FLAGS=-Wall -pthread -c -g -DVIEWER -lX11
+C_FLAGS=-Wall -pthread -c -g
+C_ARG=-lrt
+L_ARG=-ldl -lpthread -lrt # -lGLU -lGL -lSM -lICE -lX11 -lXext -lpng -lz -Wl-rpath
+LFLAGS= -lm 
+ARCH := $(shell getconf LONG_BIT)
+XML=xml/pugixml.cpp
+
+#Directories
+OBJDIR=bin
+LIBDIR=lib
+SRCDIR=src
+
+#SOURCE FILES
+MAIN_SRC=main.cpp
+MJPEG_SRC=mjpeg processframe
+HSF_SRC= %.cpp
+
+#AUX VARIABLES
+EXEC=$(MAIN_SRC:.c=.out)
+MAIN=$(SRCDIR)/$(MAIN_SRC)
+
+all: $(HSF_SRC) SIMFIG XML $(EXEC)
+
+hsf: $(HSF_SRC) 
+
+$(EXEC):  $(SRCDIR)/$(MAIN_SRC)
+	$(CXX) $(C_FLAGS) $(SRCDIR)/$@ -o $(OBJDIR)/$*.o $(C_ARG)
+	$(CXX) $(LFLAGS) $(OBJDIR)/*.o $(MATHGL) -o $(OBJDIR)/$*.out $(L_ARG)
+
+$(MJPEG_SRC):
+	$(CXX) $(M_FLAGS) $(LIBDIR)/mjpeg/$@.c -o $(OBJDIR)/$@.o
+
+XML:
+	$(CXX) -Wall -c $(LIBDIR)/$(XML) -o $(OBJDIR)/pugixml.o 
+
+$(HSF_SRC):
+	$(CXX) $(C_FLAGS) $(SRCDIR)/$@ -o $(OBJDIR)/$*.o $(C_ARG) 
+
+run:
+	sudo $(OBJDIR)/$(EXEC)
+
+clean:
+	rm -fr $(OBJDIR)/*.out
+	rm -fr $(OBJDIR)/*.o

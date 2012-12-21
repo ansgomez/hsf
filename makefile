@@ -1,47 +1,55 @@
+#################   DEFINITIONS    #################
+
 #Main compiler/linker variables
 CXX=g++
-M_FLAGS=-Wall -pthread -c -g -DVIEWER -lX11
-C_FLAGS=-Wall -pthread -c -g
-C_ARG=-lrt
-L_ARG=-ldl -lpthread -lrt # -lGLU -lGL -lSM -lICE -lX11 -lXext -lpng -lz -Wl-rpath
+CFLAGS=-Wall -pthread -I./src/
+CARG=-lrt
 LFLAGS= -lm 
+LARG=-ldl -lpthread -lrt
+
+#Architecture dependent variable
 ARCH := $(shell getconf LONG_BIT)
-MATHGL= -rdynamic src/lib/mathgl/libmgl.$(ARCH).so.6.0.0
+
+#Libraries
 XML=xml/pugixml.cpp
 
 #Directories
 OBJDIR=bin
-LIBDIR=src/lib
+LIBDIR=lib
 SRCDIR=src
 
 #SOURCE FILES
-MAIN_SRC=main.cpp
-MJPEG_SRC=mjpeg processframe
-HSF_SRC= Aperiodic.cpp BusyWait.cpp Deadline.cpp Dispatcher.cpp Enumerations.cpp Idle.cpp JobTrace.cpp Periodic.cpp Priorities.cpp Runnable.cpp Scheduler.cpp Simulation.cpp Task.cpp TDMA.cpp Thread.cpp Trace.cpp TimeUtil.cpp Worker.cpp Operators.cpp Statistics.cpp RuntimeStatistic.cpp Parser.cpp
+MAINSRC=main.cpp
 
 #AUX VARIABLES
-EXEC=$(MAIN_SRC:.c=.out)
+EXEC=$(MAIN_SRC:.cpp=.out)
 MAIN=$(SRCDIR)/$(MAIN_SRC)
 
-all: $(HSF_SRC) SIMFIG XML $(EXEC)
+#################    MAIN TARGETS   #################
 
-hsf: $(HSF_SRC) 
+all: libraries hsf executable
 
-$(EXEC):  $(SRCDIR)/$(MAIN_SRC)
-	$(CXX) $(C_FLAGS) $(SRCDIR)/$@ -o $(OBJDIR)/$*.o $(C_ARG)
-	$(CXX) $(LFLAGS) $(OBJDIR)/*.o $(MATHGL) -o $(OBJDIR)/$*.out $(L_ARG)
+hsf: core criteria dispatchers pthread queues results schedulers servers tasks util 
 
-$(MJPEG_SRC):
-	$(CXX) $(M_FLAGS) $(LIBDIR)/mjpeg/$@.c -o $(OBJDIR)/$@.o
+#################        HSF        #################
 
-SIMFIG: $(LIBDIR)/mathgl/SimulationFigure.h $(LIBDIR)/mathgl/SimulationFigure.cpp
-	$(CXX) -Wall -c $(LIBDIR)/mathgl/SimulationFigure.cpp -o $(OBJDIR)/SimulationFigure.o
+core: core/*.cpp
+	$(CXX) $(CFLAGS) -c $(SRCDIR) -o $(OBJDIR)/$*.o $(CARG)
+
+#################    EXECUTABLE     #################
+
+executable: $(SRCDIR)/$(MAINSRC)
+	$(CXX) $(CFLAGS) -c $(SRCDIR)/$@ -o $(OBJDIR)/$*.o $(CARG)    #compile main.cpp
+	$(CXX) $(LFLAGS) $(OBJDIR)/*.o -o $(OBJDIR)/$*.out $(LARG)  #link all object files
+
+#################     LIBRARIES     #################
+
+libraries: XML
 
 XML:
 	$(CXX) -Wall -c $(LIBDIR)/$(XML) -o $(OBJDIR)/pugixml.o 
 
-$(HSF_SRC):
-	$(CXX) $(C_FLAGS) $(SRCDIR)/$@ -o $(OBJDIR)/$*.o $(C_ARG) 
+#################  MISCELLANEOUS   #################
 
 run:
 	sudo $(OBJDIR)/$(EXEC)

@@ -6,6 +6,7 @@ bin/
 *.png
 old_results/
 *~
+.DS_Store
 
 ##### Metrics #####
 metrics/

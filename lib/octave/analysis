@@ -1,0 +1,6 @@
+#! /bin/octave -qf
+cd metrics/
+response_time( argv(){1} );
+execution_time( argv(){1} );
+runtime( argv(){1} );
+

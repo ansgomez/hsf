@@ -1,0 +1,5 @@
+#! /bin/octave -qf
+cd metrics/
+
+#PLOT RESULTS (BY NUMBER OF JOBS)
+plot_experiment( argv(){1}, argv(){2}, argv(){3} ) ;
