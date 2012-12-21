@@ -46,6 +46,13 @@ Thread::~Thread() {
 
 /********************* MEMBER FUNCTIONS *********************/
 
+///This function sets the priority of the thread
+void Thread::setPriority(int priority) {
+  pthread_getschedparam(thread, &policy, &thread_param);
+  thread_param.sched_priority = priority;
+  pthread_setschedparam(thread, SCHED_FIFO, &thread_param);  
+}
+
 ///Should be overwritten by subclasses
 void Thread::wrapper() {
   //empty

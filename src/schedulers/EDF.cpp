@@ -87,9 +87,7 @@ void EDF::activate() {
 
   sem_wait(&activation_sem);
     
-  pthread_getschedparam(thread, &policy, &thread_param);
-  thread_param.sched_priority = Priorities::get_sched_pr(level); 
-  pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
+  setPriority(Priorities::get_sched_pr(level));
 
   state = activated;
 
@@ -123,9 +121,7 @@ void EDF::deactivate() {
   }
 
   //Decrease the priority
-  pthread_getschedparam(thread, &policy, &thread_param);
-  thread_param.sched_priority = Priorities::get_inactive_pr();
-  pthread_setschedparam(thread, SCHED_FIFO, &thread_param);  
+  setPriority(Priorities::get_inactive_pr());
 
   state = deactivated;
 

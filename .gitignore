@@ -4,7 +4,8 @@ bin/
 ##### Trace files ######
 *.csv
 *.png
-old_results/
+*.svg
+*.eps
 *~
 .DS_Store
 

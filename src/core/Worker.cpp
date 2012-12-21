@@ -73,9 +73,7 @@ void Worker::activate() {
 
   sim->getTraces()->add_trace(worker, id, sched_start);
 
-  pthread_getschedparam(thread, &policy, &thread_param);
-  thread_param.sched_priority = Priorities::get_active_pr();
-  pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
+  setPriority(Priorities::get_active_pr());
   
   state = activated;
 
@@ -91,10 +89,8 @@ void Worker::deactivate() {
   sem_wait(&activation_sem);
   
   sim->getTraces()->add_trace(worker, id, sched_end);
-    
-  pthread_getschedparam(thread, &policy, &thread_param);
-  thread_param.sched_priority = Priorities::get_inactive_pr();
-  pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
+
+  setPriority(Priorities::get_inactive_pr());    
   
   state = deactivated;
 

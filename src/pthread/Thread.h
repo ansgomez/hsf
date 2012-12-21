@@ -45,6 +45,9 @@ class Thread {
   ~Thread();
 
   /*********** MEMBER FUNCTIONS ***********/
+  ///This function sets the priority of the thread
+  void setPriority(int);
+
   ///This function is called by the static wrapper. In the Worker object, it should point to fire(), and in the Scheduler object, it should point to schedule()
   virtual void wrapper();
 

@@ -138,9 +138,7 @@ void TDMA::activate() {
 
   sem_post(&schedule_sem);
     
-  pthread_getschedparam(thread, &policy, &thread_param);
-  thread_param.sched_priority = Priorities::get_sched_pr(level); 
-  pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
+  setPriority(Priorities::get_sched_pr(level));
 
   state = activated;
     
@@ -171,9 +169,7 @@ void TDMA::deactivate() {
   sem_wait(&schedule_sem);
 
   //now decrease the priority
-  pthread_getschedparam(thread, &policy, &thread_param);
-  thread_param.sched_priority = Priorities::get_inactive_pr(); //active priority
-  pthread_setschedparam(thread, SCHED_FIFO, &thread_param);  
+  setPriority(Priorities::get_inactive_pr());
   
   state = deactivated;
   sem_post(&activation_sem);
@@ -213,9 +209,5 @@ void Scheduler::add_load(Runnable *new_load) {
 
 ///This function adds a timeslot to the scheduler. They are assigned in the same order as the load is defined
 void TDMA::add_slot(struct timespec slot) {
-#if _DEBUG == 1
-  cout << "Added timeslot, new size: " << timeslots.size() << "\n";
-#endif
- 
   timeslots.push_back(slot);
 }
