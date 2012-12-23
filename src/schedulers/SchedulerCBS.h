@@ -2,7 +2,7 @@
 #define _CBS_SCHED_H
 
 
-#include "Scheduler.h"
+#include "core/Scheduler.h"
 
 class Deadline;
 class CBS_Queue;

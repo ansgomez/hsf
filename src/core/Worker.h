@@ -1,9 +1,9 @@
 #ifndef _WORKER_H
 #define _WORKER_H
 
-//#include "Scheduler.h"
-#include "Runnable.h"
-#include "Enumerations.h"
+//#include "core/Scheduler.h"
+#include "core/Runnable.h"
+#include "util/Enumerations.h"
 
 #include <semaphore.h>
 

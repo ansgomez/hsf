@@ -1,8 +1,8 @@
-#include "Idle.h"
+#include "pthread/Idle.h"
 
-#include "Simulation.h"
-#include "Priorities.h"
-#include "Enumerations.h"
+#include "core/Simulation.h"
+#include "pthread/Priorities.h"
+#include "util/Enumerations.h"
 
 #include <iostream>
 

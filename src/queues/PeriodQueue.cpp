@@ -1,4 +1,4 @@
-#include "PeriodQueue.h"
+#include "queues/PeriodQueue.h"
 
 /********************************************************************************
  * CLASS DEFINITION

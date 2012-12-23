@@ -2,7 +2,7 @@
 #define _PERIODICJITTER_H
 
 
-#include "Dispatcher.h"
+#include "core/Dispatcher.h"
 
 class PeriodicJitter : public Dispatcher {
   /*********** VARIABLES ***********/

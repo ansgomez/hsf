@@ -1,9 +1,9 @@
 #ifndef _SCHEDULER_H
 #define _SCHEDULER_H
 
-#include "Worker.h"
-#include "Runnable.h"
-#include "Enumerations.h"
+#include "core/Worker.h"
+#include "core/Runnable.h"
+#include "util/Enumerations.h"
 #include <vector>
 
 using namespace std;

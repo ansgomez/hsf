@@ -1,8 +1,8 @@
 #ifndef _DISPATCHER_H
 #define _DISPATCHER_H
 
-#include "Thread.h"
-#include "Enumerations.h"
+#include "pthread/Thread.h"
+#include "util/Enumerations.h"
 
 #include <time.h>
 

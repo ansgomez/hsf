@@ -1,8 +1,8 @@
-#include "Thread.h"
+#include "pthread/Thread.h"
 
-#include "Simulation.h"
-#include "Priorities.h"
-#include "Statistics.h"
+#include "core/Simulation.h"
+#include "pthread/Priorities.h"
+#include "results/Statistics.h"
 
 #include <stdlib.h>
 #include <iostream>

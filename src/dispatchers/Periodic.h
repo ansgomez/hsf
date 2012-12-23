@@ -1,7 +1,7 @@
 #ifndef _PERIODIC_H
 #define _PERIODIC_H
 
-#include "Dispatcher.h"
+#include "core/Dispatcher.h"
 
 /********************************************************************************
  * CLASS DECLARATION

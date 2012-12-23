@@ -1,9 +1,9 @@
 #ifndef _RUNNABLE_H
 #define _RUNNABLE_H
 
-#include "Thread.h"
+#include "pthread/Thread.h"
 #include "Deadline.h"
-#include "Enumerations.h"
+#include "util/Enumerations.h"
 
 class Simulation;
 class Scheduler;

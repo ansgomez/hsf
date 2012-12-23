@@ -1,6 +1,6 @@
-#include "Statistics.h"
+#include "results/Statistics.h"
 
-#include "util/TimeUtil.h"
+#include "util/util/TimeUtil.h"
 
 #include <algorithm>
 #include <fstream>

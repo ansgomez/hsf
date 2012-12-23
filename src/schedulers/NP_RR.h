@@ -2,7 +2,7 @@
 #define _NP_RR_H
 
 
-#include "Scheduler.h"
+#include "core/Scheduler.h"
 
 class NP_RR : public Scheduler {
 };

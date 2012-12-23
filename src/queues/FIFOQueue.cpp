@@ -1,4 +1,4 @@
-#include "FIFOQueue.h"
+#include "queues/FIFOQueue.h"
 
 /********************************************************************************
  * CLASS DEFINITION

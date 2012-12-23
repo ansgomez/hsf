@@ -1,7 +1,7 @@
 #ifndef _BUSYWAIT_H
 #define _BUSYWAIT_H
 
-#include "Task.h"
+#include "core/Task.h"
 
 /********************************************************************************
  * CLASS DECLARATION

@@ -1,5 +1,5 @@
-#include "results/Statistics.h"
-#include "util/Enumerations.h"
+#include "results/results/Statistics.h"
+#include "util/util/Enumerations.h"
 
 #include <time.h>
 

@@ -1,7 +1,7 @@
-#include "Scheduler.h"
-#include "Simulation.h"
-#include "Priorities.h"
-#include "Trace.h"
+#include "core/Scheduler.h"
+#include "core/Simulation.h"
+#include "pthread/Priorities.h"
+#include "results/Trace.h"
 
 #include <pthread.h>
 #include <iostream>

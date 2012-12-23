@@ -1,10 +1,10 @@
-#include "Dispatcher.h"
+#include "core/Dispatcher.h"
 
-#include "Trace.h"
-#include "Worker.h"
-#include "Thread.h"
-#include "Priorities.h"
-#include "Enumerations.h"
+#include "results/Trace.h"
+#include "core/Worker.h"
+#include "pthread/Thread.h"
+#include "pthread/Priorities.h"
+#include "util/Enumerations.h"
 
 #include <time.h>
 #include <iostream>

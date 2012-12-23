@@ -1,11 +1,11 @@
 #ifndef _STATISTICS_H
 #define _STATISTICS_H
 
-#include "Runtime.h"
-#include "MissedDeadline.h"
-#include "Trace.h"
+#include "results/Runtime.h"
+#include "results/MissedDeadline.h"
+#include "results/Trace.h"
 
-#include "util/Enumerations.h"
+#include "util/util/Enumerations.h"
 
 #include <algorithm>
 #include <vector>

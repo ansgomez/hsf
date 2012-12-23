@@ -1,7 +1,7 @@
 #ifndef _TIMEUTIL_H
 #define _TIMEUTIL_H
 
-#include "Enumerations.h"
+#include "util/Enumerations.h"
 
 #include <time.h>
 #include <stdlib.h>

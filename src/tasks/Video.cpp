@@ -1,6 +1,6 @@
-#include "Video.h"
+#include "tasks/Video.h"
 
-#include "Dispatcher.h"
+#include "core/Dispatcher.h"
 
 #include <iostream>
 

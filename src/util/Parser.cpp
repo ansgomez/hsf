@@ -1,15 +1,15 @@
-#include "Parser.h"
+#include "util/Parser.h"
 
-#include "Simulation.h"
-#include "Operators.h"
-#include "Worker.h"
-#include "TDMA.h"
-#include "Scheduler.h"
-#include "Dispatcher.h"
-#include "Runnable.h"
-#include "Periodic.h"
-#include "BusyWait.h"
-#include "Enumerations.h"
+#include "core/Simulation.h"
+#include "util/Operators.h"
+#include "core/Worker.h"
+#include "schedulers/TDMA.h"
+#include "core/Scheduler.h"
+#include "core/Dispatcher.h"
+#include "core/Runnable.h"
+#include "dispatchers/Periodic.h"
+#include "tasks/BusyWait.h"
+#include "util/Enumerations.h"
 
 #include <iostream>
 

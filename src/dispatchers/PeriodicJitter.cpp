@@ -1,9 +1,9 @@
-#include "PeriodicJitter.h"
+#include "dispatchers/PeriodicJitter.h"
 
-#include "Worker.h"
-#include "Simulation.h"
-#include "Trace.h"
-#include "Operators.h"
+#include "core/Worker.h"
+#include "core/Simulation.h"
+#include "results/Trace.h"
+#include "util/Operators.h"
 
 #include <iostream>
 #include <stdlib.h>

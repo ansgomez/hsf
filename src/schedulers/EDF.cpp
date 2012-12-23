@@ -1,12 +1,12 @@
-#include "EDF.h"
+#include "schedulers/EDF.h"
 
-#include "Scheduler.h"
-#include "Runnable.h"
-#include "Enumerations.h"
-#include "Operators.h"
-#include "Trace.h"
-#include "Priorities.h"
-#include "TimeUtil.h"
+#include "core/Scheduler.h"
+#include "core/Runnable.h"
+#include "util/Enumerations.h"
+#include "util/Operators.h"
+#include "results/Trace.h"
+#include "pthread/Priorities.h"
+#include "util/TimeUtil.h"
 #include "VectorUtil.h"
 
 #include <time.h>

@@ -1,7 +1,7 @@
 #ifndef _IDLE_H
 #define _IDLE_H
 
-#include "Thread.h"
+#include "pthread/Thread.h"
 
 class Simulation;
 

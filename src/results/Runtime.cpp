@@ -1,6 +1,6 @@
-#include "Runtime.h"
+#include "results/Runtime.h"
 
-#include "util/TimeUtil.h"
+#include "util/util/TimeUtil.h"
 
 /********************* MEMBER FUNCTIONS *********************/
 

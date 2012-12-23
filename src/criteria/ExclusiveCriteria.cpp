@@ -1,4 +1,4 @@
-#include "ExclusiveCriteria.h"
+#include "criteria/Exclusivecore/Criteria.h"
 
 /********************************************************************************
  * CLASS DEFINITION

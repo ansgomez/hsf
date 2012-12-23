@@ -1,4 +1,4 @@
-#include "Priorities.h"
+#include "pthread/Priorities.h"
 
 ///Maximum number of threads under a scheduler
 #define MAX_THREADS 10

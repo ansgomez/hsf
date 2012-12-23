@@ -1,4 +1,4 @@
-#include "PriorityQueue.h"
+#include "queues/PriorityQueue.h"
 
 /********************************************************************************
  * CLASS DEFINITION

@@ -1,7 +1,7 @@
-#include "TimeUtil.h"
+#include "util/TimeUtil.h"
 
-#include "Enumerations.h"
-#include "Operators.h"
+#include "util/Enumerations.h"
+#include "util/Operators.h"
 
 #include <time.h>
 

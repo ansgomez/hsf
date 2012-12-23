@@ -1,13 +1,13 @@
-#include "Worker.h"
+#include "core/Worker.h"
 
 #include "Intermediary.h"
-#include "Trace.h"
-#include "Task.h"
-#include "Simulation.h"
-#include "Runnable.h"
-#include "Priorities.h"
-#include "TimeUtil.h"
-#include "Enumerations.h" 
+#include "results/Trace.h"
+#include "core/Task.h"
+#include "core/Simulation.h"
+#include "core/Runnable.h"
+#include "pthread/Priorities.h"
+#include "util/TimeUtil.h"
+#include "util/Enumerations.h" 
 
 #include <iostream>
 

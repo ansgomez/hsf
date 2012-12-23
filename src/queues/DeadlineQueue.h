@@ -1,7 +1,7 @@
 #ifndef _DEADLINEQUEUE_H
 #define _DEADLINEQUEUE_H
 
-#include "RunnableQueue.h"
+#include "core/RunnableQueue.h"
 
 /********************************************************************************
  * CLASS DECLARATION

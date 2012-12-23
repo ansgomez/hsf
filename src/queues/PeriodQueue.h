@@ -1,7 +1,7 @@
 #ifndef _PERIODQUEUE_H
 #define _PERIODQUEUE_H
 
-#include "RunnableQueue.h"
+#include "core/RunnableQueue.h"
 
 /********************************************************************************
  * CLASS DECLARATION

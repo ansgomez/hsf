@@ -1,6 +1,6 @@
-#include "Criteria.h"
+#include "core/Criteria.h"
 
-#include "TimeUtil.h"
+#include "util/TimeUtil.h"
 
 #include <iostream>
 

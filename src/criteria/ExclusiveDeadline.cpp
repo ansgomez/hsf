@@ -1,4 +1,4 @@
-#include "ExclusiveDeadline.h"
+#include "criteria/ExclusiveDeadline.h"
 
 ///This function sets a new deadline
 void ExclusiveDeadline::setDeadline(struct timespec dln) {

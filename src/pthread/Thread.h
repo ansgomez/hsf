@@ -1,7 +1,7 @@
 #ifndef _THREAD_H
 #define _THREAD_H
 
-#include "Enumerations.h"
+#include "util/Enumerations.h"
 
 #include <pthread.h>
 

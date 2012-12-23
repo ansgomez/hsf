@@ -2,8 +2,8 @@
 #define _CBS_H
 
 
-#include "Scheduler.h"
-#include "Server.h"
+#include "core/Scheduler.h"
+#include "core/Server.h"
 
 class Deadline;
 

@@ -1,8 +1,8 @@
 #ifndef _EDF_H
 #define _EDF_H
 
-#include "RunnableQueue.h"
-#include "Scheduler.h"
+#include "core/RunnableQueue.h"
+#include "core/Scheduler.h"
 
 class Deadline;
 

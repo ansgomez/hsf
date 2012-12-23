@@ -1,7 +1,7 @@
-#include "RunnableQueue.h"
+#include "core/RunnableQueue.h"
 
-#include "Runnable.h"
-#include "Criteria.h"
+#include "core/Runnable.h"
+#include "core/Criteria.h"
 
 using namespace std;
 

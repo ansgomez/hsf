@@ -2,7 +2,7 @@
 #define _TASK_H
 
 #include "Deadline.h"
-#include "Enumerations.h"
+#include "util/Enumerations.h"
 
 #include <time.h>
 

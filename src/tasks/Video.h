@@ -1,7 +1,7 @@
 #ifndef _VIDEO_H
 #define _VIDEO_H
 
-#include "Task.h"
+#include "core/Task.h"
 #include "lib/mjpeg/mjpeg.h"
 
 class Video : public Task {

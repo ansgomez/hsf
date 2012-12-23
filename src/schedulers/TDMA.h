@@ -1,8 +1,8 @@
 #ifndef _TDMA_H
 #define _TDMA_H
 
-#include "Scheduler.h"
-#include "Simulation.h"
+#include "core/Scheduler.h"
+#include "core/Simulation.h"
 
 #include <semaphore.h>
 #include <stdio.h>

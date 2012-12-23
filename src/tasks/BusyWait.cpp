@@ -1,10 +1,10 @@
-#include "BusyWait.h"
+#include "tasks/BusyWait.h"
 
-#include "TimeUtil.h"
-#include "Operators.h"
-#include "Dispatcher.h"
-#include "Simulation.h"
-#include "Worker.h"
+#include "util/TimeUtil.h"
+#include "util/Operators.h"
+#include "core/Dispatcher.h"
+#include "core/Simulation.h"
+#include "core/Worker.h"
 
 #include <iostream>
 
