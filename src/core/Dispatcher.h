@@ -26,7 +26,7 @@ class Dispatcher : public Thread {
   _task_periodicity periodicity;
   
   ///This is the (constant) relative deadline of the associated task
-  struct timepsec relativeDeadline;
+  struct timespec relativeDeadline;
 
   ///When this is set, the dispatcher will sleep for the specified time before beginning to dispatch
   struct timespec offset;

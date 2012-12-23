@@ -1,7 +1,7 @@
 #ifndef _PARSER_H
 #define _PARSER_H
 
-#include "lib/xml/pugixml.hpp"
+#include "../lib/xml/pugixml.hpp"
 
 #include <string>
 #include <time.h>

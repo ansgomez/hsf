@@ -3,19 +3,19 @@
 
 #include "core/Dispatcher.h"
 #include "core/Scheduler.h"
+#include "core/Task.h"
 #include "core/Worker.h"
 #include "dispatchers/Aperiodic.h"
 #include "dispatchers/Periodic.h"
-#include "util/Parser.h"
-#include "pthread/Priorities.h"
-#include "results/Trace.h"
-#include "results/Statistics.h"
-#include "schedulers/TDMA.h"
-#include "util/TimeUtil.h"
-#include "tasks/BusyWait.h"
-#include "core/Task.h"
 #include "pthread/Idle.h"
+#include "pthread/Priorities.h"
+#include "results/Statistics.h"
+#include "results/Trace.h"
+#include "schedulers/TDMA.h"
+#include "tasks/BusyWait.h"
 #include "util/Operators.h"
+#include "util/Parser.h"
+#include "util/TimeUtil.h"
 
 #include <iostream>
 #include <unistd.h>
@@ -30,7 +30,7 @@
   ///Constructor needs the path to xml and the cpu_set
 Simulation::Simulation(string _xml_path, int cpu, string nm) {
   name = nm;
-  sim_time = Seconds(1); //Millis(100); //
+  sim_time = TimeUtil::Seconds(1); 
   initialized = 0;
   simulating = 0;
   xml_path = _xml_path;
@@ -72,8 +72,9 @@ Simulation::Simulation(string _xml_path, int cpu, string nm) {
 
 ///This function initializes all of the objects
 void Simulation::initialize() {
-  traces = new Trace(this);
-  stats = new Statistics(this);
+  //Reserve some memory for vectors
+  disp.reserve(50);
+  worker_id.reserve(50);
 
   //Idle should be the first thread to be created
   idle = new Idle(this);
@@ -85,10 +86,6 @@ void Simulation::initialize() {
   parser->parseFile(xml_path);
 
   free(parser);
-
-  //Reserve some memory for vectors
-  disp.reserve(10);
-  worker_id.reserve(32);
 }
 
 ///This function sets the dispatchers to their 'active' priority.
@@ -123,15 +120,8 @@ void Simulation::simulate() {
 
   cout << "Saving results...\n";
 
-  //Save statistics to file
-  stats->to_file();
-
-  //Save traces to file
-  traces->to_file();
-
-  //Save figure to file
-  //For experimentation, figures are unnecessary
-  //traces->to_figure();
+  //Save results to file
+  Statistics::toFile(name);
 
   cout << "All results have been saved!\n";
 }

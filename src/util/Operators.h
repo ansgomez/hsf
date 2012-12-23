@@ -13,9 +13,12 @@ struct timespec operator+(struct timespec a, struct timespec b);
 struct timespec operator-(struct timespec a, struct timespec b);
 
 ///This operator compares two timespecs 
-int operator>(struct timespec a, struct timespec b);
+bool operator>(struct timespec a, struct timespec b);
 
 ///This operator compares two timespecs
-int operator<(struct timespec a, struct timespec b);
+bool operator<(struct timespec a, struct timespec b);
+
+///This operator compares two timespecs
+bool operator==(struct timespec a, struct timespec b);
 
 #endif

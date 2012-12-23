@@ -1,12 +1,13 @@
 #ifndef _WORKER_H
 #define _WORKER_H
 
-//#include "core/Scheduler.h"
 #include "core/Runnable.h"
 #include "util/Enumerations.h"
 
 #include <semaphore.h>
+#include <vector>
 
+class Intermediary;
 class Scheduler;
 class Simulation;
 class Task;
@@ -22,7 +23,7 @@ class Worker : public Runnable {
   /*********** VARIABLES ***********/
  private:
   ///Pointer to simulation
-  Simulation *s;
+  Simulation *sim;
 
   ///Pointer to the task to be executed by the worker
   Task *load;
@@ -34,7 +35,7 @@ class Worker : public Runnable {
   vector<struct timespec> arrival_times;
   
   ///Pointer to the scheduler handling this worker
-  Intermediary * parent;
+  Intermediary* parent;
 
   ///Semaphore to control the call to the fire() function
   sem_t wrapper_sem;
@@ -45,9 +46,12 @@ class Worker : public Runnable {
   ///Semaphore to control access to the arrivalTime vector
   sem_t arrival_sem;
 
+  ///This variable determines each job's deadline (deadline = arrival_time + relativeDeadline)
+  struct timespec relativeDeadline;
+
   /*********** CONSTRUCTOR ***********/
  public:
-  Worker(Simulation *s, Scheduler *sched, unsigned int id, _task_load tl);
+  Worker(Simulation *s, Intermediary *sched, unsigned int id, _task_load tl);
 
   /*********** INHERITED FUNCTIONS ***********/
   ///This inherited function will be executed by the worker thread
@@ -65,6 +69,9 @@ class Worker : public Runnable {
   /*********** MEMBER FUNCTIONS ***********/
   ///This function will be called by the dispatcher thread, and will post to the wrapper_sem
   void new_job(struct timespec realtiveDeadline);
+
+  ///This function erases the head of the active_queue, and updates any pending events
+  void job_finished();
 
   /*********** GETTER AND SETTER FUNCTIONS ***********/
   ///This function gets the relative deadline

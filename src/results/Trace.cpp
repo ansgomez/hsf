@@ -1,6 +1,6 @@
 #include "results/Trace.h"
 
-#include "util/util/TimeUtil.h"
+#include "util/TimeUtil.h"
 
 
 using namespace std;

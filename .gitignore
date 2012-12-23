@@ -7,6 +7,8 @@ bin/
 *.svg
 *.eps
 *~
+*#
+\#*
 .DS_Store
 
 ##### Metrics #####

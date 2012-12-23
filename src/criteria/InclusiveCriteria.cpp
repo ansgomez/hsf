@@ -1,4 +1,4 @@
-#include "criteria/Inclusivecore/Criteria.h"
+#include "criteria/InclusiveCriteria.h"
 
 ///This function sets a new deadline
 void InclusiveCriteria::setDeadline(struct timespec dln) {
@@ -17,5 +17,5 @@ struct timespec InclusiveCriteria::getDeadline() {
   
 ///This function prints an alert.
 int InclusiveCriteria::getPriority() { 
-  return pr;
+  return priority;
 }

@@ -28,13 +28,13 @@ class TimeUtil {
   static void setOffset();
 
   ///This function returns a timespec with the specified seconds
-  struct timespec Seconds(__time_t s);
+  static struct timespec Seconds(__time_t s);
 
   ///This function returns a timespec with the specified milliseconds
-  struct timespec Millis(long int ms);
+  static struct timespec Millis(long int ms);
 
   ///This function returns a timespec with the specified microseconds
-  struct timespec Micros(long int us);
+  static struct timespec Micros(long int us);
 
   ///Converts a timespce to unsigned long usecs
   static unsigned long convert_us(struct timespec t1);

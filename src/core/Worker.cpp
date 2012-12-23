@@ -1,13 +1,15 @@
 #include "core/Worker.h"
 
-#include "Intermediary.h"
-#include "results/Trace.h"
-#include "core/Task.h"
-#include "core/Simulation.h"
+#include "core/Criteria.h"
+#include "core/Intermediary.h"
 #include "core/Runnable.h"
+#include "core/Simulation.h"
+#include "core/Task.h"
 #include "pthread/Priorities.h"
-#include "util/TimeUtil.h"
+#include "results/Statistics.h"
 #include "util/Enumerations.h" 
+#include "util/Operators.h"
+#include "util/TimeUtil.h"
 
 #include <iostream>
 
@@ -26,7 +28,7 @@ Worker::Worker(Simulation *s, Intermediary *p, unsigned int _id, _task_load tl) 
   sim = s;
   id = _id;
   parent = p;
-  type = worker;
+  thread_type = worker;
 
   //Register worker id with simulation
   sim->add_worker_id(_id);
@@ -45,7 +47,7 @@ void Worker::wrapper() {
   while (sim->isSimulating() == 1) {
     sem_wait(&wrapper_sem);
 
-    sim->getTraces()->add_trace(worker, id, task_start);
+    Statistics::addTrace(worker, id, task_start);
 
     if( sim->isSimulating() == 1) {
       if(load != NULL) {
@@ -56,10 +58,10 @@ void Worker::wrapper() {
       }
     }
 
-    sim->getTraces()->add_trace(worker, id, task_end);
+    Statistics::addTrace(worker, id, task_end);
 
     //remove arrival_time from schedulable criteria
-    job_finished();
+    parent->job_finished(id);
   }
 }
 
@@ -71,7 +73,7 @@ void Worker::activate() {
 
   sem_wait(&activation_sem);
 
-  sim->getTraces()->add_trace(worker, id, sched_start);
+  Statistics::addTrace(worker, id, sched_start);
 
   setPriority(Priorities::get_active_pr());
   
@@ -88,7 +90,7 @@ void Worker::deactivate() {
 
   sem_wait(&activation_sem);
   
-  sim->getTraces()->add_trace(worker, id, sched_end);
+  Statistics::addTrace(worker, id, sched_end);
 
   setPriority(Priorities::get_inactive_pr());    
   
@@ -132,7 +134,7 @@ void Worker::new_job(struct timespec realtiveDeadline) {
 ///This function erases the head of the active_queue, and updates any pending events
 void Worker::job_finished() {
 
-  if(sim->isSimulating != 1) {
+  if(sim->isSimulating() != 1) {
     return;
   }
 
@@ -160,12 +162,12 @@ void Worker::job_finished() {
 
 /********************* GETTER AND SETTER FUNCTIONS *********************/
 ///This function gets the relative deadline
-struct timespec getRelativeDeadline() {
+struct timespec Worker::getRelativeDeadline() {
   return relativeDeadline;
 }
 
 ///This function sets the relative deadline
-void setRelativeDeadline(struct timespec aux) {
+void Worker::setRelativeDeadline(struct timespec aux) {
   relativeDeadline = aux;
 }
 

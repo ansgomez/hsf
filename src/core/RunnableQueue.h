@@ -1,6 +1,8 @@
 #ifndef _RUNNABLEQUEUE_H
 #define _RUNNABLEQUEUE_H
 
+#include "core/Runnable.h"
+
 /********************************************************************************
  * CLASS DECLARATION
  ********************************************************************************
@@ -12,17 +14,19 @@
 
 typedef struct _Node {
   Runnable *r;
-  struct node *next;
+  struct _Node *next;
 } Node;
 
 class RunnableQueue {
  protected:
   ///This variable holds the size of the queue
   int size;
+
   ///The head of the queue points the current job. The rest of the queue is ordered depending of the method used to insert into the queue
-  Node *head;
+  Node* head;
+
   ///The tail of the queue points to the last job on the active queue.
-  Node *tail;
+  Node* tail;
   
  public:
   /*********** CONSTRUCTOR ***********/
@@ -31,7 +35,7 @@ class RunnableQueue {
 
   /*********** MEMBER FUNCTIONS ***********/
   ///This function inserts the new runnable in the queue depending on the derived class' criteria
-  virtual void insert(Runnable *newRunnable);
+  virtual void insertRunnable(Runnable *newRunnable);
 
   ///This function reads the head of the queue and returns a pointer to the runnable
   Runnable* peek_front();
@@ -40,7 +44,11 @@ class RunnableQueue {
   Runnable* peek_back();
 
   ///This function deletes the queue's pointer to the Runnable with the specified ifndef
-  void delete(unsigned int id);
+  void deleteRunnable(unsigned int id);
+
+  /*********** GETTER FUNCTIONS ***********/
+  ///This function returns the size of the RunnableQueue
+  int getSize();
 };
 
 #endif 

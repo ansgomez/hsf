@@ -1,7 +1,7 @@
 #ifndef _RUNTIME_H
 #define _RUNTIME_H
 
-#include "util/util/Enumerations.h"
+#include "util/Enumerations.h"
 
 #include <time.h>
 #include <string>

@@ -1,7 +1,9 @@
 #include "core/RunnableQueue.h"
 
-#include "core/Runnable.h"
 #include "core/Criteria.h"
+
+#include <iostream>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -21,14 +23,12 @@ RunnableQueue::RunnableQueue() {
 /*********** MEMBER FUNCTIONS ***********/
 
 ///This function will be implemented by the derived classes
-void RunnableQueue::insert(Runnable *r) {
+void RunnableQueue::insertRunnable(Runnable *r) {
   cout << "RunnableQueue::insert - this should not print!\n";
 }
 
-void RunnableQueue::delete(unsigned int id) {
-Runnable *aux = head->r;
-
-  if(head->r->getID() != id) {
+void RunnableQueue::deleteRunnable(unsigned int id) {
+  if(head->r->getId() != id) {
     cout << "RunnableQueue::delete - tried to delete non-active runnable\n";
   }
   else {
@@ -52,6 +52,6 @@ Runnable* RunnableQueue::peek_front() {
 
 /*********** GETTER FUNCTIONS ***********/
 ///This function returns the size of the queue
-int size() {
+int RunnableQueue::getSize() {
   return size;
 }

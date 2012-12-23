@@ -1,7 +1,7 @@
 #ifndef _TRACE_H
 #define _TRACE_H
 
-#include "util/util/Enumerations.h"
+#include "util/Enumerations.h"
 
 #include <vector>
 #include <string>

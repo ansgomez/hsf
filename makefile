@@ -27,19 +27,24 @@ MAIN=$(SRCDIR)/$(MAIN_SRC)
 
 #################    MAIN TARGETS   #################
 
-all: libraries hsf executable
+all: libraries hsf #executable
 
-hsf: core #criteria dispatchers pthread queues results schedulers servers tasks util 
+hsf: core criteria #dispatchers pthread queues results schedulers servers tasks util 
 
 #################        HSF        #################
-CORE_SRC:= $(wildcard $(SRCDIR)/core/*.cpp) 
-CORE_OBJ:= $(patsubst $(SRCDIR)/core/%.cpp, %.o, $(CORE_SRC))
 
-core: $(CORE_OBJ)
-	echo $(CORE_OBJ)
+### HSF CORE
+CORE:= $(patsubst $(SRCDIR)/core/%.cpp, %, $(wildcard $(SRCDIR)/core/*.cpp))
+core: $(CORE)
+$(CORE):
+	$(CXX) $(CFLAGS) -c $(SRCDIR)/core/$@.cpp -o $(OBJDIR)/$@.o $(CARG)
 
-$(CORE_OBJ): $(CORE_SRC)
-	$(CXX) $(CFLAGS) -c $(SRCDIR)/core/$*.cpp -o $(OBJDIR)/$(*F).o $(CARG)
+### HSF CRITERIA
+CRITERIA:= $(patsubst $(SRCDIR)/criteria/%.cpp, %, $(wildcard $(SRCDIR)/criteria/*.cpp))
+criteria: $(CRITERIA)
+$(CRITERIA):
+	$(CXX) $(CFLAGS) -c $(SRCDIR)/criteria/$@.cpp -o $(OBJDIR)/$@.o $(CARG)
+
 
 #################    EXECUTABLE     #################
 

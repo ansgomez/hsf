@@ -1,9 +1,10 @@
 #include "core/Dispatcher.h"
 
-#include "results/Trace.h"
+#include "core/Simulation.h"
 #include "core/Worker.h"
-#include "pthread/Thread.h"
 #include "pthread/Priorities.h"
+#include "pthread/Thread.h"
+#include "results/Trace.h"
 #include "util/Enumerations.h"
 
 #include <time.h>
@@ -25,7 +26,7 @@ Dispatcher::Dispatcher (Simulation *s, unsigned int _id) : Thread(s,_id)
 
   sim = s;
   id = _id;
-  type = dispatcher;
+  thread_type = dispatcher;
 
   //By default periodic
   periodicity = periodic;
@@ -39,12 +40,12 @@ Dispatcher::Dispatcher (Simulation *s, unsigned int _id) : Thread(s,_id)
 
 /********************* GETTER AND SETTER FUNCTIONS *********************/
 ///This function gets the relative deadline
-struct timespec getRelativeDeadline() {
+struct timespec Dispatcher::getRelativeDeadline() {
   return relativeDeadline;
 }
 
 ///This function sets the relative deadline
-void setRelativeDeadline(struct timespec aux) {
+void Dispatcher::setRelativeDeadline(struct timespec aux) {
   relativeDeadline = aux;
 }
 

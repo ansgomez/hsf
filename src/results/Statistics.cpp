@@ -1,6 +1,6 @@
 #include "results/Statistics.h"
 
-#include "util/util/TimeUtil.h"
+#include "util/TimeUtil.h"
 
 #include <algorithm>
 #include <fstream>

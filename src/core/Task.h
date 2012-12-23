@@ -1,7 +1,6 @@
 #ifndef _TASK_H
 #define _TASK_H
 
-#include "Deadline.h"
 #include "util/Enumerations.h"
 
 #include <time.h>

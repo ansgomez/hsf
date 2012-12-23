@@ -1,8 +1,10 @@
 #include "core/Runnable.h"
 
-#include "core/Task.h"
+#include "criteria/ExclusiveCriteria.h"
+#include "core/Criteria.h"
 #include "core/Scheduler.h"
 #include "core/Simulation.h"
+#include "core/Task.h"
 #include "pthread/Priorities.h"
 #include "results/Trace.h"
 
@@ -49,11 +51,11 @@ void Runnable::join() {
 
 /*********** GETTERS AND SETTERS ***********/
 ///This function return the runnable's schedulable criteria
-Criteria* getCriteria() {
+Criteria* Runnable::getCriteria() {
   return criteria;
 }
 
 ///This function sets the runnable's parent
-void setParent(Runnable *p) {
+void Runnable::setParent(Intermediary* p) {
   parent = p;
 }

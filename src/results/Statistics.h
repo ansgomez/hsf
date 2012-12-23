@@ -5,7 +5,7 @@
 #include "results/MissedDeadline.h"
 #include "results/Trace.h"
 
-#include "util/util/Enumerations.h"
+#include "util/Enumerations.h"
 
 #include <algorithm>
 #include <vector>
@@ -56,7 +56,7 @@ class Statistics {
   ///This function adds a missed deadline trace to the vector
   static void addMissedDeadline(unsigned int t_id, struct timespec arrival_time);
 
-  ///This function saves to custom csv file
+  ///This function saves all results to a custom csv file
   static void toFile(string filePrefix);
 
   ///This function enables the collection of statistics

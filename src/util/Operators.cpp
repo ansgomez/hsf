@@ -61,28 +61,40 @@ struct timespec operator-(struct timespec a, struct timespec b) {
 
 
 
-int operator < (struct timespec a, struct timespec b) {
+bool operator < (struct timespec a, struct timespec b) {
   if (a.tv_sec < b.tv_sec) {
-    return (1);
+    return true;
   } else {
     if (a.tv_sec == b.tv_sec && a.tv_nsec < b.tv_nsec) {
-      return (1);
+      return true;
     }
     else {
-      return (0);
+      return false;
     }
   }
 }
 
-int operator > (struct timespec a, struct timespec b) {
+bool operator > (struct timespec a, struct timespec b) {
   if (a.tv_sec > b.tv_sec) {
-    return (1);
+    return true;
   } else {
     if (a.tv_sec == b.tv_sec && a.tv_nsec > b.tv_nsec) {
-      return (1);
+      return true;
     }
     else {
-      return (0);
+      return false;
     }
   }
+}
+
+bool operator ==(struct timespec a, struct timespec b) {
+  if (a.tv_sec != b.tv_sec) {
+    return false;
+  }
+
+  if (a.tv_nsec != b.tv_nsec) {
+    return false;
+  }
+
+  return true;
 }

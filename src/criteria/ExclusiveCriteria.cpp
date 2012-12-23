@@ -1,4 +1,11 @@
-#include "criteria/Exclusivecore/Criteria.h"
+#include "criteria/ExclusiveCriteria.h"
+
+#include "util/Operators.h"
+#include "util/TimeUtil.h"
+
+#include <iostream>
+
+using namespace std;
 
 /********************************************************************************
  * CLASS DEFINITION
@@ -14,7 +21,7 @@ ExclusiveCriteria::ExclusiveCriteria() : Criteria() {
 /*********** INHERITED FUNCTIONS ***********/
 
 ///This function sets a new deadline
-void setDeadline(struct timespec dln) {
+void ExclusiveCriteria::setDeadline(struct timespec dln) {
   if(priority == -1) {
     deadline = dln;
   }
@@ -24,8 +31,8 @@ void setDeadline(struct timespec dln) {
 }
 
 ///This function sets the new priority
-void setPriority(int pr) {
-  if ( deadline == Millis(0) ) {
+void ExclusiveCriteria::setPriority(int pr) {
+  if ( deadline == TimeUtil::Millis(0) ) {
     if( priority >= 0 &&  priority < 100) {
       priority = pr;
     }
@@ -39,8 +46,8 @@ void setPriority(int pr) {
 }
 
 ///This function returns the object's deadline (according to its criteria policy)
-struct timespec getDeadline() {
-  if (deadline == Millis(0)) {
+struct timespec ExclusiveCriteria::getDeadline() {
+  if (deadline == TimeUtil::Millis(0)) {
     cout << "ExclusiveCriteria::getDeadline() error - object has no deadline assigned to it!\n";
   }
 
@@ -48,8 +55,8 @@ struct timespec getDeadline() {
 }
   
 ///This function returns the object's priority (according to its criteria policy)
-int getPriority() {
-  if (prioriy == -1) {
+int ExclusiveCriteria::getPriority() {
+  if (priority == -1) {
     cout << "ExclusiveCriteria::getDeadline() error - object has a priority assigned to it!\n";
   }
 

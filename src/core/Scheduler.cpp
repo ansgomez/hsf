@@ -1,10 +1,14 @@
 #include "core/Scheduler.h"
+
+#include "core/Intermediary.h"
 #include "core/Simulation.h"
 #include "pthread/Priorities.h"
 #include "results/Trace.h"
 
 #include <pthread.h>
 #include <iostream>
+
+using namespace std;
 
 /********************************************************************************
  * CLASS DEFINITION
@@ -14,7 +18,7 @@
 /********************* CONSTRUCTOR *********************/
 
 ///Constructor needs pointer to simulation as well as the scheduler's id and hierarchical level
-Scheduler::Scheduler(Simulation *s, unsigned int _id, int _level) : Runnable(s, _id){
+Scheduler::Scheduler(Simulation *s, unsigned int _id, int _level) : Intermediary(_id){
   sim = s;
   id = _id;
   thread_type = scheduler;

@@ -1,6 +1,8 @@
 #ifndef _INCLUSIVE_CRITERIA_H
 #define _INCLUSIVE_CRITERIA_H
 
+#include "core/Criteria.h"
+
 /********************************************************************************
  * CLASS DECLARATION
  ********************************************************************************

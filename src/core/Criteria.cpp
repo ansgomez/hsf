@@ -4,6 +4,8 @@
 
 #include <iostream>
 
+using namespace std;
+
 /********************************************************************************
  * CLASS DEFINITION
  ********************************************************************************
@@ -11,9 +13,9 @@
 
 /*********** CONSTRUCTOR ***********/
 Criteria::Criteria() {
-  arrivalTime = Millis(0);
-  deadline = Millis(0);
-  period = Millis(0);
+  arrivalTime = TimeUtil::Millis(0);
+  deadline = TimeUtil::Millis(0);
+  period = TimeUtil::Millis(0);
   priority = -1;
 }
 
@@ -32,9 +34,11 @@ void Criteria::setPriority(int pr) {
 ///This function returns the object's deadline (according to its criteria policy)
 struct timespec Criteria::getDeadline() {
   cout << "Criteria::getDeadline() - this should not print!\n";
+  return deadline;
 }
   
 ///This function returns the object's priority (according to its criteria policy)
 int Criteria::getPriority() {
   cout << "Criteria::getPriority() - this should not print!\n";
+  return priority;
 }

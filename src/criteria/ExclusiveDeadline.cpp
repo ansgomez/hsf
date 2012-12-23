@@ -1,5 +1,9 @@
 #include "criteria/ExclusiveDeadline.h"
 
+#include <iostream>
+
+using namespace std;
+
 ///This function sets a new deadline
 void ExclusiveDeadline::setDeadline(struct timespec dln) {
   deadline = dln;

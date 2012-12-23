@@ -1,14 +1,14 @@
 #ifndef _RUNNABLE_H
 #define _RUNNABLE_H
 
-#include "pthread/Thread.h"
-#include "Deadline.h"
-#include "util/Enumerations.h"
-
+class Intermediary;
 class Simulation;
 class Scheduler;
 class Task;
 class Criteria;
+
+#include "pthread/Thread.h"
+#include "util/Enumerations.h"
 
 /********************************************************************************
  * CLASS DECLARATION
@@ -19,16 +19,16 @@ class Runnable : public Thread {
   /*********** VARIABLES ***********/
  protected:
   ///Pointer to simulation
-  Simulation *sim;
+  Simulation* sim;
   
   ///Runnable's schedulable criteria (this is the criteria used to schedule it)
-  Criteria *criteria;
+  Criteria* criteria;
   
   ///Pointer to Task currently being 'executed' by the runnable
-  Task *current_task;
+  Task* current_task;
   
   ///Pointer to the scheduler that this runnable belongs to
-  Scheduler *parent;
+  Intermediary* parent;
 
   ///Auxiliary variable to hold the state of runnable
   _runnable_state state;
@@ -56,6 +56,6 @@ class Runnable : public Thread {
   Criteria* getCriteria();
 
   ///This function sets the runnable's parent
-  void setParent(Runnable *p);
+  void setParent(Intermediary* p);
 };
 #endif
