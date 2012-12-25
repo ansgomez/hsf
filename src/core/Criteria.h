@@ -25,8 +25,10 @@ class Criteria {
   ///This variable holds the runnable's priority
   int priority;
 
-  /*********** CONSTRUCTOR ***********/
  public:
+
+  /*********** CONSTRUCTOR ***********/
+
   ///Constructor needs nothing
   Criteria();
   

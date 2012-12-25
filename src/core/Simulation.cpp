@@ -24,6 +24,15 @@
  *        CLASS DEFINITION             * 
  ***************************************/
 
+/*********** STATIC VARIABLES ***********/
+
+///This attribute holds how long the simulation will last
+struct timespec Simulation::simTime;
+///This attribute indicate if the simulation is initialized
+bool Simulation::initialized;
+///This attribute indicates if there is currently a simulation
+bool Simulation::simulating;  
+
 /*********** CONSTRUCTOR ***********/
   ///Constructor needs the path to xml and the cpu_set
 Simulation::Simulation(string _xml_path, int cpu, string nm) {

@@ -2,7 +2,7 @@
 
 #include "core/Simulation.h"
 
-int main() {
+int main(int argc, char** argv) {
     
   Simulation *sim = new Simulation("hsf.xml", 1, "simulation");
 

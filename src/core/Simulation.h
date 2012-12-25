@@ -1,9 +1,9 @@
 #ifndef _SIMULATION_H
 #define _SIMULATION_H
 
-#include <vector>
 #include <string>
 #include <time.h>
+#include <vector>
 
 class Dispatcher;
 class Idle;
@@ -25,17 +25,6 @@ class Simulation {
 
   /*********** VARIABLES ***********/
 
-  /**** HSF VARIABLES */
-
-  ///This object is the root scheduler
-  Scheduler* top_sched;
-
-  ///This vector holds all of the simulation's dispatchers
-  vector<Dispatcher*> disp;
-
-  ///This is the idle thread
-  Idle* idle;
-
   /**** INPUT VARIABLES ****/
 
   ///The name of the simulation (will be used for traced output)
@@ -46,6 +35,17 @@ class Simulation {
 
   ///This variable stores the path to the XML input file
   string xml_path;
+
+  /**** HSF VARIABLES */
+
+  ///This object is the root scheduler
+  Scheduler* top_sched;
+
+  ///This vector holds all of the simulation's dispatchers
+  vector<Dispatcher*> disp;
+
+  ///This is the idle thread
+  Idle* idle;
 
   /**** STATIC VARIABLES ****/
 

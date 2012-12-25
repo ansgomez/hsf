@@ -27,7 +27,7 @@ class EDF : public Scheduler {
   RunnableQueue* newJobQueue;
 
   ///Semaphores to ensure proper execution
-  sem_t schedule_sem, preempt_sem, event_sem, newjob_sem, jobfinished_sem, activation_sem;
+  sem_t activation_sem, event_sem, jobfinished_sem, newjob_sem, preempt_sem, schedule_sem;
 
  public: 
 

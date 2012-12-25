@@ -5,7 +5,8 @@ CXX=g++
 CFLAGS=-Wall -I./src/
 CARG=-lrt
 LFLAGS= -lm 
-LARG=-ldl -lpthread -lrt
+LARG=-ldl -lpthread -lrt -lGLU -lGL -lSM -lICE -lX11 -lXext -lpng -lz -Wl-rpath
+M_FLAGS=-Wall -pthread -c -g -DVIEWER -lX11 #MJPEG Flags
 
 #Architecture dependent variable
 ARCH := $(shell getconf LONG_BIT)
@@ -20,10 +21,7 @@ SRCDIR=src
 
 #SOURCE FILES
 MAINSRC=main.cpp
-
-#AUX VARIABLES
-EXEC=$(MAIN_SRC:.cpp=.out)
-MAIN=$(SRCDIR)/$(MAIN_SRC)
+MAINOBJ=$(MAIN_SRC:.cpp=.out)
 
 #################    MAIN TARGETS   #################
 
@@ -95,17 +93,24 @@ $(UTIL):
 	$(CXX) $(CFLAGS) -c $(SRCDIR)/util/$@.cpp -o $(OBJDIR)/$@.o $(CARG)
 
 #################    EXECUTABLE     #################
-
-executable: $(SRCDIR)/$(MAINSRC)
-	$(CXX) $(CFLAGS) -c $(SRCDIR)/$@ -o $(OBJDIR)/$*.o $(CARG)    #compile main.cpp
-	$(CXX) $(LFLAGS) $(OBJDIR)/*.o -o $(OBJDIR)/$*.out $(LARG)  #link all object files
+exe: executable
+executable:  
+	$(CXX) $(CFLAGS) -c $(SRCDIR)/$(MAINSRC) -o $(OBJDIR)/hsf.o $(CARG)    #compile main.cpp
+	$(CXX) $(LFLAGS) $(OBJDIR)/*.o -o $(OBJDIR)/hsf $(LARG)  #link all object files
 
 #################     LIBRARIES     #################
+lib: libraries
+libraries: XML MJPEG
 
-libraries: XML
-
+### PUGI XML LIB
 XML:
 	$(CXX) -Wall -c $(LIBDIR)/$(XML) -o $(OBJDIR)/pugixml.o 
+
+### MJPEG LIB
+MJPEG_SRC=mjpeg processframe
+MJPEG: $(MJPEG_SRC)
+$(MJPEG_SRC):
+	$(CXX) $(M_FLAGS) $(LIBDIR)/mjpeg/$@.c -o $(OBJDIR)/$@.o
 
 #################  MISCELLANEOUS   #################
 
