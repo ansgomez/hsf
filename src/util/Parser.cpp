@@ -1,15 +1,16 @@
 #include "util/Parser.h"
 
-#include "core/Simulation.h"
-#include "util/Operators.h"
-#include "core/Worker.h"
-#include "schedulers/TDMA.h"
-#include "core/Scheduler.h"
 #include "core/Dispatcher.h"
+#include "core/Simulation.h"
+#include "core/Scheduler.h"
 #include "core/Runnable.h"
+#include "core/Worker.h"
 #include "dispatchers/Periodic.h"
+#include "schedulers/TDMA.h"
 #include "tasks/BusyWait.h"
 #include "util/Enumerations.h"
+#include "util/Operators.h"
+#include "util/TimeUtil.h"
 
 #include <iostream>
 
@@ -40,13 +41,13 @@ struct timespec Parser::parseTime(xml_node n) {
   struct timespec ret;
 
   if(units == "sec") {
-    ret = Seconds(time);
+    ret = TimeUtil::Seconds(time);
   }
   else if(units == "ms") {
-    ret = Millis(time);
+    ret = TimeUtil::Millis(time);
   }
   else if(units == "us") {
-    ret = Micros(time);
+    ret = TimeUtil::Micros(time);
   }
   else {
     cout << "Parser error: could not recognize time unit!\n";
@@ -92,7 +93,7 @@ Worker* Parser::parseWorker(xml_node worker_node, unsigned int *id) {
     cout << "Creating Worker " << *id << endl;
 #endif
     BusyWait *bw = new BusyWait(sim, d, parseTime(worker_node.child("wcet")));
-    Scheduler *parent;
+    Scheduler *parent = NULL;
     worker = new Worker(sim, parent, *id, busy_wait);
     worker->setLoad(bw);
     d->setWorker(worker);

@@ -8,14 +8,16 @@
 class Simulation;
 class Dispatcher;
 
-/********************************************************************************
- * CLASS DECLARATION
- ********************************************************************************
- */
-
+/***************************************
+ *        CLASS DECLARATION            * 
+ ***************************************/
+ 
 class Task {
+ 
  protected:
+ 
   /*********** VARIABLES ***********/
+  
   ///Pointer to the simulation
   Simulation *sim;
 
@@ -25,8 +27,10 @@ class Task {
   ///Varible describing the task's type of load (video, busy_wait)
   _task_load task_load;
 
-  /*********** CONSTRUCTOR ***********/
  public:
+ 
+  /*********** CONSTRUCTOR ***********/
+  
   ///Constructor needs pointer to simulation, dispatcher, and its load type
   Task(Simulation *s, Dispatcher *disp, _task_load load);
 

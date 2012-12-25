@@ -1,5 +1,10 @@
 #include "queues/PeriodQueue.h"
 
+#include "core/Criteria.h"
+#include "util/Operators.h"
+
+#include <stdlib.h>
+
 /********************************************************************************
  * CLASS DEFINITION
  ********************************************************************************
@@ -15,10 +20,10 @@ PeriodQueue::PeriodQueue() : RunnableQueue() {
 /*********** MEMBER FUNCTIONS ***********/
 
 ///This function inserts the new runnable in the queue in such a ways that no job before it (in the queue) has a lower period. If only this method is used to access the queue, then the queue will always be sorted by ascending period
-void PeriodQueue::insert(Runnable *newRunnable) {
+void PeriodQueue::insertRunnable(Runnable *newRunnable) {
   //Base case, the list was empty. The Runnable is now head and tail of queue
   if (head == NULL) {
-    head = (Node*) malloc(sizeof(Node))
+    head = (Node*) malloc(sizeof(Node));
     head->r = newRunnable;
     tail = head;
     return;
@@ -57,7 +62,7 @@ void PeriodQueue::insert(Runnable *newRunnable) {
 
   //This loop will insert the Runnable in any position except first or last
   while(aux->next != NULL) {
-    if(aux->r->getCriteria()->getPeriod() > newRunnable()->getCriteria()->getPeriod()) {
+    if(aux->r->getCriteria()->getPeriod() > newRunnable->getCriteria()->getPeriod()) {
       Node *newNode = (Node*) malloc(sizeof(Node));
       newNode->r = newRunnable;
       //insert new node in the middle

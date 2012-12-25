@@ -30,9 +30,9 @@
   ///Constructor needs the path to xml and the cpu_set
 Simulation::Simulation(string _xml_path, int cpu, string nm) {
   name = nm;
-  sim_time = TimeUtil::Seconds(1); 
-  initialized = 0;
-  simulating = 0;
+  simTime = TimeUtil::Seconds(1); 
+  initialized = false;
+  simulating = false;
   xml_path = _xml_path;
 
   //Set main process parameters
@@ -101,7 +101,7 @@ void Simulation::simulate() {
   cout << "**Simulating**\n" ;
 
   //Set simulation variables
-  simulating = 1;  
+  Simulation::simulating = true;  
   TimeUtil::setOffset();
 
   //Activate threads
@@ -109,10 +109,10 @@ void Simulation::simulate() {
   top_sched->activate();
 
   //Sleep for the duration of the simulation
-  nanosleep(&sim_time, &rem);
+  nanosleep(&simTime, &rem);
 
   //Deactivate threads
-  simulating = 0;  
+  Simulation::simulating = false;  
   cout << "***Done***\n";
 
   //Join all other threads
@@ -172,12 +172,12 @@ void Simulation::add_worker_id(unsigned int _id) {
 }
 
 ///This function tells if the simulation is initialized
-int Simulation::isInitialized() {
+bool Simulation::isInitialized() {
   return initialized;
 }
 
 ///This function tells if there is currently a simulation
-int Simulation::isSimulating() {
+bool Simulation::isSimulating() {
   return simulating;
 }
 
@@ -193,10 +193,11 @@ string Simulation::getName() {
   return name;
 }
 
+/*
 ///This function returns the simulation's traces
 Trace* Simulation::getTraces() {
   return traces;
-}
+  }*/
 
 ///This function return the simulation's statistics
 Statistics* Simulation::getStats() {
@@ -209,8 +210,8 @@ vector<unsigned int> Simulation::getWorker_id() {
 }
 
 ///This function returns the simulation time
-struct timespec Simulation::getSim_time() {
-  return sim_time;
+struct timespec Simulation::getSimTime() {
+  return simTime;
 }
 
 ///This function sets the name of the simulation
@@ -220,7 +221,7 @@ void Simulation::setName(string s) {
 
 ///This function sets the duration of the simulation
 void Simulation::setDuration(struct timespec d) {
-  sim_time = d;
+  simTime = d;
 }
 
 ///This function sets the top schedulerxs

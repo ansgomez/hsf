@@ -1,5 +1,7 @@
 #include "util/Operators.h"
 
+#include <stdlib.h>
+
 using namespace std;
 
 struct timespec operator*(double a, struct timespec b) {
@@ -18,7 +20,7 @@ struct timespec operator*(double a, struct timespec b) {
      x->tv_nsec = a * b.tv_nsec;
   }
   
-  if(x->tv_nsec > 999999999) {
+  while(x->tv_nsec > 999999999) {
      x->tv_sec ++;
      x->tv_nsec = x->tv_nsec - 1000000000;
   }

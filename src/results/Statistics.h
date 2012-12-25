@@ -1,10 +1,9 @@
 #ifndef _STATISTICS_H
 #define _STATISTICS_H
 
-#include "results/Runtime.h"
 #include "results/MissedDeadline.h"
+#include "results/Runtime.h"
 #include "results/Trace.h"
-
 #include "util/Enumerations.h"
 
 #include <algorithm>
@@ -18,14 +17,16 @@
 
 using namespace std;
 
-/********************************************************************************
- * CLASS DECLARATION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DECLARATION            * 
+ ***************************************/
 
 class Statistics {
-  /*********** VARIABLES ***********/
+
  private:
+
+  /*********** VARIABLES ***********/
+
   ///This vector holds all of the simulation's runtime statistics
   static vector<Runtime> runtimes;
   ///This vector holds alll of the time traces
@@ -43,7 +44,9 @@ class Statistics {
   static sem_t deadline_sem;
 
  public:
+ 
   /*********** MEMBER FUNCTIONS ***********/
+  
   ///This function initiates all of the variables
   static void initialize();
 
@@ -64,6 +67,7 @@ class Statistics {
 
   ///This function disable the collection of statistics
   static void disable();
+  
   /*
  ///This function helps sort the runtime vector by ID
   struct compareId {

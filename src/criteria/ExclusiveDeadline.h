@@ -3,22 +3,22 @@
 
 #include "core/Criteria.h"
 
-/********************************************************************************
- * CLASS DECLARATION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DECLARATION            * 
+ ***************************************/
 
 class ExclusiveDeadline : public Criteria {
-  /*********** VARIABLES ***********/
- private:
-  struct timespec deadline;
+
+ public:
 
   /*********** CONSTRUCTOR ***********/
- public:
+
   ///Constructor needs nothing
   ExclusiveDeadline();
 
-/*********** INHERITED FUNCTIONS ***********/
+  /*********** INHERITED FUNCTIONS ***********/
+
+  /**** FROM CRITERIA ****/
 
   ///This function sets a new deadline
   void setDeadline(struct timespec dln);

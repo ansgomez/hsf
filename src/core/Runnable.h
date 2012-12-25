@@ -1,23 +1,25 @@
 #ifndef _RUNNABLE_H
 #define _RUNNABLE_H
 
+#include "pthread/Thread.h"
+#include "util/Enumerations.h"
+
 class Intermediary;
 class Simulation;
 class Scheduler;
 class Task;
 class Criteria;
 
-#include "pthread/Thread.h"
-#include "util/Enumerations.h"
-
-/********************************************************************************
- * CLASS DECLARATION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DECLARATION            * 
+ ***************************************/
 
 class Runnable : public Thread {
-  /*********** VARIABLES ***********/
+
  protected:
+
+  /*********** VARIABLES ***********/
+
   ///Pointer to simulation
   Simulation* sim;
   
@@ -33,28 +35,35 @@ class Runnable : public Thread {
   ///Auxiliary variable to hold the state of runnable
   _runnable_state state;
 
-  /*********** CONSTRUCTOR ***********/
  public:
+
+  /*********** CONSTRUCTOR ***********/
+
   ///Constructor needs simulation pointer and an id
   Runnable(Simulation *s, unsigned int _id);
 
   /*********** INHERITED FUNCTIONS ***********/
+  
+  /**** FROM THREAD ****/
+
   ///This function will be defined by subclasses
   virtual void wrapper();
 
+  ///This function joins the calling thread with the object's pthread
+  void join();
+
+  /**** FROM RUNNABLE ****/
+  
   ///This function set the current runnable to active, meaning that it has control of the CPU and should 'run'
   virtual void activate();
 
   ///This function set the current runnable to inactive, meaning that it has lost control of the CPU and has to stop running
   virtual void deactivate();
 
-  ///This function joins the calling thread with the object's pthread
-  void join();
 
   /*********** GETTERS AND SETTERS ***********/
   ///This function return the runnable's schedulable criteria
   Criteria* getCriteria();
-
   ///This function sets the runnable's parent
   void setParent(Intermediary* p);
 };

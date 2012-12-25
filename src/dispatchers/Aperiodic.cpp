@@ -2,8 +2,9 @@
 
 #include "core/Worker.h"
 #include "core/Simulation.h"
-#include "results/Trace.h"
+#include "results/Statistics.h"
 #include "util/Operators.h"
+#include "util/TimeUtil.h"
 
 #include <iostream>
 
@@ -16,7 +17,7 @@
 
 ///Constructor needs a pointer to simulation and id
 Aperiodic::Aperiodic(Simulation *s, unsigned int id) : Dispatcher(s,id) {
-  release_time = Millis(5); //default release time is 5 ms
+  release_time = TimeUtil::Millis(5); //default release time is 5 ms
 }
 
 /********************* INHERITED FUNCTIONS *********************/
@@ -31,7 +32,7 @@ void Aperiodic::dispatch() {
   cout << "+Worker " << worker->getId() << " has new job!\n";
 #endif  
 
-  sim->getTraces()->add_trace(dispatcher, worker->getId(), task_arrival);
+  Statistics::addTrace(dispatcher, worker->getId(), task_arrival);
   
   if(worker != NULL) {
     worker->new_job();
@@ -42,9 +43,9 @@ void Aperiodic::dispatch() {
   
   //wait until simulation is done to free worker
   do {
-    struct timespec aux = sim->getSim_time() - release_time;
+    struct timespec aux = Simulation::getSimTime() - release_time;
       nanosleep(&aux, &rem);
-  } while(sim->isSimulating() == 1);
+  } while(Simulation::isSimulating() == 1);
   
   //Free worker from blocking (doesn't affect workers while they have inactive priority -> only when the simulation has ended
   if(worker != NULL) {

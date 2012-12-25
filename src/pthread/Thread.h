@@ -9,14 +9,16 @@ using namespace std;
 
 class Simulation;
 
-/********************************************************************************
- * CLASS DECLARATION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DECLARATION            * 
+ ***************************************/
 
 class Thread {
-  /*********** VARIABLES ***********/
+
  protected:
+
+  /*********** VARIABLES ***********/
+
   ///Pointer to the simulation
   Simulation* sim;
 
@@ -38,13 +40,16 @@ class Thread {
   ///Auxiliary variable to the set the thread's parameters
   struct sched_param thread_param;
 
-  /*********** CONSTRUCTOR ***********/
  public:
+
+  /*********** CONSTRUCTOR ***********/
+
   ///Constructor needs nothing to create thread (with inactive priotity);
   Thread(Simulation *s, unsigned int _id);
   ~Thread();
 
   /*********** MEMBER FUNCTIONS ***********/
+  
   ///This function sets the priority of the thread
   void setPriority(int);
 
@@ -54,15 +59,18 @@ class Thread {
   ///Calling this function will block the calling thread until this thread exits
   virtual void join();
 
+  /*********** GETTER FUNCTIONS ***********/
+
+  ///This function returns the thread id
+  unsigned int getId();
+
  private:
+ 
+  /*********** MEMBER FUNCTIONS ***********/
+ 
   ///The runnable thread points to this static function. This function recieves a Runnable object, and calls
   ///the wrapper function in that object
   static void * static_wrapper(void * This);
-
-  /*********** GETTER FUNCTIONS ***********/
- public:
-  ///This function returns the thread id
-  unsigned int getId();
 
 };
 #endif

@@ -1,18 +1,21 @@
 #ifndef _CBS_H
 #define _CBS_H
 
-
-#include "core/Scheduler.h"
 #include "core/Server.h"
+#include "queues/QueueCBS.h"
 
-class Deadline;
+/***************************************
+ *        CLASS DECLARATION            * 
+ ***************************************/
 
-class CBS : public Scheduler, public Server {
+class CBS : public Server {
+
   private:
-    Vector<Deadline> deadlines;
 
+    QueueCBS queue;
 
   public:
+
     void replenish();
 
     void serve();

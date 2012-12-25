@@ -1,5 +1,9 @@
 #include "queues/PriorityQueue.h"
 
+#include "core/Criteria.h"
+
+#include <stdlib.h>
+
 /********************************************************************************
  * CLASS DEFINITION
  ********************************************************************************
@@ -14,10 +18,10 @@ PriorityQueue::PriorityQueue() : RunnableQueue() {
 /*********** MEMBER FUNCTIONS ***********/
 
 ///This function inserts the new runnable in the queue in such a way that no job before it (in the queue) has a lower (numerical) priority than itself. If only this method is used to access the queue, then the queue will always be sorted by descending priority
-void PriorityQueue::insert(Runnable *newRunnable) {
+void PriorityQueue::insertRunnable(Runnable *newRunnable) {
   //Base case, the list was empty. The Runnable is now head and tail of queue
   if (head == NULL) {
-    head = (Node*) malloc(sizeof(Node))
+    head = (Node*) malloc(sizeof(Node));
     head->r = newRunnable;
     tail = head;
     return;
@@ -56,7 +60,7 @@ void PriorityQueue::insert(Runnable *newRunnable) {
 
   //This loop will insert the Runnable in any position except first or last
   while(aux->next != NULL) {
-    if(aux->r->getCriteria()->getPriority() < newRunnable()->getCriteria()->getPriority()) {
+    if(aux->r->getCriteria()->getPriority() < newRunnable->getCriteria()->getPriority()) {
       Node *newNode = (Node*) malloc(sizeof(Node));
       newNode->r = newRunnable;
       //insert new node in the middle

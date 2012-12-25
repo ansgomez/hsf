@@ -1,11 +1,10 @@
-#include "CBS_Queue.h"
-#include "Deadline.h"
+#include "QueueCBS.h"
 
-void CBS_Queue::enqueue(unsigned int id, struct timespec arrival_time) {
+void QueueCBS::enqueue(unsigned int id, struct timespec arrival_time) {
 
 }
 
-void CBS_Queue::dequeue(unsigned int id) {
+void QueueCBS::dequeue(unsigned int id) {
 
 }
 

@@ -68,7 +68,7 @@ class Worker : public Runnable {
 
   /*********** MEMBER FUNCTIONS ***********/
   ///This function will be called by the dispatcher thread, and will post to the wrapper_sem
-  void new_job(struct timespec realtiveDeadline);
+  void new_job();
 
   ///This function erases the head of the active_queue, and updates any pending events
   void job_finished();

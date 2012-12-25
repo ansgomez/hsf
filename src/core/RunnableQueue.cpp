@@ -27,6 +27,26 @@ void RunnableQueue::insertRunnable(Runnable *r) {
   cout << "RunnableQueue::insert - this should not print!\n";
 }
 
+///This function reads the head of the queue (destructive read), and returns the pointer to the Runnable
+Runnable* RunnableQueue::peek_back() {
+  return tail->r;
+}
+
+///This function reads the head of the queue (non-destructive read) and returns a pointer to the runnable
+Runnable* RunnableQueue::peek_front() {
+  return head->r;
+}
+
+///This function reads the head of the queue, erases it from the RunnableQueue, and returns the head pointer
+Runnable* RunnableQueue::pop_front() {
+  Runnable* aux = head->r;
+
+  deleteRunnable(aux->getId());
+
+  return aux;
+}
+
+///This function deletes the queue's pointer to the Runnable with the specified ifndef
 void RunnableQueue::deleteRunnable(unsigned int id) {
   if(head->r->getId() != id) {
     cout << "RunnableQueue::delete - tried to delete non-active runnable\n";
@@ -38,16 +58,6 @@ void RunnableQueue::deleteRunnable(unsigned int id) {
     //free the old head
     free(old);
   }
-}
-
-///This function reads the head of the queue (destructive read), and returns the pointer to the Runnable
-Runnable* RunnableQueue::peek_back() {
-  return tail->r;
-}
-
-///This function reads the head of the queue (non-destructive read) and returns a pointer to the runnable
-Runnable* RunnableQueue::peek_front() {
-  return head->r;
 }
 
 /*********** GETTER FUNCTIONS ***********/

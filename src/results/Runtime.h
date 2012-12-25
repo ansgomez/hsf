@@ -5,19 +5,19 @@
 
 #include <time.h>
 #include <string>
-#include <time.h>
-#include <sstream>
 
 using namespace std;
 
-/********************************************************************************
- * CLASS DECLARATION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DECLARATION            * 
+ ***************************************/
 
 class Runtime {
-  /*********** VARIABLES ***********/
+
  private:
+
+  /*********** VARIABLES ***********/
+
   ///This variable stores the type of thread the statistic belongs to
   enum _thread_type type;
   ///This variable stores the id of the thread the statistic belongs to
@@ -25,8 +25,10 @@ class Runtime {
   ///This variable stores the runtime of the thread
   struct timespec ts;
 
-  /*********** MEMBER FUNCTIONS ***********/
  public:
+
+  /*********** MEMBER FUNCTIONS ***********/
+
   ///This sets the thread type, id, and runtime of trace
   void setRuntime(enum _thread_type _type, unsigned int _id, struct timespec _ts);
 

@@ -1,11 +1,11 @@
 #include "schedulers/TDMA.h"
 
-#include "core/Scheduler.h"
 #include "core/Runnable.h"
+#include "core/Scheduler.h"
+#include "pthread/Priorities.h"
+#include "results/Trace.h"
 #include "util/Enumerations.h"
 #include "util/Operators.h"
-#include "results/Trace.h"
-#include "pthread/Priorities.h"
 #include "util/TimeUtil.h"
 
 #include <time.h>
@@ -49,20 +49,20 @@ void TDMA::schedule(){
   cout << "Began scheduling...\n";
 #endif
 
-  while (sim->isSimulating() == 1) {
+  while (Simulation::isSimulating() == 1) {
     
-    for(active_index=0; active_index<(int)timeslots.size() && sim->isSimulating()==1; active_index++) {
+    for(active_index=0; active_index<(int)timeslots.size() && Simulation::isSimulating()==1; active_index++) {
 
       time_slot = timeslots[active_index];
 
       exit = false;
 
-      while(exit == false && sim->isSimulating()==1) {
+      while(exit == false && Simulation::isSimulating()==1) {
 
 	sem_wait(&schedule_sem);
 
 	//If simulation ended while asleep, break
-	if(sim->isSimulating()==0) {
+	if(Simulation::isSimulating()==0) {
 	  sem_post(&schedule_sem);
 	  break;
 	}
@@ -83,7 +83,7 @@ void TDMA::schedule(){
 	sem_post(&timing_sem);
 
 	//If simulation ended while asleep, break
-	if(sim->isSimulating()==0) {
+	if(Simulation::isSimulating()==0) {
 	  sem_post(&schedule_sem);
 	  break;
 	}
@@ -114,7 +114,7 @@ void TDMA::schedule(){
 	  clock_gettime(CLOCK_REALTIME, &timeB);
 	  time_slot = time_slot - (timeB-timeA);
 	  
-	  if(time_slot < Millis(0)) {
+          if(time_slot < TimeUtil::Millis(0)) {
 	    exit = true;
 	  }
 
@@ -147,7 +147,7 @@ void TDMA::activate() {
 
 ///This function rewrites the deactivate method both the scheduler (through its semaphores) as well as its load
 void TDMA::deactivate() {
-  int sts, err_no;
+  int sts;
 
   if(state == deactivated) {
     cout << "TDMA::deactivate error - already deactivated!\n";
@@ -203,7 +203,7 @@ void TDMA::join() {
 /*********** MEMBER FUNCTIONS ***********/
 
 ///This function adds a load to the scheduler (could be another scheduler, or a worker)
-void Scheduler::add_load(Runnable *new_load) {
+void TDMA::add_load(Runnable *new_load) {
   load.push_back(new_load);
 }
 

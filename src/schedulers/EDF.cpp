@@ -1,13 +1,15 @@
 #include "schedulers/EDF.h"
 
+#include "core/Criteria.h"
 #include "core/Scheduler.h"
+#include "core/Simulation.h"
 #include "core/Runnable.h"
+#include "core/RunnableQueue.h"
+#include "pthread/Priorities.h"
+#include "results/Trace.h"
 #include "util/Enumerations.h"
 #include "util/Operators.h"
-#include "results/Trace.h"
-#include "pthread/Priorities.h"
 #include "util/TimeUtil.h"
-#include "VectorUtil.h"
 
 #include <time.h>
 #include <iostream>
@@ -39,7 +41,7 @@ EDF::EDF(Simulation *s, unsigned int id, int level) : Scheduler(s, id, level) {
 ///This function performs the actual scheduling (figuring out the order of execution for its load)
 void EDF::schedule() {
 
-  while(s->isSimulating() == 1) {
+  while(Simulation::isSimulating() == 1) {
     //Wait for an event to ocurr
     sem_wait(&event_sem);
     //todo make sure that event_sem isn't posted more than once (unless necessary)
@@ -55,24 +57,28 @@ void EDF::schedule() {
 
     //Add any new jobs to the active queue
     sem_wait(&newjob_sem);
-    while(newJobQueue->size() > 0) {
-      activeQueue->insertByDeadline(newJobQueue->pop());
+    while(newJobQueue->getSize() > 0) {
+      activeQueue->insertRunnable(newJobQueue->pop_front());
     }
     sem_post(&newjob_sem);
 
     //Remove any finished jobs from the active queue
     sem_wait(&jobfinished_sem);
     while(jobFinishedQueue.size() > 0) {
-      activeQueue->eraseById(jobFinishedQueue[0]);
+      //erase from RunnableQueue
+      activeQueue->deleteRunnable(jobFinishedQueue[0]);
+      //erase from jobFinishedQueue
       jobFinishedQueue.erase(jobFinishedQueue.begin());
     }
     sem_post(&jobfinished_sem);
 
-    if(active_queue.size == 0) {
+    //If activeQueue is empty, wait for next event
+    if(activeQueue->getSize() == 0) {
       continue;
     }
 
-    active_queue[0]->activate();
+    //Otherwise, activate head of activeQueue and post to schedule sem to register changes with scheduler thread
+    activeQueue->peek_front()->activate();
 
     sem_post(&schedule_sem);
   }
@@ -94,10 +100,10 @@ void EDF::activate() {
   //Activate current head of active_queue (if any) only when there are any new jobs (since the current job might have to be preempted
   sem_wait(&newjob_sem);
   //If there are no new jobs pending
-  if(newjob_queue.size() == 0) {
+  if(newJobQueue->getSize() == 0) {
     //activate current head of queue
-    if(active_queue[0] != NULL) {
-      active_queue[0]->activate();
+    if(activeQueue->peek_front() != NULL) {
+      activeQueue->peek_front()->activate();
     }
   }
   sem_post(&newjob_sem); 
@@ -116,8 +122,8 @@ void EDF::deactivate() {
   sem_wait(&schedule_sem);
 
   //Deactivate currently active job (if any)
-  if(active_queue[0] != NULL) {
-    active_queue[0]->deactivate();
+  if(activeQueue->peek_front() != NULL) {
+    activeQueue->peek_front()->deactivate();
   }
 
   //Decrease the priority
@@ -125,21 +131,21 @@ void EDF::deactivate() {
 
   state = deactivated;
 
-  sem_post(&sched_sem);
+  sem_post(&schedule_sem);
   sem_post(&activation_sem);
 }
 
 ///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution. This is executed by the worker thread itself (always of a lower priority than its scheduler)
-void EDF::new_job(Runable* obj) {
+void EDF::new_job(Runnable* obj) {
   //Add new arrival to newjob_queue
   sem_wait(&newjob_sem);
-  newjob_queue.push_back(obj);
+  newJobQueue->insertRunnable(obj);
   sem_post(&newjob_sem); 
 
   //Verify if current head has earlier deadline
-  if(active_queue.size() > 0) {
+  if(activeQueue->getSize() > 0) {
     //If current head is earlier, no need to register event
-    if (active_queue[0] < obj->getCriteria()->getDeadline()) {
+    if (activeQueue->peek_front()->getCriteria()->getDeadline() < obj->getCriteria()->getDeadline()) {
       return;
     }
   }
@@ -153,24 +159,24 @@ void EDF::new_job(Runable* obj) {
   parent->new_job(this);
 
   //Alert scheduler of event 
-  sem_wait(&sched_sem);
+  sem_wait(&schedule_sem);
   sem_post(&event_sem);
-  sem_post(&sched_sem);
+  sem_post(&schedule_sem);
   //sched_sem assures one event handled per post in the scheduler, otherwise, multiple jobs could be handled from just one 
 }
 
 ///This function handles a job that had been queued by the worker. The worker object is thus already in the scheduler's queue, but now has a different schedulable criteria (and thus requires a change in the scheduling queue).
-void EDF::renew_job(int runnable_id) {
+void EDF::renew_job(Runnable* r) {
 
 }
 
-///This function handles the end of a job in its load. It will always result in a change of executing thread. This is executed by the worker thread itself (always of a lower priority than its scheduler)
+///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
 void EDF::job_finished(unsigned int runnable_id) {
 
-  //Add new finish to finishedjob_queue
-  sem_wait(&finishedjob_sem);
-  finishedjob_queue.push_back(runnable_id);
-  sem_post(&finishedjob_sem);
+  //Add new finish to jobfinished_queue
+  sem_wait(&jobfinished_sem);
+  jobFinishedQueue.push_back(runnable_id);
+  sem_post(&jobfinished_sem);
 
   //Alert parent of even
   parent->job_finished(id);
@@ -178,8 +184,8 @@ void EDF::job_finished(unsigned int runnable_id) {
   //At this point, current object might loose priority, 
 
   //Alert current object of event
-  sem_wait(&sched_sem);
+  sem_wait(&schedule_sem);
   sem_post(&event_sem);
-  sem_post(&sched_sem);
+  sem_post(&schedule_sem);
 }
 

@@ -3,14 +3,16 @@
 
 #include <time.h>
 
-/********************************************************************************
- * CLASS DECLARATION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DECLARATION            * 
+ ***************************************/
 
 class Criteria {
-  /*********** VARIABLES ***********/
+
  protected:
+ 
+  /*********** VARIABLES ***********/
+ 
   ///This variable holds the arrival time of the Runnable's current job
   struct timespec arrivalTime;
 
@@ -23,7 +25,7 @@ class Criteria {
   ///This variable holds the runnable's priority
   int priority;
 
-    /*********** CONSTRUCTOR ***********/
+  /*********** CONSTRUCTOR ***********/
  public:
   ///Constructor needs nothing
   Criteria();

@@ -3,22 +3,22 @@
 
 #include "core/Runnable.h"
 
-/********************************************************************************
- * CLASS DECLARATION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DECLARATION            * 
+ ***************************************/
 
-   ///This function inserts the new runnable in the queue in such a way that no job before it (in the queue) has a lower (numerical) priority than itself. If only this method is used to access the queue, then the queue will always be sorted by descending priority
-  
-  ///This function inserts the new runnable in the queue in such a ways that no job before it (in the queue) has a lower period. If only this method is used to access the queue, then the queue will always be sorted by ascending period
-
+///This structure is the basis for the linked list that is the RunnableQueue. It holds a pointer to the Runnable, and a pointer to the next Node.
 typedef struct _Node {
   Runnable *r;
   struct _Node *next;
 } Node;
 
 class RunnableQueue {
+
  protected:
+
+ /*********** VARIABLES ***********/
+
   ///This variable holds the size of the queue
   int size;
 
@@ -29,11 +29,14 @@ class RunnableQueue {
   Node* tail;
   
  public:
+
   /*********** CONSTRUCTOR ***********/
+  
   ///Contructor needs nothing
   RunnableQueue();
 
   /*********** MEMBER FUNCTIONS ***********/
+  
   ///This function inserts the new runnable in the queue depending on the derived class' criteria
   virtual void insertRunnable(Runnable *newRunnable);
 
@@ -43,10 +46,14 @@ class RunnableQueue {
   ///This function reads the tail of the queue and returns the pointer to the Runnable
   Runnable* peek_back();
 
+  ///This function reads the head of the queue, erases it from the RunnableQueue, and returns the head pointer
+  Runnable* pop_front();
+
   ///This function deletes the queue's pointer to the Runnable with the specified ifndef
   void deleteRunnable(unsigned int id);
 
   /*********** GETTER FUNCTIONS ***********/
+  
   ///This function returns the size of the RunnableQueue
   int getSize();
 };

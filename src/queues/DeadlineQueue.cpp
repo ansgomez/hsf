@@ -1,5 +1,10 @@
 #include "queues/DeadlineQueue.h"
 
+#include "core/Criteria.h"
+#include "util/Operators.h"
+
+#include <stdlib.h>
+
 /********************************************************************************
  * CLASS DEFINITION
  ********************************************************************************
@@ -14,12 +19,12 @@ DeadlineQueue::DeadlineQueue() : RunnableQueue() {
 /*********** MEMBER FUNCTIONS ***********/
 
 ///This function inserts the new runnable in the queue in such a way that no job before it (in the queue) has a later leadline than itself. If only this method is used to access the queue, then the queue will always be sorted by ascending deadline.
-void DeadlineQueue::insert(Runnable *newRunnable) {
+void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
   //increase the size counter
   size++;
   //Base case, the list was empty. The Runnable is now head and tail of queue
   if (head == NULL) {
-    head = (Node*) malloc(sizeof(Node))
+    head = (Node*) malloc(sizeof(Node));
     head->r = newRunnable;
     tail = head;
     return;
@@ -58,7 +63,7 @@ void DeadlineQueue::insert(Runnable *newRunnable) {
 
   //This loop will insert the Runnable in any position except first or last
   while(aux->next != NULL) {
-    if(aux->r->getCriteria()->getDeadline() > newRunnable()->getCriteria()->getDeadline()) {
+    if(aux->r->getCriteria()->getDeadline() > newRunnable->getCriteria()->getDeadline()) {
       Node *newNode = (Node*) malloc(sizeof(Node));
       newNode->r = newRunnable;
       //insert new node in the middle
@@ -68,3 +73,5 @@ void DeadlineQueue::insert(Runnable *newRunnable) {
     }
   }
 }
+
+

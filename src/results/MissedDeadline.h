@@ -8,14 +8,16 @@
 
 using namespace std;
 
-/********************************************************************************
- * CLASS DECLARATION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DECLARATION            * 
+ ***************************************/
 
 class MissedDeadline {
-/*********** VARIABLES ***********/
+
  private:
+
+  /*********** VARIABLES ***********/
+
   ///This variable store the id of the thread the trace belongs to
   unsigned int thread_id;
 
@@ -25,8 +27,10 @@ class MissedDeadline {
   ///This variable will store the job's finish time
   struct timespec finishTime;
 
-  /*********** MEMBER FUNCTIONS ***********/
  public:
+
+  /*********** MEMBER FUNCTIONS ***********/
+
   ///This function sets the attributes of the object
   void setMissedDeadline(unsigned int ti, struct timespec at, struct timespec ft);
 

@@ -1,17 +1,43 @@
+#include "SchedulerCBS.h"
 
-#include "CBS_SCHED.h"
-#include "Deadline.h"
-#include "CBS_Queue.h"
 
-void CBS_SCHED::updateDeadline(const unsigned int & id, const Deadline & deadline) {
+///Constructor needs pointer to simulation, id, and its level
+SchedulerCBS::SchedulerCBS(Simulation* s, unsigned int id, int level) : Scheduler(s, id, level) {
+
 }
 
-void CBS_SCHED::newJob(const unsigned int & id, const Deadline & deadline) {
+/*********** INHERITED FUNCTIONS ***********/
+
+/**** FROM RUNNABLE  ****/
+///This function rewrites the activate method to activate both the scheduler(through its semaphores) as well as its load - this runs in the dispatcher thread
+void SchedulerCBS::activate() {
+
 }
 
-void CBS_SCHED::jobFinished(const unsigned int & id) {
+
+///This function rewrites the deactivate method both the scheduler (through its semaphores) as well as its load
+void SchedulerCBS::deactivate() {
+
 }
 
-void CBS_SCHED::schedule() {
+/**** FROM INTERMEDIARY  ****/
+///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution.
+void SchedulerCBS::new_job(Runnable *ojb) {
+
 }
 
+///This function handles a job that had been queued by the worker. The worker object is thus already in the scheduler's queue, but now has a different schedulable criteria (and thus requires a change in the scheduling queue).
+void SchedulerCBS::renew_job(Runnable* r) {
+
+}
+
+///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
+void SchedulerCBS::job_finished(unsigned int runnable_id) {
+
+}
+
+/**** FROM SCHEDULER  ****/
+///This function performs the actual scheduling (figuring out the order of execution for its load)
+void SchedulerCBS::schedule() {
+
+}

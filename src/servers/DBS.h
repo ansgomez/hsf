@@ -1,14 +1,18 @@
 #ifndef _DBS_H
 #define _DBS_H
 
+#include "core/RunnableQueue.h"
+#include "core/Server.h"
 
-#include "core/Scheduler.h"
+/***************************************
+ *        CLASS DECLARATION            * 
+ ***************************************/
 
-class Task;
+class DBS : public Server {
 
-class DBS : public Scheduler {
   private:
-    Vector<Task> task_queue;
+
+    RunnableQueue queue;
 
 };
 #endif

@@ -1,5 +1,9 @@
 #include "queues/FIFOQueue.h"
 
+#include "core/Criteria.h"
+
+#include <stdlib.h>
+
 /********************************************************************************
  * CLASS DEFINITION
  ********************************************************************************
@@ -15,7 +19,7 @@ FIFOQueue::FIFOQueue() : RunnableQueue() {
 /*********** MEMBER FUNCTIONS ***********/
 
 ///This function inserts the new runnable at the end of the queue.
-void FIFOQueue::insert(Runnable *newRunnable) {
+void FIFOQueue::insertRunnable(Runnable *newRunnable) {
   Node *aux = (Node*) malloc(sizeof(Node));
   aux->r = newRunnable;
   aux->next = NULL;

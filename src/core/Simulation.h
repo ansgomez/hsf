@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <time.h>
 
 using namespace std;
 
@@ -14,22 +15,24 @@ class Statistics;
 class Scheduler;
 class Idle;
 
-/********************************************************************************
- * CLASS DECLARATION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DECLARATION            * 
+ ***************************************/
 
 class Simulation {
-  /*********** VARIABLES ***********/
+
  protected:
+
+  /*********** VARIABLES ***********/
+
   ///This variable stores the path to the XML input file
   string xml_path;
 
   ///This attribute indicate if the simulation is initialized
-  int initialized;
+  static bool initialized;
 
   ///This attribute indicates if there is currently a simulation
-  int simulating;  
+  static bool simulating;  
 
   ///The name of the simulation (will be used for traced output)
   string name;
@@ -47,7 +50,7 @@ class Simulation {
   Scheduler *top_sched;
 
   ///This attribute holds how long the simulation will last
-  struct timespec sim_time;
+  static struct timespec simTime;
 
   ///This is the idle thread
   Idle *idle;
@@ -59,8 +62,10 @@ class Simulation {
   cpu_set_t set;
   struct sched_param param;
 
-  /*********** CONSTRUCTOR ***********/
  public:
+
+  /*********** CONSTRUCTOR ***********/
+
   ///Constructor needs the path to xml and the cpu_set
   Simulation(string xml_path, int cpu, string name);
 
@@ -73,10 +78,10 @@ class Simulation {
   void simulate();
 
   ///This function tells whether the simulation is initialized (used to synchronize threads during X11_init()
-  int isInitialized();
+  static bool isInitialized();
 
   ///This function tells if there is currently a simulation
-  int isSimulating();
+  static bool isSimulating();
 
   ///This function sets the dispatchers to their 'active' priority.
   void activate_dispatchers();
@@ -92,11 +97,11 @@ class Simulation {
   ///This function returns the name of the simulation
   string getName();
   ///This function returns the simulation's traces
-  Trace* getTraces();
+  //Trace* getTraces();
   ///This function returns a vector of the worker id's
   vector<unsigned int> getWorker_id();
   ///This function returns the simulation time
-  struct timespec getSim_time();
+  static struct timespec getSimTime();
   ///This function return the simulation's statistics
   Statistics* getStats();
   ///This function sets the name of the simulation

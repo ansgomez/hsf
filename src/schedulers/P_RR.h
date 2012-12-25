@@ -1,19 +1,19 @@
-#ifndef _SCHEDULER_CBS_H
-#define _SCHEDULER_CBS_H
+#ifndef _P_RR_H
+#define _P_RR_H
 
 #include "core/RunnableQueue.h"
 #include "core/Scheduler.h"
-
-#include <semaphore.h>
 
 /***************************************
  *        CLASS DECLARATION            * 
  ***************************************/
 
-class SchedulerCBS : public Scheduler {
-
+class P_RR : public Scheduler {
  private:
- 
+  
+  ///This timespec holds timeslice allocated to each active job
+  struct timespec timeslice;
+
   ///This queue holds all active Runnables underneath this scheduler.
   RunnableQueue* activeQueue;
 
@@ -26,12 +26,12 @@ class SchedulerCBS : public Scheduler {
   ///Semaphores to ensure proper execution
   sem_t schedule_sem, preempt_sem, event_sem, newjob_sem, jobfinished_sem, activation_sem;
 
- public:
+ public: 
 
   /*********** CONSTRUCTOR ***********/
-
+ 
   ///Constructor needs pointer to simulation, id, and its level
-  SchedulerCBS(Simulation* s, unsigned int id, int level);
+  P_RR(Simulation* s, unsigned int id, int level);
 
   /*********** INHERITED FUNCTIONS ***********/
 

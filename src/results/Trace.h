@@ -3,19 +3,20 @@
 
 #include "util/Enumerations.h"
 
-#include <vector>
 #include <string>
 
 using namespace std;
 
-/********************************************************************************
- * CLASS DECLARATION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DECLARATION            * 
+ ***************************************/
 
 class Trace {
-/*********** VARIABLES ***********/
+
  private:
+
+  /*********** VARIABLES ***********/
+
   ///This variable will store the trace's timestamp
   struct timespec timestamp;
 
@@ -28,8 +29,10 @@ class Trace {
   ///This variable stores the action that is being traced
   _task_action task_action;
 
-  /*********** MEMBER FUNCTIONS ***********/
  public:
+
+  /*********** MEMBER FUNCTIONS ***********/
+
   ///This function sets the attributes of the object
   void setTrace(struct timespec ts, _thread_type tt, unsigned int ti, _task_action ta);
 

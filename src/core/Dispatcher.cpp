@@ -38,39 +38,13 @@ Dispatcher::Dispatcher (Simulation *s, unsigned int _id) : Thread(s,_id)
   worker = NULL;
 }
 
-/********************* GETTER AND SETTER FUNCTIONS *********************/
-///This function gets the relative deadline
-struct timespec Dispatcher::getRelativeDeadline() {
-  return relativeDeadline;
-}
-
-///This function sets the relative deadline
-void Dispatcher::setRelativeDeadline(struct timespec aux) {
-  relativeDeadline = aux;
-}
-
-///This function sets the worker
-void Dispatcher::setWorker(Worker *w) {
-  worker = w;
-}
-
-///This function sets the dispatcher's periodicity
-void Dispatcher::setPeriodicity(_task_periodicity t) {
-  periodicity = t;
-}
-
-///This function sets the dispatcher's offset
-void Dispatcher::setOffset(struct timespec o) {
-  offset = o;
-}
-
 /********************* INHERITED FUNCTIONS *********************/
 ///This is the pthread's wrapper function
 void Dispatcher::wrapper() {
   struct timespec rem;
 
   //Wait until the simulation is initialized
-  while(sim->isInitialized() == 0);
+  while(Simulation::isInitialized() == 0);
 
   //if offset != 0, sleep before dispatching
   if(offset.tv_nsec != 0 || offset.tv_sec !=0) {
@@ -94,12 +68,23 @@ void Dispatcher::dispatch() {
 
 ///This function sets the dispatcher's priority to DISP_PR
 void Dispatcher::activate() {
-
-#if _DEBUG == 1
-  cout << "Dispatcher " << id << " now has DISP_PR\n";
-#endif
-
   pthread_getschedparam(thread, &policy, &thread_param);
   thread_param.sched_priority = Priorities::get_disp_pr(); //active priority
   pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
+}
+
+/********************* GETTER AND SETTER FUNCTIONS *********************/
+///This function sets the worker
+void Dispatcher::setWorker(Worker *w) {
+  worker = w;
+}
+
+///This function sets the dispatcher's periodicity
+void Dispatcher::setPeriodicity(_task_periodicity t) {
+  periodicity = t;
+}
+
+///This function sets the dispatcher's offset
+void Dispatcher::setOffset(struct timespec o) {
+  offset = o;
 }

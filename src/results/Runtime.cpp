@@ -1,11 +1,13 @@
 #include "results/Runtime.h"
 
-#include "util/util/TimeUtil.h"
+#include "util/TimeUtil.h"
+
+#include <sstream>
 
 /********************* MEMBER FUNCTIONS *********************/
 
 ///This sets the thread type, id, and runtime of trace
-  void setRuntime(enum _thread_type _type, unsigned int _id, struct timespec _ts) {
+void Runtime::setRuntime(enum _thread_type _type, unsigned int _id, struct timespec _ts) {
   type = _type;
   id = _id;
   ts = _ts;
@@ -26,6 +28,6 @@ unsigned int Runtime::getId() {
 }
 
 ///This operator defines the sorting criteria to the the statistic's id
-int Runtime::operator<(RuntimeStatistic b) {
+int Runtime::operator<(Runtime b) {
   return this->getId() < b.getId();
 }

@@ -2,8 +2,9 @@
 
 #include "core/Worker.h"
 #include "core/Simulation.h"
-#include "results/Trace.h"
+#include "results/Statistics.h"
 #include "util/Operators.h"
+#include "util/TimeUtil.h"
 
 #include <iostream>
 
@@ -15,7 +16,7 @@
 /********************* CONSTRUCTOR *********************/
 
 Periodic::Periodic(Simulation *s, unsigned int id) : Dispatcher(s,id) {
-  period =  Millis(20);
+  period =  TimeUtil::Millis(20);
 }
 
 /********************* INHERITED FUNCTIONS *********************/
@@ -23,9 +24,9 @@ Periodic::Periodic(Simulation *s, unsigned int id) : Dispatcher(s,id) {
 void Periodic::dispatch() {
   struct timespec rem;
 
-  while (sim->isSimulating() ==  1) {
+  while (Simulation::isSimulating() ==  1) {
 
-    sim->getTraces()->add_trace(dispatcher, worker->getId(), task_arrival);
+    Statistics::addTrace(dispatcher, worker->getId(), task_arrival);
 
     if(worker != NULL) {
       worker->new_job();
@@ -34,7 +35,7 @@ void Periodic::dispatch() {
       cout << "Dispatcher error: worker is null!\n";
     }
 
-    if(sim->isSimulating() ==  1) {
+    if(Simulation::isSimulating() ==  1) {
       nanosleep(&period, &rem);
     }
   }

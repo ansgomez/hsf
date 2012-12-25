@@ -12,11 +12,9 @@
 Idle::Idle(Simulation *s) : Thread(s,0) {
   sim = s;
 
-  type = idle;
+  thread_type = idle;
 
-  pthread_getschedparam(thread, &policy, &thread_param);
-  thread_param.sched_priority = Priorities::get_idle_pr(); 
-  pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
+  setPriority(Priorities::get_idle_pr());
 }
 
 /********************* MEMBER FUNCTIONS *********************/
@@ -28,7 +26,7 @@ void Idle::run() {
   cout << "Starting Idle thread\n";
 #endif
 
-  while (sim->isSimulating() == 1);
+  while (Simulation::isSimulating() == 1);
 
 #if _INFO == 1
   cout << "Exiting Idle thread\n";

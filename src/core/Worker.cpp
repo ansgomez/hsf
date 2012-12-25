@@ -42,14 +42,14 @@ Worker::Worker(Simulation *s, Intermediary *p, unsigned int _id, _task_load tl) 
 
 void Worker::wrapper() {
   //Wait until the simulation is initialized
-  while(sim->isInitialized() == 0);
+  while(Simulation::isInitialized() == 0);
 
-  while (sim->isSimulating() == 1) {
+  while (Simulation::isSimulating() == 1) {
     sem_wait(&wrapper_sem);
 
     Statistics::addTrace(worker, id, task_start);
 
-    if( sim->isSimulating() == 1) {
+    if( Simulation::isSimulating() == 1) {
       if(load != NULL) {
 	load->fire();    
       }
@@ -110,8 +110,8 @@ void Worker::join() {
 /*********** MEMBER FUNCTIONS ***********/
 
 ///This function will be called by the dispatcher thread, and will post to the wrapper_sem
-void Worker::new_job(struct timespec realtiveDeadline) {
-
+void Worker::new_job() {
+  //fix: struct timespec realtiveDeadline is not a param
   sem_wait(&arrival_sem);
   arrival_times.push_back(TimeUtil::getTime() + relativeDeadline);
 
@@ -134,7 +134,7 @@ void Worker::new_job(struct timespec realtiveDeadline) {
 ///This function erases the head of the active_queue, and updates any pending events
 void Worker::job_finished() {
 
-  if(sim->isSimulating() != 1) {
+  if(Simulation::isSimulating() != 1) {
     return;
   }
 

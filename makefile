@@ -29,7 +29,7 @@ MAIN=$(SRCDIR)/$(MAIN_SRC)
 
 all: libraries hsf #executable
 
-hsf: core criteria #dispatchers pthread queues results schedulers servers tasks util 
+hsf: core criteria dispatchers pthread queues results schedulers servers tasks util 
 
 #################        HSF        #################
 
@@ -45,6 +45,54 @@ criteria: $(CRITERIA)
 $(CRITERIA):
 	$(CXX) $(CFLAGS) -c $(SRCDIR)/criteria/$@.cpp -o $(OBJDIR)/$@.o $(CARG)
 
+
+### HSF DISPATCHERS
+DISPATCHERS:= $(patsubst $(SRCDIR)/dispatchers/%.cpp, %, $(wildcard $(SRCDIR)/dispatchers/*.cpp))
+dispatchers: $(DISPATCHERS)
+$(DISPATCHERS):
+	$(CXX) $(CFLAGS) -c $(SRCDIR)/dispatchers/$@.cpp -o $(OBJDIR)/$@.o $(CARG)
+
+### HSF DISPATCHERS
+PTHREAD:= $(patsubst $(SRCDIR)/pthread/%.cpp, %, $(wildcard $(SRCDIR)/pthread/*.cpp))
+pthread: $(PTHREAD)
+$(PTHREAD):
+	$(CXX) $(CFLAGS) -c $(SRCDIR)/pthread/$@.cpp -o $(OBJDIR)/$@.o $(CARG)
+
+### HSF QUEUES
+QUEUES:= $(patsubst $(SRCDIR)/queues/%.cpp, %, $(wildcard $(SRCDIR)/queues/*.cpp))
+queues: $(QUEUES)
+$(QUEUES):
+	$(CXX) $(CFLAGS) -c $(SRCDIR)/queues/$@.cpp -o $(OBJDIR)/$@.o $(CARG)
+
+### HSF RESULTS
+RESULTS:= $(patsubst $(SRCDIR)/results/%.cpp, %, $(wildcard $(SRCDIR)/results/*.cpp))
+results: $(RESULTS)
+$(RESULTS):
+	$(CXX) $(CFLAGS) -c $(SRCDIR)/results/$@.cpp -o $(OBJDIR)/$@.o $(CARG)
+
+### HSF SCHEDULERS
+SCHEDULERS:= $(patsubst $(SRCDIR)/schedulers/%.cpp, %, $(wildcard $(SRCDIR)/schedulers/*.cpp))
+schedulers: $(SCHEDULERS)
+$(SCHEDULERS):
+	$(CXX) $(CFLAGS) -c $(SRCDIR)/schedulers/$@.cpp -o $(OBJDIR)/$@.o $(CARG)
+
+### HSF SERVERS
+SERVERS:= $(patsubst $(SRCDIR)/servers/%.cpp, %, $(wildcard $(SRCDIR)/servers/*.cpp))
+servers: $(SERVERS)
+$(SERVERS):
+	$(CXX) $(CFLAGS) -c $(SRCDIR)/servers/$@.cpp -o $(OBJDIR)/$@.o $(CARG)
+
+### HSF TASKS
+TASKS:= $(patsubst $(SRCDIR)/tasks/%.cpp, %, $(wildcard $(SRCDIR)/tasks/*.cpp))
+tasks: $(TASKS)
+$(TASKS):
+	$(CXX) $(CFLAGS) -c $(SRCDIR)/tasks/$@.cpp -o $(OBJDIR)/$@.o $(CARG)
+
+### HSF UTIL
+UTIL:= $(patsubst $(SRCDIR)/util/%.cpp, %, $(wildcard $(SRCDIR)/util/*.cpp))
+util: $(UTIL)
+$(UTIL):
+	$(CXX) $(CFLAGS) -c $(SRCDIR)/util/$@.cpp -o $(OBJDIR)/$@.o $(CARG)
 
 #################    EXECUTABLE     #################
 

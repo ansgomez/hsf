@@ -3,26 +3,35 @@
 
 #include "core/Dispatcher.h"
 
-/********************************************************************************
- * CLASS DECLARATION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DECLARATION            * 
+ ***************************************/
 
 class Periodic : public Dispatcher {
-  /*********** VARIABLES ***********/
+
  private:
+
+  /*********** VARIABLES ***********/
+
+  ///This timespec hols the Dispatcher's period
   struct timespec period;
 
-  /*********** CONSTRUCTOR ***********/
  public:
+
+  /*********** CONSTRUCTOR ***********/
+
   ///Constructor needs simulation pointer, and id
   Periodic(Simulation *s, unsigned int id);
 
   /*********** INHERITED FUNCTIONS ***********/
+  
+  /**** FROM DISPATCHER ****/  
+  
   ///This function was a flagged loop that activates the Worker according to the task periodicity
   void dispatch();
 
   /*********** GETTER AND SETTER FUNCTIONS ***********/
+
   ///This function sets the period
   void setPeriod(struct timespec p);
   ///This function returns the period

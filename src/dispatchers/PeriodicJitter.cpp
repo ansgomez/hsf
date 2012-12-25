@@ -2,8 +2,9 @@
 
 #include "core/Worker.h"
 #include "core/Simulation.h"
-#include "results/Trace.h"
+#include "results/Statistics.h"
 #include "util/Operators.h"
+#include "util/TimeUtil.h"
 
 #include <iostream>
 #include <stdlib.h>
@@ -17,11 +18,11 @@
 /*********** CONSTRUCTOR ***********/
 
 PeriodicJitter::PeriodicJitter(Simulation *s, unsigned int id) : Dispatcher(s,id) {
-  period =  Millis(20);
+  period =  TimeUtil::Millis(20);
 
   srand(time(NULL));
 
-  deltaPeriod = Millis(0);
+  deltaPeriod = TimeUtil::Millis(5);
 }
 
 /*********** INHERITED FUNCTIONS ***********/
@@ -30,9 +31,9 @@ void PeriodicJitter::dispatch() {
   struct timespec newPeriod, rem;
   double random;
 
-  while (sim->isSimulating() ==  1) {
+  while (Simulation::isSimulating() ==  1) {
 
-    sim->getTraces()->add_trace(dispatcher, worker->getId(), task_arrival);
+    Statistics::addTrace(dispatcher, worker->getId(), task_arrival);
 
     if(worker != NULL) {
       worker->new_job();
@@ -41,7 +42,7 @@ void PeriodicJitter::dispatch() {
       cout << "Dispatcher error: worker is null!\n";
     }
 
-    if(sim->isSimulating() ==  1) {
+    if(Simulation::isSimulating() ==  1) {
       random = (1+(rand()%200))/100.0; //random in [1/100,2]
       newPeriod = period + jitter - random*jitter - deltaPeriod;
       //deltaPeriod keeps the timing to n*P+-jitter

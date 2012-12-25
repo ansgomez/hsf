@@ -79,7 +79,7 @@ void * Thread::static_wrapper(void * This)
   clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts);
  
   //Save the runtime statistic
-  t->sim->getStats()->add_stat(t->thread_type, t->id, ts);
+  Statistics::addRuntime(t->thread_type, t->id, ts);
 
   pthread_exit(NULL);
   return NULL;

@@ -1,8 +1,11 @@
 #ifndef _SERVER_H
 #define _SERVER_H
 
-
 #include "core/Runnable.h"
+
+/***************************************
+ *        CLASS DECLARATION            * 
+ ***************************************/
 
 class Server : public Runnable {
   public:
@@ -15,4 +18,5 @@ class Server : public Runnable {
     void serve();
 
 };
+
 #endif

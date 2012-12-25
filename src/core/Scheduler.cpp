@@ -31,7 +31,7 @@ Scheduler::Scheduler(Simulation *s, unsigned int _id, int _level) : Intermediary
 void Scheduler::wrapper() {
 
   //Wait until the simulation is initialized
-  while(sim->isInitialized() == 0);
+  while(Simulation::isInitialized() == 0);
 
   schedule();
 }
@@ -60,19 +60,19 @@ void Scheduler::schedule() {
 }
 
 ///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution.
-void Scheduler::new_job(Runnable *obj) {
+void Scheduler::new_job(Runnable *r) {
   //empty
   cout << "Scheduler::new_job - This should not print!\n";
 }
 
 ///This function handles a job that had been queued by the worker. The worker object is thus already in the scheduler's queue, but now has a different schedulable criteria (and thus requires a change in the scheduling queue).
-void Scheduler::renew_job(int runnable_id) {
+void Scheduler::renew_job(Runnable* r) {
   //empty
   cout << "Scheduler::renew_job - This should not print!\n";
 }
 
 ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
-void Scheduler::job_finished(int runnable_id) {
+void Scheduler::job_finished(unsigned int id) {
   //empty
   cout << "Scheduler::job_finished - This should not print!\n";
 }

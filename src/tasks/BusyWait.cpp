@@ -41,7 +41,7 @@ void BusyWait::fire() {
       count += 100;
       start = end;
     }
-  } while ( count < wcet_us && sim->isSimulating()==1 ); 
+  } while ( count < wcet_us && Simulation::isSimulating()==1 ); 
 
   //TODO if(now() > deadline()) -> add to missed_deadlines
 }
