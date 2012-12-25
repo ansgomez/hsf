@@ -31,17 +31,6 @@ class Criteria {
   Criteria();
   
   /*********** GETTERS AND SETTERS ***********/
-  ///This function sets a new arrivalTime
-  virtual void setArrivalTime(struct timespec at);
-
-  ///This function sets a new deadline
-  virtual void setDeadline(struct timespec dln);
-
-  ///This function sets a new period
-  virtual void setPeriod(struct timespec p);
-
-  ///This function sets the new priority
-  virtual void setPriority(int pr);
 
   ///This function returns the current job's arrivalTime (according to its criteria policy)
   virtual struct timespec getArrivalTime();
@@ -54,6 +43,18 @@ class Criteria {
   
   ///This function returns the object's priority (according to its criteria policy)
   virtual int getPriority();
+
+  ///This function sets a new arrivalTime
+  virtual void setArrivalTime(struct timespec at);
+
+  ///This function sets a new deadline
+  virtual void setDeadline(struct timespec dln);
+
+  ///This function sets a new period
+  virtual void setPeriod(struct timespec p);
+
+  ///This function sets the new priority
+  virtual void setPriority(int pr);
 };
 
 #endif

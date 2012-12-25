@@ -4,12 +4,12 @@
 
 #include <stdlib.h>
 
-/********************************************************************************
- * CLASS DEFINITION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
 
- /*********** CONSTRUCTOR ***********/
+/*********** CONSTRUCTOR ***********/
+
 ///Contructor needs nothing
 PriorityQueue::PriorityQueue() : RunnableQueue() {
   //empty
@@ -17,7 +17,7 @@ PriorityQueue::PriorityQueue() : RunnableQueue() {
 
 /*********** MEMBER FUNCTIONS ***********/
 
-///This function inserts the new runnable in the queue in such a way that no job before it (in the queue) has a lower (numerical) priority than itself. If only this method is used to access the queue, then the queue will always be sorted by descending priority
+///This function inserts the new runnable in the queue depending on the Runnable's priority
 void PriorityQueue::insertRunnable(Runnable *newRunnable) {
   //Base case, the list was empty. The Runnable is now head and tail of queue
   if (head == NULL) {

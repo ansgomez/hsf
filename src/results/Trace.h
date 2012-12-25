@@ -16,6 +16,7 @@ class Trace {
  private:
 
   /*********** VARIABLES ***********/
+  //Variables will be traced in the following order:
 
   ///This variable will store the trace's timestamp
   struct timespec timestamp;

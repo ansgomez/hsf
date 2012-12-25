@@ -6,13 +6,13 @@
 #include <string>
 #include <time.h>
 
+class Dispatcher;
+class Scheduler;
+class Simulation;
+class Worker;
+
 using namespace std;
 using namespace pugi;
-
-class Simulation;
-class Scheduler;
-class Worker;
-class Dispatcher;
 
 /***************************************
  *        CLASS DECLARATION            * 
@@ -44,17 +44,17 @@ class Parser {
 
   /*********** MEMBER FUNCTIONS ***********/
 
-  ///This function converts an XML "time" node to a timespec
-  struct timespec parseTime(xml_node n);
+  ///This function extract information from an XML "worker" and returns its corresponding disp.
+  Dispatcher* parseDispatcher(xml_node disp, unsigned int* id);
 
   ///This function receives a TDMA node and parses the entire node to return the full object
   Scheduler* parseTDMA( xml_node sched, unsigned int *id, int level);
 
+  ///This function converts an XML "time" node to a timespec
+  struct timespec parseTime(xml_node n);
+
   ///This function receives a Worker node, and it returns the initialized worker object
   Worker* parseWorker(xml_node worker, unsigned int *id);
-			     
-  ///This function extract information from an XML "worker" and returns its corresponding disp.
-  Dispatcher* parseDispatcher(xml_node disp, unsigned int* id);
 
 };
 

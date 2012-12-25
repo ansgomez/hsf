@@ -10,12 +10,13 @@
 #include <time.h>
 #include <iostream>
 
-/********************************************************************************
- * CLASS DEFINITION
- ********************************************************************************
- */
+using namespace std;
 
-/********************* CONSTRUCTOR *********************/
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
+
+/*********** CONSTRUCTOR ***********/
 
 ///Constructor needs Simulation pointer, and a disp_id
 Dispatcher::Dispatcher (Simulation *s, unsigned int _id) : Thread(s,_id)
@@ -38,7 +39,10 @@ Dispatcher::Dispatcher (Simulation *s, unsigned int _id) : Thread(s,_id)
   worker = NULL;
 }
 
-/********************* INHERITED FUNCTIONS *********************/
+/*********** INHERITED FUNCTIONS ***********/
+
+/**** FROM THREAD ****/
+
 ///This is the pthread's wrapper function
 void Dispatcher::wrapper() {
   struct timespec rem;
@@ -58,13 +62,7 @@ void Dispatcher::wrapper() {
 #endif
 }
 
-/********************* MEMBER FUNCTIONS *********************/
-
-///This virtual function should be implemented by the subclasses
-void Dispatcher::dispatch() {
-  //empty
-  cout << "Dispatcher::dispatch - This should not print!\n";
-}
+/*********** MEMBER FUNCTIONS ***********/
 
 ///This function sets the dispatcher's priority to DISP_PR
 void Dispatcher::activate() {
@@ -73,10 +71,17 @@ void Dispatcher::activate() {
   pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
 }
 
-/********************* GETTER AND SETTER FUNCTIONS *********************/
-///This function sets the worker
-void Dispatcher::setWorker(Worker *w) {
-  worker = w;
+///This virtual function should be implemented by the subclasses
+void Dispatcher::dispatch() {
+  //empty
+  cout << "Dispatcher::dispatch - This should not print!\n";
+}
+
+/*********** SETTER FUNCTIONS ***********/
+
+///This function sets the dispatcher's offset
+void Dispatcher::setOffset(struct timespec o) {
+  offset = o;
 }
 
 ///This function sets the dispatcher's periodicity
@@ -84,7 +89,7 @@ void Dispatcher::setPeriodicity(_task_periodicity t) {
   periodicity = t;
 }
 
-///This function sets the dispatcher's offset
-void Dispatcher::setOffset(struct timespec o) {
-  offset = o;
+///This function sets the worker
+void Dispatcher::setWorker(Worker *w) {
+  worker = w;
 }

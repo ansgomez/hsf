@@ -6,7 +6,11 @@
 
 #include <iostream>
 
-/********************* CONSTRUCTOR *********************/
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
+
+/*********** CONSTRUCTOR ***********/
 
 ///The constructor needs the simulation pointer
 Idle::Idle(Simulation *s) : Thread(s,0) {
@@ -17,7 +21,16 @@ Idle::Idle(Simulation *s) : Thread(s,0) {
   setPriority(Priorities::get_idle_pr());
 }
 
-/********************* MEMBER FUNCTIONS *********************/
+/*********** INHERITED FUNCTIONS ***********/
+
+/**** FROM THREAD ****/
+
+///This inherited function will only call run()
+void Idle::wrapper() {
+  run();
+}
+
+/*********** MEMBER FUNCTIONS ***********/
 
 ///This function contains the flagged loop.
 void Idle::run() {
@@ -33,9 +46,3 @@ void Idle::run() {
 #endif  
 }
 
-/********************* INHERITED FUNCTIONS *********************/
-
-///This inherited function will only call run()
-void Idle::wrapper() {
-  run();
-}

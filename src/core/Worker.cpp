@@ -13,10 +13,9 @@
 
 #include <iostream>
 
-/********************************************************************************
- * CLASS DEFINITION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
 
 /*********** CONSTRUCTOR ***********/
 
@@ -40,6 +39,17 @@ Worker::Worker(Simulation *s, Intermediary *p, unsigned int _id, _task_load tl) 
 
 /*********** INHERITED FUNCTIONS ***********/
 
+/**** FROM THREAD ****/
+
+///This function joins the calling thread with the object's pthread
+void Worker::join() {
+  //Post to sem in case worker is blocked
+  sem_post(&wrapper_sem);
+
+  pthread_join(thread, NULL);
+}
+
+///This inherited function will be executed by the worker thread
 void Worker::wrapper() {
   //Wait until the simulation is initialized
   while(Simulation::isInitialized() == 0);
@@ -64,6 +74,8 @@ void Worker::wrapper() {
     parent->job_finished(id);
   }
 }
+
+/**** FROM RUNNABLE ****/
 
 ///This function set the current runnable to active, meaning that it has control of the CPU and should 'run'
 void Worker::activate() {
@@ -99,37 +111,7 @@ void Worker::deactivate() {
   sem_post(&activation_sem);
 }
 
-///This function joins the calling thread with the object's pthread
-void Worker::join() {
-  //Post to sem in case worker is blocked
-  sem_post(&wrapper_sem);
-
-  pthread_join(thread, NULL);
-}
-
 /*********** MEMBER FUNCTIONS ***********/
-
-///This function will be called by the dispatcher thread, and will post to the wrapper_sem
-void Worker::new_job() {
-  //fix: struct timespec realtiveDeadline is not a param
-  sem_wait(&arrival_sem);
-  arrival_times.push_back(TimeUtil::getTime() + relativeDeadline);
-
-  //If there were no active jobs before, register event
-  if(arrival_times.size() == 1) {
-    //Update schedulable criteria
-    criteria->setDeadline(arrival_times[0]);
-
-    //Notify parent of new arrival
-    parent->new_job(this);
-  }
-  //Otherwise, the worker is already executing a job and when that finished, the next job will be renewed with the parent
-
-  sem_post(&arrival_sem);
-
-  //Post to worker thread
-  sem_post(&wrapper_sem);
-}
 
 ///This function erases the head of the active_queue, and updates any pending events
 void Worker::job_finished() {
@@ -160,18 +142,40 @@ void Worker::job_finished() {
   sem_post(&arrival_sem);
 }
 
+///This function will be called by the dispatcher thread, and will post to the wrapper_sem
+void Worker::new_job() {
+  //fix: struct timespec realtiveDeadline is not a param
+  sem_wait(&arrival_sem);
+  arrival_times.push_back(TimeUtil::getTime() + relativeDeadline);
+
+  //If there were no active jobs before, register event
+  if(arrival_times.size() == 1) {
+    //Update schedulable criteria
+    criteria->setDeadline(arrival_times[0]);
+
+    //Notify parent of new arrival
+    parent->new_job(this);
+  }
+  //Otherwise, the worker is already executing a job and when that finished, the next job will be renewed with the parent
+
+  sem_post(&arrival_sem);
+
+  //Post to worker thread
+  sem_post(&wrapper_sem);
+}
+
 /********************* GETTER AND SETTER FUNCTIONS *********************/
 ///This function gets the relative deadline
 struct timespec Worker::getRelativeDeadline() {
   return relativeDeadline;
 }
 
-///This function sets the relative deadline
-void Worker::setRelativeDeadline(struct timespec aux) {
-  relativeDeadline = aux;
-}
-
 ///This function sets the worker's load
 void Worker::setLoad(Task *t) {
   load = t;
+}
+
+///This function sets the relative deadline
+void Worker::setRelativeDeadline(struct timespec aux) {
+  relativeDeadline = aux;
 }

@@ -1,9 +1,9 @@
 #include "util/Parser.h"
 
 #include "core/Dispatcher.h"
-#include "core/Simulation.h"
-#include "core/Scheduler.h"
 #include "core/Runnable.h"
+#include "core/Scheduler.h"
+#include "core/Simulation.h"
 #include "core/Worker.h"
 #include "dispatchers/Periodic.h"
 #include "schedulers/TDMA.h"
@@ -17,13 +17,9 @@
 #define _INFO 0
 #define _DEBUG 0
 
-using namespace std;
-using namespace pugi;
-
-/********************************************************************************
- * CLASS DEFINITION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
 
 /*********** CONSTRUCTOR ***********/
 
@@ -32,29 +28,37 @@ Parser::Parser(Simulation *_sim) {
   sim = _sim;
 }
 
-/*********** MEMBER FUNCTIONS ***********/
+/*********** PUBLIC MEMBER FUNCTIONS ***********/
 
-//This function converts an XML "time" node to a timespec
-struct timespec Parser::parseTime(xml_node n) {
-  int time = n.attribute("value").as_int();
-  string units = n.attribute("units").value();
-  struct timespec ret;
+///This function receives the filepath and initiates the entire simulation
+void Parser::parseFile(string filePath) {
+  xml_document doc;
+  unsigned int id = 1;
 
-  if(units == "sec") {
-    ret = TimeUtil::Seconds(time);
-  }
-  else if(units == "ms") {
-    ret = TimeUtil::Millis(time);
-  }
-  else if(units == "us") {
-    ret = TimeUtil::Micros(time);
-  }
-  else {
-    cout << "Parser error: could not recognize time unit!\n";
+  //Load file
+  if (!doc.load_file(filePath.data()) ) {
+    cout << "Could not find file...\n";
+    return;
   }
 
-  return ret;
+  //Create parent xml_node
+  xml_node sim_node = doc.child("simulation");
+
+  //Set parent (simulation) attributes
+  sim->setName(sim_node.attribute("name").value());
+  sim->setDuration(parseTime(sim_node.child("duration")));
+
+  //Create top_sched node
+  xml_node top_sched = sim_node.child("runnable");
+
+  //if TDMA
+  Scheduler *top = parseTDMA(top_sched, &id, 0);
+  sim->setTopScheduler(top);
+
+  cout << " '" << sim_node.attribute("name").value() << "' has been loaded\n";
 }
+
+/*********** PRIVATE MEMBER FUNCTIONS ***********/
 
 //This function extract information from an XML "worker" and returns its corresponding disp.
 Dispatcher* Parser::parseDispatcher(xml_node disp_node, unsigned int *id) {
@@ -78,31 +82,6 @@ Dispatcher* Parser::parseDispatcher(xml_node disp_node, unsigned int *id) {
   }
 
   return disp;
-}
-
-
-///This function receives a Worker node, and it returns the initialized worker object
-Worker* Parser::parseWorker(xml_node worker_node, unsigned int *id) {
-  string load = worker_node.attribute("load").as_string();
-  Worker *worker = NULL;
-
-  if(load == "busy_wait") {
-    Dispatcher *d = parseDispatcher(worker_node, id);
-    *id = *id + 1;  
-#if _INFO==1
-    cout << "Creating Worker " << *id << endl;
-#endif
-    BusyWait *bw = new BusyWait(sim, d, parseTime(worker_node.child("wcet")));
-    Scheduler *parent = NULL;
-    worker = new Worker(sim, parent, *id, busy_wait);
-    worker->setLoad(bw);
-    d->setWorker(worker);
-  }
-  else {
-    cout << "Parser error: Worker " << *id << "'s load was not recognized\n";
-  }
-
-  return worker;
 }
 
 ///This function receives and TDMA node, and parses its load
@@ -149,31 +128,49 @@ Scheduler* Parser::parseTDMA(xml_node sched_node, unsigned int *id, int level) {
   return (Scheduler*) sched;
 }
 
+//This function converts an XML "time" node to a timespec
+struct timespec Parser::parseTime(xml_node n) {
+  int time = n.attribute("value").as_int();
+  string units = n.attribute("units").value();
+  struct timespec ret;
 
-///This function receives the filepath and initiates the entire simulation
-void Parser::parseFile(string filePath) {
-  xml_document doc;
-  unsigned int id = 1;
-
-  //Load file
-  if (!doc.load_file(filePath.data()) ) {
-    cout << "Could not find file...\n";
-    return;
+  if(units == "sec") {
+    ret = TimeUtil::Seconds(time);
+  }
+  else if(units == "ms") {
+    ret = TimeUtil::Millis(time);
+  }
+  else if(units == "us") {
+    ret = TimeUtil::Micros(time);
+  }
+  else {
+    cout << "Parser error: could not recognize time unit!\n";
   }
 
-  //Create parent xml_node
-  xml_node sim_node = doc.child("simulation");
+  return ret;
+}
 
-  //Set parent (simulation) attributes
-  sim->setName(sim_node.attribute("name").value());
-  sim->setDuration(parseTime(sim_node.child("duration")));
 
-  //Create top_sched node
-  xml_node top_sched = sim_node.child("runnable");
+///This function receives a Worker node, and it returns the initialized worker object
+Worker* Parser::parseWorker(xml_node worker_node, unsigned int *id) {
+  string load = worker_node.attribute("load").as_string();
+  Worker *worker = NULL;
 
-  //if TDMA
-  Scheduler *top = parseTDMA(top_sched, &id, 0);
-  sim->setTopScheduler(top);
+  if(load == "busy_wait") {
+    Dispatcher *d = parseDispatcher(worker_node, id);
+    *id = *id + 1;  
+#if _INFO==1
+    cout << "Creating Worker " << *id << endl;
+#endif
+    BusyWait *bw = new BusyWait(sim, d, parseTime(worker_node.child("wcet")));
+    Scheduler *parent = NULL;
+    worker = new Worker(sim, parent, *id, busy_wait);
+    worker->setLoad(bw);
+    d->setWorker(worker);
+  }
+  else {
+    cout << "Parser error: Worker " << *id << "'s load was not recognized\n";
+  }
 
-  cout << " '" << sim_node.attribute("name").value() << "' has been loaded\n";
+  return worker;
 }

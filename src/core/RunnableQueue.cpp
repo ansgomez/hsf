@@ -7,10 +7,9 @@
 
 using namespace std;
 
-/********************************************************************************
- * CLASS DEFINITION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
 
 /*********** CONSTRUCTOR ***********/
 ///Contructor needs nothing
@@ -21,6 +20,20 @@ RunnableQueue::RunnableQueue() {
 }
 
 /*********** MEMBER FUNCTIONS ***********/
+
+///This function deletes the queue's pointer to the Runnable with the specified ifndef
+void RunnableQueue::deleteRunnable(unsigned int id) {
+  if(head->r->getId() != id) {
+    cout << "RunnableQueue::delete - tried to delete non-active runnable\n";
+  }
+  else {
+    Node *old = head;
+    //move the head to the next node
+    head = head->next;
+    //free the old head
+    free(old);
+  }
+}
 
 ///This function will be implemented by the derived classes
 void RunnableQueue::insertRunnable(Runnable *r) {
@@ -46,21 +59,8 @@ Runnable* RunnableQueue::pop_front() {
   return aux;
 }
 
-///This function deletes the queue's pointer to the Runnable with the specified ifndef
-void RunnableQueue::deleteRunnable(unsigned int id) {
-  if(head->r->getId() != id) {
-    cout << "RunnableQueue::delete - tried to delete non-active runnable\n";
-  }
-  else {
-    Node *old = head;
-    //move the head to the next node
-    head = head->next;
-    //free the old head
-    free(old);
-  }
-}
-
 /*********** GETTER FUNCTIONS ***********/
+
 ///This function returns the size of the queue
 int RunnableQueue::getSize() {
   return size;

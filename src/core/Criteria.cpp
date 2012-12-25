@@ -6,10 +6,9 @@
 
 using namespace std;
 
-/********************************************************************************
- * CLASS DEFINITION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
 
 /*********** CONSTRUCTOR ***********/
 Criteria::Criteria() {
@@ -20,26 +19,6 @@ Criteria::Criteria() {
 }
 
 /*********** GETTERS AND SETTERS ***********/
-
-///This function sets a new arrivalTime
-void Criteria::setArrivalTime(struct timespec at) {
-  cout << "Criteria::setArrivalTime() - this should not print!\n";
-}
-
-///This function sets a new deadline
-void Criteria::setDeadline(struct timespec dln) {
-  cout << "Criteria::setDeadline() - this should not print!\n";
-}
-
-///This function sets a new period
-void Criteria::setPeriod(struct timespec p) {
-  cout << "Criteria::setPeriod() - this should not print!\n";  
-}
-
-///This function sets the new priority
-void Criteria::setPriority(int pr) {
-  cout << "Criteria::setPriority() - this should not print!\n";
-}
 
 ///This function returns the current job's arrivalTime (according to its criteria policy)
 struct timespec Criteria::getArrivalTime() {
@@ -63,4 +42,24 @@ struct timespec Criteria::getPeriod() {
 int Criteria::getPriority() {
   cout << "Criteria::getPriority() - this should not print!\n";
   return priority;
+}
+
+///This function sets a new arrivalTime
+void Criteria::setArrivalTime(struct timespec at) {
+  cout << "Criteria::setArrivalTime() - this should not print!\n";
+}
+
+///This function sets a new deadline
+void Criteria::setDeadline(struct timespec dln) {
+  cout << "Criteria::setDeadline() - this should not print!\n";
+}
+
+///This function sets a new period
+void Criteria::setPeriod(struct timespec p) {
+  cout << "Criteria::setPeriod() - this should not print!\n";  
+}
+
+///This function sets the new priority
+void Criteria::setPriority(int pr) {
+  cout << "Criteria::setPriority() - this should not print!\n";
 }

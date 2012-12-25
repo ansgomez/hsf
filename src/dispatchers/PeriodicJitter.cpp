@@ -1,7 +1,7 @@
 #include "dispatchers/PeriodicJitter.h"
 
-#include "core/Worker.h"
 #include "core/Simulation.h"
+#include "core/Worker.h"
 #include "results/Statistics.h"
 #include "util/Operators.h"
 #include "util/TimeUtil.h"
@@ -10,10 +10,9 @@
 #include <stdlib.h>
 #include <time.h>
 
-/********************************************************************************
- * CLASS DEFINITION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
 
 /*********** CONSTRUCTOR ***********/
 
@@ -26,6 +25,8 @@ PeriodicJitter::PeriodicJitter(Simulation *s, unsigned int id) : Dispatcher(s,id
 }
 
 /*********** INHERITED FUNCTIONS ***********/
+
+/**** FROM DISPATCHER ****/
 
 void PeriodicJitter::dispatch() {
   struct timespec newPeriod, rem;
@@ -64,9 +65,11 @@ void PeriodicJitter::dispatch() {
 #endif
 }
 
-///This function sets the dispatcher's period
-void PeriodicJitter::setPeriod(struct timespec p) {
-  period = p;
+/*********** GETTER AND SETTER FUNCTIONS ***********/
+
+///This function returns the period
+struct timespec PeriodicJitter::getPeriod() {
+  return period;
 }
 
 ///This function sets the jitter
@@ -74,9 +77,7 @@ void PeriodicJitter::setJitter(struct timespec j) {
   jitter = j;
 }
 
-///This function returns the period
-struct timespec PeriodicJitter::getPeriod() {
-  return period;
+///This function sets the dispatcher's period
+void PeriodicJitter::setPeriod(struct timespec p) {
+  period = p;
 }
-
-

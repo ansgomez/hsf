@@ -1,39 +1,33 @@
 #include "pthread/Priorities.h"
 
 ///Maximum number of threads under a scheduler
-#define MAX_THREADS 10
+#define MAX_LEVELS 10
 
-/********************************************************************************
- * CLASS DEFINITION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
 
-/********************* MEMBER FUNCTIONS *********************/
+/*********** MEMBER FUNCTIONS ***********/
 
 int Priorities::get_main_pr() {
-  return 5+2*MAX_THREADS;
-}
-
-int Priorities::get_sched_pr(int level) {
-  if(level<0 || level>=MAX_THREADS) {
-    return -1;
-  }
-  else {
-     return 5+2*MAX_THREADS-level; 
-  }
+  return 5+MAX_LEVELS;
 }
 
 int Priorities::get_disp_pr() {
-  return 4+MAX_THREADS;
+  return 5+MAX_LEVELS-1;
 }
 
-int Priorities::get_server_pr(int x) {
-  if ( x<0 || x>=MAX_THREADS) {
+int Priorities::get_sched_pr(int level) {
+  if(level<0 || level>=MAX_LEVELS) {
     return -1;
   }
   else {
-    return 4+2*MAX_THREADS-x;
+     return 4+MAX_LEVELS-level; 
   }
+}
+
+int Priorities::get_server_pr() {
+  return 4;
 }
 
 int Priorities::get_active_pr() {
@@ -47,7 +41,3 @@ int Priorities::get_idle_pr() {
 int Priorities::get_inactive_pr() {
   return 1;
 }
-
-
-
-

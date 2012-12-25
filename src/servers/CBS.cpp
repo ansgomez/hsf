@@ -1,6 +1,8 @@
 #include "servers/CBS.h"
 
-
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
 
 void CBS::replenish() {
 }

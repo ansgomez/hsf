@@ -5,8 +5,8 @@
 
 #include <time.h>
 
-class Simulation;
 class Dispatcher;
+class Simulation;
 
 /***************************************
  *        CLASS DECLARATION            * 
@@ -18,14 +18,14 @@ class Task {
  
   /*********** VARIABLES ***********/
   
-  ///Pointer to the simulation
-  Simulation *sim;
+  ///Varible describing the task's type of load (video, busy_wait)
+  _task_load task_load;
 
   ///Pointer to the task's dispatcher
   Dispatcher *dispatcher;
 
-  ///Varible describing the task's type of load (video, busy_wait)
-  _task_load task_load;
+  ///Pointer to the simulation
+  Simulation *sim;
 
  public:
  

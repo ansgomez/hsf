@@ -13,14 +13,14 @@ class PeriodicJitter : public Dispatcher {
 
   /*********** VARIABLES ***********/
 
-  ///The dispatcher's period
-  struct timespec period;
+  ///Auxiliary variable to keep track of delta Period
+  struct timespec deltaPeriod;
 
   ///The dispatcher's jitter
   struct timespec jitter;
 
-  ///Auxiliary variable to keep track of delta Period
-  struct timespec deltaPeriod;
+  ///The dispatcher's period
+  struct timespec period;
 
  public:
 
@@ -38,11 +38,11 @@ class PeriodicJitter : public Dispatcher {
 
   /*********** GETTER AND SETTER FUNCTIONS ***********/
   
-  ///This function sets the period
-  void setPeriod(struct timespec p);
-  ///This function sets the jitter
-  void setJitter(struct timespec j);
   ///This function returns the period
   struct timespec getPeriod();
+  ///This function sets the jitter
+  void setJitter(struct timespec j);
+  ///This function sets the period
+  void setPeriod(struct timespec p);
 };
 #endif

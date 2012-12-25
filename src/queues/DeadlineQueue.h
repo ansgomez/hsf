@@ -20,7 +20,7 @@ class DeadlineQueue : RunnableQueue {
 
   /**** FROM RUNNABLEQUEUE ****/   
    
-  ///This function inserts the new runnable in the queue according to the Runnable's deadline
+  ///This function inserts the new runnable in the queue depending on the Runnable's deadline
   void insertRunnable(Runnable *newRunnable);
 };
 

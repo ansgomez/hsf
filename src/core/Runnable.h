@@ -20,17 +20,17 @@ class Runnable : public Thread {
 
   /*********** VARIABLES ***********/
 
-  ///Pointer to simulation
-  Simulation* sim;
-  
   ///Runnable's schedulable criteria (this is the criteria used to schedule it)
   Criteria* criteria;
   
   ///Pointer to Task currently being 'executed' by the runnable
   Task* current_task;
-  
+
   ///Pointer to the scheduler that this runnable belongs to
   Intermediary* parent;
+
+  ///Pointer to simulation
+  Simulation* sim;
 
   ///Auxiliary variable to hold the state of runnable
   _runnable_state state;
@@ -46,11 +46,11 @@ class Runnable : public Thread {
   
   /**** FROM THREAD ****/
 
-  ///This function will be defined by subclasses
-  virtual void wrapper();
-
   ///This function joins the calling thread with the object's pthread
   void join();
+
+  ///This function will be defined by subclasses
+  virtual void wrapper();
 
   /**** FROM RUNNABLE ****/
   

@@ -4,6 +4,8 @@
 #include "core/RunnableQueue.h"
 #include "core/Scheduler.h"
 
+using namespace std;
+
 /***************************************
  *        CLASS DECLARATION            * 
  ***************************************/

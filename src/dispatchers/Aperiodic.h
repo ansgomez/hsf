@@ -31,10 +31,10 @@ class Aperiodic : public Dispatcher {
   void dispatch();
 
   /*********** GETTER AND SETTER FUNCTIONS ***********/
-  
+
+  ///This function returns the release time
+  struct timespec getRelease();  
   ///This function sets the release time for the aperiodic dispatcher
   void setRelease(struct timespec r);
-  ///This function returns the release time
-  struct timespec getRelease();
 };
 #endif

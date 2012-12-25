@@ -11,8 +11,6 @@
 #include "pthread/Priorities.h"
 #include "results/Statistics.h"
 #include "results/Trace.h"
-#include "schedulers/TDMA.h"
-#include "tasks/BusyWait.h"
 #include "util/Operators.h"
 #include "util/Parser.h"
 #include "util/TimeUtil.h"
@@ -22,11 +20,11 @@
 #include <stdio.h>
 #include <pthread.h>
 
-/********************************************************************************
- * CLASS DEFINITION
- ********************************************************************************
- */
-/********************* CONSTRUCTOR *********************/
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
+
+/*********** CONSTRUCTOR ***********/
   ///Constructor needs the path to xml and the cpu_set
 Simulation::Simulation(string _xml_path, int cpu, string nm) {
   name = nm;
@@ -68,7 +66,24 @@ Simulation::Simulation(string _xml_path, int cpu, string nm) {
   initialize();
 }
 
-/********************* MEMBER FUNCTIONS *********************/
+/*********** MEMBER FUNCTIONS ***********/
+
+///This function sets the dispatchers to their 'active' priority.
+void Simulation::activate_dispatchers() {
+  for (unsigned int c=0;c<disp.size();c++) {
+    disp[c]->activate();
+  }
+}
+
+///This function should be called by the Worker constructor to 'register' its id
+void Simulation::add_worker_id(unsigned int _id) {
+#if _INFO ==1
+  cout << "Adding Worker ID: " << _id << endl;
+#endif 
+
+  worker_id.push_back(_id);
+
+}
 
 ///This function initializes all of the objects
 void Simulation::initialize() {
@@ -86,44 +101,6 @@ void Simulation::initialize() {
   parser->parseFile(xml_path);
 
   free(parser);
-}
-
-///This function sets the dispatchers to their 'active' priority.
-void Simulation::activate_dispatchers() {
-  for (unsigned int c=0;c<disp.size();c++) {
-    disp[c]->activate();
-  }
-}
-
-///This function begins the simulation
-void Simulation::simulate() {
-  struct timespec rem;
-  cout << "**Simulating**\n" ;
-
-  //Set simulation variables
-  Simulation::simulating = true;  
-  TimeUtil::setOffset();
-
-  //Activate threads
-  activate_dispatchers();
-  top_sched->activate();
-
-  //Sleep for the duration of the simulation
-  nanosleep(&simTime, &rem);
-
-  //Deactivate threads
-  Simulation::simulating = false;  
-  cout << "***Done***\n";
-
-  //Join all other threads
-  join_all();
-
-  cout << "Saving results...\n";
-
-  //Save results to file
-  Statistics::toFile(name);
-
-  cout << "All results have been saved!\n";
 }
 
 ///This function waits for all other thread to join
@@ -161,14 +138,43 @@ void Simulation::join_all() {
 #endif
 }
 
-///This function should be called by the Worker constructor to 'register' its id
-void Simulation::add_worker_id(unsigned int _id) {
-#if _INFO ==1
-  cout << "Adding Worker ID: " << _id << endl;
-#endif 
 
-  worker_id.push_back(_id);
+///This function begins the simulation
+void Simulation::simulate() {
+  struct timespec rem;
+  cout << "**Simulating**\n" ;
 
+  //Set simulation variables
+  Simulation::simulating = true;  
+  TimeUtil::setOffset();
+
+  //Activate threads
+  activate_dispatchers();
+  top_sched->activate();
+
+  //Sleep for the duration of the simulation
+  nanosleep(&simTime, &rem);
+
+  //Deactivate threads
+  Simulation::simulating = false;  
+  cout << "***Done***\n";
+
+  //Join all other threads
+  join_all();
+
+  cout << "Saving results...\n";
+
+  //Save results to file
+  Statistics::toFile(name);
+
+  cout << "All results have been saved!\n";
+}
+
+/*********** STATIC FUNCTIONS ***********/
+
+///This function returns the simulation time
+struct timespec Simulation::getSimTime() {
+  return simTime;
 }
 
 ///This function tells if the simulation is initialized
@@ -181,27 +187,16 @@ bool Simulation::isSimulating() {
   return simulating;
 }
 
+/*********** GETTER AND SETTER FUNCTIONS ***********/
+
 ///This function adds dispatchers to the simulation object
 void Simulation::addDispatcher(Dispatcher *d) {
   disp.push_back(d);
 }
 
-/********************* GETTER AND SETTER FUNCTIONS *********************/
-
 ///This function returns the name of the simulation
 string Simulation::getName() {
   return name;
-}
-
-/*
-///This function returns the simulation's traces
-Trace* Simulation::getTraces() {
-  return traces;
-  }*/
-
-///This function return the simulation's statistics
-Statistics* Simulation::getStats() {
-  return stats;
 }
 
 ///This function returns a vector of the worker id's
@@ -209,19 +204,14 @@ vector<unsigned int> Simulation::getWorker_id() {
   return worker_id;
 }
 
-///This function returns the simulation time
-struct timespec Simulation::getSimTime() {
-  return simTime;
+///This function sets the duration of the simulation
+void Simulation::setDuration(struct timespec d) {
+  simTime = d;
 }
 
 ///This function sets the name of the simulation
 void Simulation::setName(string s) {
   name = s;
-}
-
-///This function sets the duration of the simulation
-void Simulation::setDuration(struct timespec d) {
-  simTime = d;
 }
 
 ///This function sets the top schedulerxs

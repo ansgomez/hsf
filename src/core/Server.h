@@ -1,21 +1,52 @@
 #ifndef _SERVER_H
 #define _SERVER_H
 
-#include "core/Runnable.h"
+#include "core/Intermediary.h"
 
 /***************************************
  *        CLASS DECLARATION            * 
  ***************************************/
 
-class Server : public Runnable {
-  public:
-    void wrapper();
+class Server : public Intermediary {
+ public:
 
-    void activate();
+  /*********** CONSTRUCTOR ***********/
+   
+  ///Constructor needs pointer to simulation as well as the scheduler's id and hierarchical level
+  Server( unsigned int _id);
 
-    void deactivate();
+  /*********** INHERITED FUNCTIONS ***********/
+  
+  /**** FROM THREAD ****/
 
-    void serve();
+  ///This function rewrites the join method to account for the server's load
+  void join();
+
+  ///This is the pthread's wrapper function
+  void wrapper();
+  
+  /**** FROM RUNNABLE ****/
+  
+  ///This function rewrites the activate method to activate both the scheduler as well as its load
+  void activate();
+  
+  ///This function rewrites the deactivate method both the scheduler as well as its load
+  void deactivate();
+
+  /**** FROM INTERMEDIARY ****/
+
+  ///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution.
+  virtual void new_job(Runnable *obj);
+
+  ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
+  virtual void job_finished(unsigned int runnable_id);
+
+  ///This function handles a job that had been queued by the worker. The worker object is thus already in the scheduler's queue, but now has a different schedulable criteria (and thus requires a change in the scheduling queue).
+  virtual void renew_job(Runnable* r);
+  
+  /*********** MEMBER FUNCTIONS ***********/
+
+  virtual void serve();
 
 };
 

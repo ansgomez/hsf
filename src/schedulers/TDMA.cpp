@@ -14,12 +14,12 @@
 
 using namespace std;
 
-/********************************************************************************
- * CLASS DEFINITION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
 
 /*********** CONSTRUCTOR ***********/
+
 ///Constructor needs pointer to simulation
 TDMA::TDMA(Simulation *s, unsigned int id, int level) : Scheduler(s, id, level) {
 #if _INFO==1
@@ -38,6 +38,86 @@ TDMA::TDMA(Simulation *s, unsigned int id, int level) : Scheduler(s, id, level) 
 
 /*********** INHERITED FUNCTIONS ***********/
     
+/**** FROM THREAD ****/
+
+///This function rewrites the join method to account for the scheduler's load (they are all joined)
+void TDMA::join() {
+  for(unsigned int c=0; c<load.size(); c++) {
+    if( load[c] != NULL) {
+      load[c]->join();
+    }
+  }
+}
+
+/**** FROM RUNNABLE ****/
+
+///This function rewrites the activate method to activate both the scheduler(through its semaphores) as well as its load - this runs in the dispatcher thread
+void TDMA::activate() {
+  if(state == activated) {
+    cout << "TDMA::activate error - already activated!\n";
+  }
+
+  sem_wait(&activation_sem);
+
+  sem_post(&schedule_sem);
+    
+  setPriority(Priorities::get_sched_pr(level));
+
+  state = activated;
+    
+  sem_post(&activation_sem);
+}
+
+///This function rewrites the deactivate method both the scheduler (through its semaphores) as well as its load
+void TDMA::deactivate() {
+  int sts;
+
+  if(state == deactivated) {
+    cout << "TDMA::deactivate error - already deactivated!\n";
+  }
+
+  sem_wait(&activation_sem);
+
+  sts = sem_trywait(&timing_sem);
+
+  //If the scheduler isn't timing, no need to do anything (just wait for sem to be freed)
+  if (sts == 0) {
+    sem_post(&timing_sem);
+  }
+  else { 
+    //If the scheduler has timing_sem locked, then it must be preempted
+    sem_post(&preempt_sem);
+  } 
+
+  sem_wait(&schedule_sem);
+
+  //now decrease the priority
+  setPriority(Priorities::get_inactive_pr());
+  
+  state = deactivated;
+  sem_post(&activation_sem);
+}
+
+/**** FROM INTERMEDIARY ****/
+
+///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
+void TDMA::job_finished(unsigned int worker_id){
+  //cout << " Sched handled Worker " << worker << "'s finished job!\n";
+  if (parent != NULL) {
+    parent->job_finished(worker);
+  }
+}
+
+///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution.
+void TDMA::new_job(Worker * worker) {
+  //cout << "Sched handled Worker " << worker->getId() << "'s new job\n";
+  if (parent != NULL) {
+    parent->new_job(worker);
+  }
+}
+
+/**** FROM SCHEDULER ****/
+
 ///This function performs the actual scheduling (figuring out the order of execution for its load)
 void TDMA::schedule(){
   struct timespec timeA, timeB, time_slot, aux;
@@ -128,77 +208,6 @@ void TDMA::schedule(){
 
 }//end of function
 
-///This function rewrites the activate method to activate both the scheduler(through its semaphores) as well as its load - this runs in the dispatcher thread
-void TDMA::activate() {
-  if(state == activated) {
-    cout << "TDMA::activate error - already activated!\n";
-  }
-
-  sem_wait(&activation_sem);
-
-  sem_post(&schedule_sem);
-    
-  setPriority(Priorities::get_sched_pr(level));
-
-  state = activated;
-    
-  sem_post(&activation_sem);
-}
-
-///This function rewrites the deactivate method both the scheduler (through its semaphores) as well as its load
-void TDMA::deactivate() {
-  int sts;
-
-  if(state == deactivated) {
-    cout << "TDMA::deactivate error - already deactivated!\n";
-  }
-
-  sem_wait(&activation_sem);
-
-  sts = sem_trywait(&timing_sem);
-
-  //If the scheduler isn't timing, no need to do anything (just wait for sem to be freed)
-  if (sts == 0) {
-    sem_post(&timing_sem);
-  }
-  else { 
-    //If the scheduler has timing_sem locked, then it must be preempted
-    sem_post(&preempt_sem);
-  } 
-
-  sem_wait(&schedule_sem);
-
-  //now decrease the priority
-  setPriority(Priorities::get_inactive_pr());
-  
-  state = deactivated;
-  sem_post(&activation_sem);
-}
-
-///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution.
-void TDMA::new_job(Worker * worker) {
-  //cout << "Sched handled Worker " << worker->getId() << "'s new job\n";
-  if (parent != NULL) {
-    parent->new_job(worker);
-  }
-}
-
-///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
-void TDMA::job_finished(unsigned int worker_id){
-  //cout << " Sched handled Worker " << worker << "'s finished job!\n";
-  if (parent != NULL) {
-    parent->job_finished(worker);
-  }
-}
-
-///This function rewrites the join method to account for the scheduler's load (they are all joined)
-void TDMA::join() {
-  for(unsigned int c=0; c<load.size(); c++) {
-    if( load[c] != NULL) {
-      load[c]->join();
-    }
-  }
-}
 
 /*********** MEMBER FUNCTIONS ***********/
 

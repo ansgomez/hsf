@@ -1,26 +1,27 @@
 #include "dispatchers/Aperiodic.h"
 
-#include "core/Worker.h"
 #include "core/Simulation.h"
+#include "core/Worker.h"
 #include "results/Statistics.h"
 #include "util/Operators.h"
 #include "util/TimeUtil.h"
 
 #include <iostream>
 
-/********************************************************************************
- * CLASS DEFINITION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
 
-/********************* CONSTRUCTOR *********************/
+/*********** CONSTRUCTOR ***********/
 
 ///Constructor needs a pointer to simulation and id
 Aperiodic::Aperiodic(Simulation *s, unsigned int id) : Dispatcher(s,id) {
   release_time = TimeUtil::Millis(5); //default release time is 5 ms
 }
 
-/********************* INHERITED FUNCTIONS *********************/
+/*********** INHERITED FUNCTIONS ***********/
+
+/**** FROM DISPATCHER ****/
 
 ///This function was a flagged loop that activates the Worker according to the task periodicity
 void Aperiodic::dispatch() {
@@ -53,14 +54,14 @@ void Aperiodic::dispatch() {
   }
 }
 
-/********************* GETTER AND SETTER FUNCTIONS *********************/
-
-///This function sets the release time for the aperiodic dispatcher
-void Aperiodic::setRelease(struct timespec r) {
-  release_time = r;
-}
+/*********** GETTER AND SETTER FUNCTIONS ***********/
 
 ///This function returns the release time
 struct timespec Aperiodic::getRelease() {
   return release_time;
+}
+
+///This function sets the release time for the aperiodic dispatcher
+void Aperiodic::setRelease(struct timespec r) {
+  release_time = r;
 }

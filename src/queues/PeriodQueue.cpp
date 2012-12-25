@@ -5,12 +5,11 @@
 
 #include <stdlib.h>
 
-/********************************************************************************
- * CLASS DEFINITION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
 
- /*********** CONSTRUCTOR ***********/
+/*********** CONSTRUCTOR ***********/
  
 ///Contructor needs nothing
 PeriodQueue::PeriodQueue() : RunnableQueue() {
@@ -19,7 +18,7 @@ PeriodQueue::PeriodQueue() : RunnableQueue() {
 
 /*********** MEMBER FUNCTIONS ***********/
 
-///This function inserts the new runnable in the queue in such a ways that no job before it (in the queue) has a lower period. If only this method is used to access the queue, then the queue will always be sorted by ascending period
+///This function inserts the new runnable in the queue depending on the Runnable's period
 void PeriodQueue::insertRunnable(Runnable *newRunnable) {
   //Base case, the list was empty. The Runnable is now head and tail of queue
   if (head == NULL) {

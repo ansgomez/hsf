@@ -2,7 +2,7 @@
 
 #Main compiler/linker variables
 CXX=g++
-CFLAGS=-Wall -pthread -I./src/
+CFLAGS=-Wall -I./src/
 CARG=-lrt
 LFLAGS= -lm 
 LARG=-ldl -lpthread -lrt
@@ -52,11 +52,11 @@ dispatchers: $(DISPATCHERS)
 $(DISPATCHERS):
 	$(CXX) $(CFLAGS) -c $(SRCDIR)/dispatchers/$@.cpp -o $(OBJDIR)/$@.o $(CARG)
 
-### HSF DISPATCHERS
+### HSF PTHREAD
 PTHREAD:= $(patsubst $(SRCDIR)/pthread/%.cpp, %, $(wildcard $(SRCDIR)/pthread/*.cpp))
 pthread: $(PTHREAD)
 $(PTHREAD):
-	$(CXX) $(CFLAGS) -c $(SRCDIR)/pthread/$@.cpp -o $(OBJDIR)/$@.o $(CARG)
+	$(CXX) $(CFLAGS) -pthread -c $(SRCDIR)/pthread/$@.cpp -o $(OBJDIR)/$@.o $(CARG)
 
 ### HSF QUEUES
 QUEUES:= $(patsubst $(SRCDIR)/queues/%.cpp, %, $(wildcard $(SRCDIR)/queues/*.cpp))

@@ -5,8 +5,6 @@
 
 #include <pthread.h>
 
-using namespace std;
-
 class Simulation;
 
 /***************************************
@@ -19,17 +17,14 @@ class Thread {
 
   /*********** VARIABLES ***********/
 
-  ///Pointer to the simulation
-  Simulation* sim;
-
   ///Thread id - a unique value among all threads in a simulation
   unsigned int id;
 
-  ///Type indicates wether the thread is a scheduler, worker, dispatcher, server, or idle
-  _thread_type thread_type;
-
   ///This is an auxiliary variable to set the thread's priority
   int policy;
+
+  ///Pointer to the simulation
+  Simulation* sim;
 
   ///The actual pthread variable
   pthread_t thread;
@@ -39,6 +34,9 @@ class Thread {
 
   ///Auxiliary variable to the set the thread's parameters
   struct sched_param thread_param;
+
+  ///Type indicates wether the thread is a scheduler, worker, dispatcher, server, or idle
+  _thread_type thread_type;
 
  public:
 
@@ -50,19 +48,19 @@ class Thread {
 
   /*********** MEMBER FUNCTIONS ***********/
   
-  ///This function sets the priority of the thread
-  void setPriority(int);
+  ///Calling this function will block the calling thread until this thread exits
+  virtual void join();
 
   ///This function is called by the static wrapper. In the Worker object, it should point to fire(), and in the Scheduler object, it should point to schedule()
   virtual void wrapper();
 
-  ///Calling this function will block the calling thread until this thread exits
-  virtual void join();
-
-  /*********** GETTER FUNCTIONS ***********/
+  /*********** GETTER AND SETTER FUNCTIONS ***********/
 
   ///This function returns the thread id
   unsigned int getId();
+
+  ///This function sets the priority of the thread
+  void setPriority(int);
 
  private:
  

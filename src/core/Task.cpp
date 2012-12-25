@@ -1,14 +1,14 @@
 #include "core/Task.h"
+
 #include "core/Dispatcher.h"
 #include "core/Simulation.h"
 #include "util/TimeUtil.h"
 
 #include <iostream>
 
-/********************************************************************************
- * CLASS DEFINITION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
 
 /*********** CONSTRUCTOR ***********/
 

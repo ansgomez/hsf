@@ -1,19 +1,18 @@
 #include "core/Runnable.h"
 
-#include "criteria/ExclusiveCriteria.h"
 #include "core/Criteria.h"
 #include "core/Scheduler.h"
 #include "core/Simulation.h"
 #include "core/Task.h"
+#include "criteria/InclusiveCriteria.h"
 #include "pthread/Priorities.h"
 #include "results/Trace.h"
 
 #include <iostream>
 
-/********************************************************************************
- * CLASS DEFINITION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
 
 /*********** CONSTRUCTOR ***********/
 
@@ -22,10 +21,26 @@ Runnable::Runnable(Simulation *s, unsigned int _id) : Thread(s,_id) {
   state = deactivated;
 
   //TODO: parametrize this!
-  criteria = (Criteria *) (new ExclusiveCriteria());
+  criteria = (Criteria *) (new InclusiveCriteria());
 }
 
 /*********** INHERITED FUNCTIONS ***********/
+
+/**** FROM THREAD ****/
+
+///This function joins the calling thread with the object's pthread
+void Runnable::join() {
+  //empty
+  cout << "Runnable::join - This should not print!\n";
+}
+
+///This function will be executed by the pthread
+void Runnable::wrapper() {
+  //empty
+  cout << "Runnable::wrapper - This should not print!\n";
+}
+
+/**** FROM RUNNABLE ****/
 
 ///This function set the current runnable to active, meaning that it has control of the CPU and should 'run'
 void Runnable::activate() {
@@ -37,19 +52,8 @@ void Runnable::deactivate() {
   cout << "Runnable::deactivate - This should not print!\n";
 }
 
-///This function will be executed by the pthread
-void Runnable::wrapper() {
-  //empty
-  cout << "Runnable::wrapper - This should not print!\n";
-}
-
-///This function joins the calling thread with the object's pthread
-void Runnable::join() {
-  //empty
-  cout << "Runnable::join - This should not print!\n";
-}
-
 /*********** GETTERS AND SETTERS ***********/
+
 ///This function return the runnable's schedulable criteria
 Criteria* Runnable::getCriteria() {
   return criteria;

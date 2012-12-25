@@ -5,12 +5,12 @@
 
 #include <stdlib.h>
 
-/********************************************************************************
- * CLASS DEFINITION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
 
- /*********** CONSTRUCTOR ***********/
+/*********** CONSTRUCTOR ***********/
+
 ///Contructor needs nothing
 DeadlineQueue::DeadlineQueue() : RunnableQueue() {
   //empty
@@ -18,7 +18,7 @@ DeadlineQueue::DeadlineQueue() : RunnableQueue() {
 
 /*********** MEMBER FUNCTIONS ***********/
 
-///This function inserts the new runnable in the queue in such a way that no job before it (in the queue) has a later leadline than itself. If only this method is used to access the queue, then the queue will always be sorted by ascending deadline.
+///This function inserts the new runnable in the queue depending on the Runnable's deadline
 void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
   //increase the size counter
   size++;

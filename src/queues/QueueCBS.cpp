@@ -1,5 +1,9 @@
 #include "QueueCBS.h"
 
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
+
 void QueueCBS::enqueue(unsigned int id, struct timespec arrival_time) {
 
 }

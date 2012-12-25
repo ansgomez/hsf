@@ -2,13 +2,16 @@
 
 #include "util/TimeUtil.h"
 
-#include <algorithm>
 #include <fstream>
 #include <iostream>
 
 using namespace std;
 
-/********************* STATIC VARIABLES *********************/
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
+
+/*********** VARIABLES ***********/
 
 ///This vector holds all of the simulation's runtime statistics
 vector<Runtime> Statistics::runtimes;
@@ -28,27 +31,28 @@ sem_t Statistics::trace_sem;
 ///Semaphore to protect writing to the missedDealine vector
 sem_t Statistics::deadline_sem;
 
-/********************* MEMBER FUNCTIONS *********************/
+/*********** MEMBER FUNCTIONS ***********/
 
-///This function initiates all of the variables
-void Statistics::initialize() {
-  runtimes.reserve(N_THREADS);
-  traces.reserve(N_TRACES);
-  missedDeadlines.reserve(N_DEADLINES);
+///This function adds a missed deadline trace to the vector
+void Statistics::addMissedDeadline(unsigned int t_id, struct timespec arrival_time, struct timespec deadline) {
+  if(state == 1) {
+    MissedDeadline md;
+    struct timespec aux;
 
-  //Initialize semaphores to 1, so it acts like a mutex
-  sem_init(&trace_sem, 0, 1);
-  sem_init(&deadline_sem, 0, 1);
+    aux = TimeUtil::getTime(relative);
 
-  //must call enable() before registering statistics
-  state = 0;
+    sem_wait(&deadline_sem);
+    md.setMissedDeadline(t_id, arrival_time, deadline,  aux);
+      missedDeadlines.push_back(md);
+    sem_post(&deadline_sem);
+  }
 }
 
 ///This function adds a runtime to the vector
-void Statistics::addRuntime(enum _thread_type type, unsigned int id, struct timespec ts) {
+void Statistics::addRuntime(enum _thread_type type, unsigned int id, struct timespec _rt) {
   Runtime rt;
 
-  rt.setRuntime(type, id, ts);
+  rt.setRuntime(type, id, _rt);
   runtimes.push_back(rt);
 }
 
@@ -67,24 +71,42 @@ void Statistics::addTrace(enum _thread_type type, unsigned int t_id, enum _task_
   }
 }
 
- ///This function adds a missed deadline trace to the vector
-void Statistics::addMissedDeadline(unsigned int t_id, struct timespec arrival_time) {
-  if(state == 1) {
-    MissedDeadline md;
-    struct timespec aux;
+///This function enables the collection of statistics
+void Statistics::enable() {
+  state = 1;
+}
 
-    aux = TimeUtil::getTime(relative);
+///This function disable the collection of statistics
+void Statistics::disable() {
+  state = 0;
+}
 
-    sem_wait(&deadline_sem);
-      md.setMissedDeadline(t_id, arrival_time, aux);
-      missedDeadlines.push_back(md);
-    sem_post(&deadline_sem);
-  }
+///This function initiates all of the variables
+void Statistics::initialize() {
+  runtimes.reserve(N_THREADS);
+  traces.reserve(N_TRACES);
+  missedDeadlines.reserve(N_DEADLINES);
+
+  //Initialize semaphores to 1, so it acts like a mutex
+  sem_init(&trace_sem, 0, 1);
+  sem_init(&deadline_sem, 0, 1);
+
+  //must call enable() before registering statistics
+  state = 0;
 }
 
 ///This function saves to custom csv file
 void Statistics::toFile(string filePrefix) {  
   ofstream file;
+
+  /************ SAVING MISSED DEADLINES *********/
+  MissedDeadline aux_m;
+  file.open((filePrefix+"_missedDeadlines.csv").data());
+  for(unsigned int c=0;c<missedDeadlines.size();c++) {
+    aux_m = missedDeadlines[c];
+    file << aux_m.toString() << "\n"; 
+  }
+  file.close();
 
   /************ SAVING RUNTIMES *********/
   Runtime aux_r;
@@ -106,24 +128,5 @@ void Statistics::toFile(string filePrefix) {
     file << aux_t.toString() << "\n"; 
   }
   file.close();
-
-  /************ SAVING MISSED DEADLINES *********/
-  MissedDeadline aux_m;
-  file.open((filePrefix+"_missedDeadlines.csv").data());
-  for(unsigned int c=0;c<missedDeadlines.size();c++) {
-    aux_m = missedDeadlines[c];
-    file << aux_m.toString() << "\n"; 
-  }
-  file.close();
   
-}
-
-///This function enables the collection of statistics
-void Statistics::enable() {
-  state = 1;
-}
-
-///This function disable the collection of statistics
-void Statistics::disable() {
-  state = 0;
 }

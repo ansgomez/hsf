@@ -4,14 +4,11 @@
 
 #include <sstream>
 
-using namespace std;
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
 
-/********************************************************************************
- * CLASS DEFINITION
- ********************************************************************************
- */
-
-/********************* MEMBER FUNCTIONS *********************/
+/*********** MEMBER FUNCTIONS ***********/
 
 ///This function sets the attributes of the object
 void Trace::setTrace(struct timespec ts, _thread_type tt, unsigned int ti, _task_action ta) {
@@ -29,6 +26,8 @@ string Trace::toString() {
 
   return out.str();
 }
+
+/*********** GETTER FUNCTIONS ***********/
 
 ///This function returns the timestamp
 struct timespec Trace::getTimestamp() {

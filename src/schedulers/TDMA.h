@@ -9,8 +9,6 @@
 #include <stdio.h>
 #include <string.h>
 
-using namespace std;
-
 /***************************************
  *        CLASS DECLARATION            * 
  ***************************************/
@@ -31,7 +29,7 @@ class TDMA : public Scheduler {
   vector<struct timespec> timeslots; 
 
   ///Semaphores to ensure proper execution
-  sem_t schedule_sem, preempt_sem, timing_sem, activation_sem;
+  sem_t activation_sem, preempt_sem, schedule_sem, timing_sem;
 
  public:
 
@@ -62,6 +60,8 @@ class TDMA : public Scheduler {
 
   ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
   void job_finished(unsigned int worker_id);
+
+  /**** FROM SCHEDULER ****/
 
   ///This function performs the actual scheduling (figuring out the order of execution for its load)
   void schedule();

@@ -6,19 +6,18 @@
 
 using namespace std;
 
-/********************************************************************************
- * CLASS DEFINITION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
 
-/********************* CONSTRUCTOR *********************/
+/*********** CONSTRUCTOR ***********/
 
 ///The constructor requires a pointer to the simulation, its own dispatcher, and the WCET
 Video::Video(Simulation *s, Dispatcher *disp) : Task(s, disp, video) {
   state = mjpeg_init();
 }
 
-/********************* MEMEBER FUNCTIONS *********************/
+/*********** MEMBER FUNCTIONS ***********/
 
 void Video::fire() {
   mjpeg_fire(state);

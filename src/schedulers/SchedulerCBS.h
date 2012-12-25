@@ -6,6 +6,8 @@
 
 #include <semaphore.h>
 
+using namespace std;
+
 /***************************************
  *        CLASS DECLARATION            * 
  ***************************************/

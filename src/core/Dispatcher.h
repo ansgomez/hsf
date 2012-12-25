@@ -6,8 +6,6 @@
 
 #include <time.h>
 
-using namespace std;
-
 class Simulation;
 class Worker;
 
@@ -49,19 +47,20 @@ class Dispatcher : public Thread {
 
   /*********** MEMBER FUNCTIONS ***********/
 
-  ///This function was a flagged loop that activates the Worker according to the task periodicity
-  virtual void dispatch();
-
   ///This function assignes DISP_PR to the thread
   void activate();  
 
+  ///This function was a flagged loop that activates the Worker according to the task periodicity
+  virtual void dispatch();
+
   /*********** SETTER FUNCTIONS ***********/
 
-  ///This function sets the associated worker
-  void setWorker(Worker *w);
-  ///This function sets the tasks's periodicity
-  void setPeriodicity(_task_periodicity t);
   ///This function sets the dispatcher's offset
   void setOffset(struct timespec o);
+  ///This function sets the tasks's periodicity
+  void setPeriodicity(_task_periodicity t);
+  ///This function sets the associated worker
+  void setWorker(Worker *w);
 };
+
 #endif

@@ -5,14 +5,15 @@
 
 #include <time.h>
 
-/********************************************************************************
- * CLASS DEFINITION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
+
+/*********** STATIC VARIABLES ***********/
 
 struct timespec TimeUtil::offset;
 
-/********************* MEMBER FUNCTIONS *********************/
+/*********** MEMBER FUNCTIONS ***********/
 
 ///This function returns a timespec with the current time
 struct timespec TimeUtil::getTime()
@@ -41,12 +42,27 @@ void TimeUtil::setOffset()
   clock_gettime(CLOCK_REALTIME, &offset);
 }
 
-///This function returns a timespec with the specified seconds
-struct timespec TimeUtil::Seconds(__time_t s) {
+/*********** AUXILIARY FUNCTIONS ***********/
+
+///Converts a timespec to unsigned long usecs
+unsigned long int TimeUtil::convert_us(struct timespec t1)
+{
+  unsigned long int ul = (unsigned long int) (t1.tv_sec)*1000000 + (unsigned long int)(t1.tv_nsec)/1000;
+  return ul;
+}
+
+///This function returns a timespec with the specified microseconds
+struct timespec TimeUtil::Micros(long int us) {
   struct timespec aux;
 
-  aux.tv_sec = s;
-  aux.tv_nsec = 0;
+  if(us < 1000000) {
+    aux.tv_sec = 0;
+    aux.tv_nsec = us*1000;
+  }
+  else {
+    aux.tv_sec = (int) (us/1000000);
+    aux.tv_nsec = (us-aux.tv_sec*1000000)*1000;
+  }
 
   return aux;
 }
@@ -68,24 +84,12 @@ struct timespec TimeUtil::Millis(long int ms) {
   return aux;
 }
 
-///This function returns a timespec with the specified microseconds
-struct timespec TimeUtil::Micros(long int us) {
+///This function returns a timespec with the specified seconds
+struct timespec TimeUtil::Seconds(__time_t s) {
   struct timespec aux;
 
-  if(us < 1000000) {
-    aux.tv_sec = 0;
-    aux.tv_nsec = us*1000;
-  }
-  else {
-    aux.tv_sec = (int) (us/1000000);
-    aux.tv_nsec = (us-aux.tv_sec*1000000)*1000;
-  }
+  aux.tv_sec = s;
+  aux.tv_nsec = 0;
 
   return aux;
-}
-
-unsigned long int TimeUtil::convert_us(struct timespec t1)
-{
-  unsigned long int ul = (unsigned long int) (t1.tv_sec)*1000000 + (unsigned long int)(t1.tv_nsec)/1000;
-  return ul;
 }

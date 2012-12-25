@@ -8,18 +8,19 @@
 
 #include <iostream>
 
-/********************************************************************************
- * CLASS DEFINITION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
 
-/********************* CONSTRUCTOR *********************/
+/*********** CONSTRUCTOR ***********/
 
 Periodic::Periodic(Simulation *s, unsigned int id) : Dispatcher(s,id) {
   period =  TimeUtil::Millis(20);
 }
 
-/********************* INHERITED FUNCTIONS *********************/
+/*********** INHERITED FUNCTIONS ***********/
+
+/**** FROM DISPATCHER ****/  
 
 void Periodic::dispatch() {
   struct timespec rem;
@@ -56,12 +57,15 @@ void Periodic::dispatch() {
 #endif
 }
 
-///This function sets the dispatcher's period
-void Periodic::setPeriod(struct timespec p) {
-  period = p;
-}
+/*********** GETTER AND SETTER FUNCTIONS ***********/
 
 ///This function returns the period
 struct timespec Periodic::getPeriod() {
   return period;
 }
+
+///This function sets the dispatcher's period
+void Periodic::setPeriod(struct timespec p) {
+  period = p;
+}
+
