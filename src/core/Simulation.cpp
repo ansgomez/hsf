@@ -173,7 +173,7 @@ void Simulation::simulate() {
   Statistics::disable();
 
   //Join all other threads
-  //join_all();
+  join_all();
 
   cout << "Saving results...\n";
 

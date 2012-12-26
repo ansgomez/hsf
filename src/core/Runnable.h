@@ -4,7 +4,7 @@
 #include "pthread/Thread.h"
 #include "util/Enumerations.h"
 
-class Intermediary;
+class ResourceAllocator;
 class Task;
 class Criteria;
 
@@ -25,7 +25,7 @@ class Runnable : public Thread {
   Task* current_task;
 
   ///Pointer to the scheduler that this runnable belongs to
-  Intermediary* parent;
+  ResourceAllocator* parent;
 
   ///Auxiliary variable to hold the state of runnable
   _runnable_state state;
@@ -60,6 +60,6 @@ class Runnable : public Thread {
   ///This function return the runnable's schedulable criteria
   Criteria* getCriteria();
   ///This function sets the runnable's parent
-  void setParent(Intermediary* p);
+  void setParent(ResourceAllocator* p);
 };
 #endif

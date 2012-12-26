@@ -7,7 +7,7 @@
 #include <semaphore.h>
 #include <vector>
 
-class Intermediary;
+class ResourceAllocator;
 class Task;
 
 using namespace std;
@@ -26,7 +26,7 @@ class Worker : public Runnable {
   vector<struct timespec> arrival_times;
   
   ///Pointer to the scheduler handling this worker
-  Intermediary* parent;
+  ResourceAllocator* parent;
 
   ///Pointer to the task to be executed by the worker
   Task* load;
@@ -48,7 +48,7 @@ class Worker : public Runnable {
 
   /*********** CONSTRUCTOR ***********/
  public:
-  Worker(Intermediary *p, unsigned int _id, _task_load tl);
+  Worker(ResourceAllocator *p, unsigned int _id, _task_load tl);
 
   /*********** INHERITED FUNCTIONS ***********/
 

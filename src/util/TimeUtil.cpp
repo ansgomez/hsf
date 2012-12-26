@@ -36,6 +36,17 @@ struct timespec TimeUtil::getTime(enum _time_type type)
   return aux;
 }
 
+///This function returns an unsigned long int with the current time in microseconds
+unsigned long int TimeUtil::getTimeUSec()
+{
+  struct timespec aux;
+  clock_gettime(CLOCK_REALTIME, &aux);
+  
+  aux = aux - offset;
+
+  return convert_us(aux);
+}
+
 ///Sets the relative-time offset to current time
 void TimeUtil::setOffset()
 {

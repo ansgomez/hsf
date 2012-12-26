@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-#define _INFO 1
+#define _INFO 0
 
 using namespace std;
 
@@ -15,7 +15,7 @@ using namespace std;
 /*********** CONSTRUCTOR ***********/
 
 ///Constructor needs pointer to simulation as well as the scheduler's id and hierarchical level
-Scheduler::Scheduler(unsigned int _id, int _level) : Intermediary(_id){
+Scheduler::Scheduler(unsigned int _id, int _level) : ResourceAllocator(_id){
 #if _INFO == 1
   cout << "++New Scheduler - " << _id << "\n";
 #endif

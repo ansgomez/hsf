@@ -1,7 +1,7 @@
 #include "core/Worker.h"
 
 #include "core/Criteria.h"
-#include "core/Intermediary.h"
+#include "core/ResourceAllocator.h"
 #include "core/Simulation.h"
 #include "core/Task.h"
 #include "criteria/InclusiveCriteria.h"
@@ -12,7 +12,7 @@
 
 #include <iostream>
 
-#define _INFO 1
+#define _INFO 0
 
 /***************************************
  *        CLASS DEFINITION             * 
@@ -20,7 +20,7 @@
 
 /*********** CONSTRUCTOR ***********/
 
-Worker::Worker(Intermediary *p, unsigned int _id, _task_load tl) : Runnable(_id) {
+Worker::Worker(ResourceAllocator *p, unsigned int _id, _task_load tl) : Runnable(_id) {
 #if _INFO == 1
   cout << "++New Worker \t - " << _id << endl;
 #endif

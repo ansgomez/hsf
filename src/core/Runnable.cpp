@@ -57,6 +57,6 @@ Criteria* Runnable::getCriteria() {
 }
 
 ///This function sets the runnable's parent
-void Runnable::setParent(Intermediary* p) {
+void Runnable::setParent(ResourceAllocator* p) {
   parent = p;
 }

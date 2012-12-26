@@ -7,8 +7,10 @@
 #include <time.h>
 
 class Dispatcher;
+class ResourceAllocator;
 class Scheduler;
 class Simulation;
+class TDMA;
 class Worker;
 
 using namespace std;
@@ -48,13 +50,13 @@ class Parser {
   Dispatcher* parseDispatcher(xml_node disp, unsigned int* id);
 
   ///This function receives a TDMA node and parses the entire node to return the full object
-  Scheduler* parseTDMA( xml_node sched, unsigned int *id, int level);
+  TDMA* parseTDMA( xml_node sched, unsigned int *id, int level);
 
   ///This function converts an XML "time" node to a timespec
   struct timespec parseTime(xml_node n);
 
-  ///This function receives a Worker node, and it returns the initialized worker object
-  Worker* parseWorker(xml_node worker, unsigned int *id);
+  ///This function receives a Worker node, its parent, and it returns the initialized worker object
+  Worker* parseWorker(ResourceAllocator* parent, xml_node worker_node, unsigned int *id);
 
 };
 

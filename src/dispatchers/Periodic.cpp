@@ -8,6 +8,8 @@
 
 #include <iostream>
 
+#define _INFO 0
+
 /***************************************
  *        CLASS DEFINITION             * 
  ***************************************/
@@ -30,9 +32,10 @@ void Periodic::dispatch() {
     Statistics::addTrace(dispatcher, worker->getId(), task_arrival);
 
     if(worker != NULL) {
-      cout << "Disp : " << id << " is registering a new job\n";
+#if _INFO==1
+      cout << "Disp : " << id << " is registering a new job @t=" << TimeUtil::getTimeUSec() << "\n";
+#endif
       worker->new_job();
-      cout << "Disp : " << id << " is continuing execution\n";
     }
     else {
       cout << "Dispatcher error: worker is null!\n";

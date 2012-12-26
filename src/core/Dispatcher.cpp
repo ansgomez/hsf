@@ -7,7 +7,7 @@
 #include <time.h>
 #include <iostream>
 
-#define _INFO 1
+#define _INFO 0
 
 using namespace std;
 

@@ -8,14 +8,14 @@
  *        CLASS DECLARATION            * 
  ***************************************/
 
-class Intermediary : public Runnable {
+class ResourceAllocator : public Runnable {
 
  public:
 
   /*********** CONSTRUCTOR ***********/
 
   ///Constructor needs runnable's id
-  Intermediary(unsigned int _id);
+  ResourceAllocator(unsigned int _id);
 
   /*********** INHERITED FUNCTIONS ***********/
 

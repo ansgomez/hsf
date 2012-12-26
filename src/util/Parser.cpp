@@ -1,6 +1,7 @@
 #include "util/Parser.h"
 
 #include "core/Dispatcher.h"
+#include "core/ResourceAllocator.h"
 #include "core/Runnable.h"
 #include "core/Scheduler.h"
 #include "core/Simulation.h"
@@ -52,10 +53,10 @@ void Parser::parseFile(string filePath) {
   xml_node top_sched = sim_node.child("runnable");
 
   //if TDMA
-  Scheduler *top = parseTDMA(top_sched, &id, 0);
+  Scheduler *top = (Scheduler*) parseTDMA(top_sched, &id, 0);
   sim->setTopScheduler(top);
 
-  cout << " '" << sim_node.attribute("name").value() << "' has been loaded\n";
+  cout << "... '" << sim_node.attribute("name").value() << "' has been loaded\n";
 }
 
 /*********** PRIVATE MEMBER FUNCTIONS ***********/
@@ -85,7 +86,7 @@ Dispatcher* Parser::parseDispatcher(xml_node disp_node, unsigned int *id) {
 }
 
 ///This function receives and TDMA node, and parses its load
-Scheduler* Parser::parseTDMA(xml_node sched_node, unsigned int *id, int level) {
+TDMA* Parser::parseTDMA(xml_node sched_node, unsigned int *id, int level) {
 
   TDMA *sched = new TDMA(*id, level);
 
@@ -95,7 +96,7 @@ Scheduler* Parser::parseTDMA(xml_node sched_node, unsigned int *id, int level) {
 
     //If child is worker, parse a worker
     if( type == "worker" ) {
-      Worker *w = parseWorker(load, id);
+      Worker *w = parseWorker((ResourceAllocator*)sched, load, id);
 
       sched->add_load((Runnable*) w);
 
@@ -107,7 +108,7 @@ Scheduler* Parser::parseTDMA(xml_node sched_node, unsigned int *id, int level) {
       if(alg == "TDMA") {
 	*id = *id +1;
 
-	Scheduler *s = parseTDMA(load, id, level+1);
+	TDMA* s = (TDMA*) parseTDMA(load, id, level+1);
 
 	sched->add_load((Runnable*) s);
       }//end of tdma
@@ -125,7 +126,7 @@ Scheduler* Parser::parseTDMA(xml_node sched_node, unsigned int *id, int level) {
     sched->add_slot(parseTime(slot));
   }
 
-  return (Scheduler*) sched;
+  return sched;
 }
 
 //This function converts an XML "time" node to a timespec
@@ -151,8 +152,8 @@ struct timespec Parser::parseTime(xml_node n) {
 }
 
 
-///This function receives a Worker node, and it returns the initialized worker object
-Worker* Parser::parseWorker(xml_node worker_node, unsigned int *id) {
+///This function receives a Worker node, its parent, and it returns the initialized worker object
+Worker* Parser::parseWorker(ResourceAllocator* parent, xml_node worker_node, unsigned int *id) {
   string load = worker_node.attribute("load").as_string();
   Worker *worker = NULL;
 
@@ -163,7 +164,7 @@ Worker* Parser::parseWorker(xml_node worker_node, unsigned int *id) {
     cout << "Creating Worker " << *id << endl;
 #endif
     BusyWait *bw = new BusyWait(d, parseTime(worker_node.child("wcet")));
-    Scheduler *parent = NULL;
+
     worker = new Worker(parent, *id, busy_wait);
     worker->setLoad(bw);
     d->setWorker(worker);

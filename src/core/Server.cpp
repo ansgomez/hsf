@@ -13,7 +13,7 @@ using namespace std;
 /*********** CONSTRUCTOR ***********/
 
 ///Constructor needs pointer to simulation as well as the scheduler's id and hierarchical level
-Server::Server(unsigned int _id) : Intermediary(_id){
+Server::Server(unsigned int _id) : ResourceAllocator(_id){
   id = _id;
   thread_type = server;
 }

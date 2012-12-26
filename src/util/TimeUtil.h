@@ -27,13 +27,16 @@ class TimeUtil {
   ///This function returns a timespec with the current time
   static struct timespec getTime(enum _time_type type);
 
+  ///This function returns an unsigned long int with the current time in microseconds
+  unsigned long int getTimeUSec();
+
   //Sets the relative-time offset to current time
   static void setOffset();
 
   /*********** AUXILIARY FUNCTIONS ***********/
 
   ///Converts a timespec to unsigned long usecs
-  static unsigned long convert_us(struct timespec t1);
+  static unsigned long int convert_us(struct timespec t1);
 
   ///This function returns a timespec with the specified microseconds
   static struct timespec Micros(long int us);

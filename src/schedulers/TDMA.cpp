@@ -111,11 +111,20 @@ void TDMA::job_finished(unsigned int worker_id){
 }
 
 ///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution.
-void TDMA::new_job(Worker * worker) {
-  //cout << "Sched handled Worker " << worker->getId() << "'s new job\n";
+void TDMA::new_job(Runnable *obj) {
+
+#if _INFO==1
+  cout << "TDMA handled runnable " << obj->getId() << "'s new job\n";
+#endif
+
   if (parent != NULL) {
-    parent->new_job(worker);
+    parent->new_job(obj);
   }
+  //Unless it's the top level entity, null parent is a problem!
+  else if (level != 0) {
+    cout << "TDMA::new_job - parent was null!\n";
+  }
+  //else -> it is the top level entity
 }
 
 /**** FROM SCHEDULER ****/
@@ -155,9 +164,6 @@ void TDMA::schedule(){
 	clock_gettime(CLOCK_REALTIME, &timeA);
 
 	if(load[active_index] != NULL) {
-	  //#if _INFO==1
-	  //cout << "TDMA (" << id << ") is activating: " << load[active_index]->getId() << endl;
-	  //#endif
 	  load[active_index]->activate();
 	}
 

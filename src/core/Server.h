@@ -1,13 +1,13 @@
 #ifndef _SERVER_H
 #define _SERVER_H
 
-#include "core/Intermediary.h"
+#include "core/ResourceAllocator.h"
 
 /***************************************
  *        CLASS DECLARATION            * 
  ***************************************/
 
-class Server : public Intermediary {
+class Server : public ResourceAllocator {
  public:
 
   /*********** CONSTRUCTOR ***********/

@@ -1,7 +1,7 @@
 #ifndef _SCHEDULER_H
 #define _SCHEDULER_H
 
-#include "core/Intermediary.h"
+#include "core/ResourceAllocator.h"
 #include "core/Worker.h"
 #include "util/Enumerations.h"
 
@@ -13,7 +13,7 @@ class Simulation;
  *        CLASS DECLARATION            * 
  ***************************************/
 
-class Scheduler : public Intermediary {
+class Scheduler : public ResourceAllocator {
 
  protected:
  

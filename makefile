@@ -15,8 +15,9 @@ ARCH := $(shell getconf LONG_BIT)
 XML=xml/pugixml.cpp
 
 #Directories
-OBJDIR=bin
+BINDIR=bin
 LIBDIR=lib
+OBJDIR=obj
 SRCDIR=src
 
 #SOURCE FILES
@@ -96,7 +97,7 @@ $(UTIL):
 exe: executable
 executable:  
 	$(CXX) $(CFLAGS) -c $(SRCDIR)/$(MAINSRC) -o $(OBJDIR)/hsf.o $(CARG)    #compile main.cpp
-	$(CXX) $(LFLAGS) $(OBJDIR)/*.o -o $(OBJDIR)/hsf $(LARG)  #link all object files
+	$(CXX) $(LFLAGS) $(OBJDIR)/*.o -o $(BINDIR)/hsf $(LARG)  #link all object files
 
 #################     LIBRARIES     #################
 lib: libraries
@@ -118,5 +119,5 @@ run:
 	sudo $(OBJDIR)/$(EXEC)
 
 clean:
-	rm -fr $(OBJDIR)/*.out
-	rm -fr $(OBJDIR)/*.o
+	rm -fr $(BINDIR)/*.o*
+	rm -fr $(OBJDIR)/*.o*

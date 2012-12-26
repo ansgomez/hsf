@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-#define _INFO 1
+#define _INFO 0
 
 /***************************************
  *        CLASS DEFINITION             * 
