@@ -15,7 +15,7 @@
 /*********** CONSTRUCTOR ***********/
 
 ///Constructor needs a pointer to simulation and id
-Aperiodic::Aperiodic(Simulation *s, unsigned int id) : Dispatcher(s,id) {
+Aperiodic::Aperiodic(unsigned int id) : Dispatcher(id) {
   release_time = TimeUtil::Millis(5); //default release time is 5 ms
 }
 
@@ -46,7 +46,7 @@ void Aperiodic::dispatch() {
   do {
     struct timespec aux = Simulation::getSimTime() - release_time;
       nanosleep(&aux, &rem);
-  } while(Simulation::isSimulating() == 1);
+  } while(Simulation::isSimulating());
   
   //Free worker from blocking (doesn't affect workers while they have inactive priority -> only when the simulation has ended
   if(worker != NULL) {

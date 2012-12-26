@@ -19,9 +19,6 @@ class Scheduler : public Intermediary {
  
   /*********** VARIABLES ***********/
 
-  ///Pointer to simulation
-  Simulation *sim;
-
   ///This variable stores the type of scheduler
   _sched_type sched_type;
 
@@ -33,7 +30,7 @@ class Scheduler : public Intermediary {
   /*********** CONSTRUCTOR ***********/
    
   ///Constructor needs pointer to simulation as well as the scheduler's id and hierarchical level
-  Scheduler(Simulation *s, unsigned int _id, int level);
+  Scheduler(unsigned int _id, int level);
 
   /*********** INHERITED FUNCTIONS ***********/
 

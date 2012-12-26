@@ -33,7 +33,7 @@ class SchedulerCBS : public Scheduler {
   /*********** CONSTRUCTOR ***********/
 
   ///Constructor needs pointer to simulation, id, and its level
-  SchedulerCBS(Simulation* s, unsigned int id, int level);
+  SchedulerCBS(unsigned int id, int level);
 
   /*********** INHERITED FUNCTIONS ***********/
 

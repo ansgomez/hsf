@@ -31,7 +31,7 @@ void Server::join() {
 void Server::wrapper() {
 
   //Wait until the simulation is initialized
-  while(Simulation::isInitialized() == 0);
+  while( !Simulation::isInitialized() );
 
   serve();
 }

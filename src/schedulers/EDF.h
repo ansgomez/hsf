@@ -34,7 +34,7 @@ class EDF : public Scheduler {
   /*********** CONSTRUCTOR ***********/
  
   ///Constructor needs pointer to simulation, id, and its level
-  EDF(Simulation* s, unsigned int id, int level);
+  EDF(unsigned int id, int level);
 
   /*********** INHERITED FUNCTIONS ***********/
 

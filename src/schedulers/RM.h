@@ -31,7 +31,7 @@ class RM : public Scheduler {
   /*********** CONSTRUCTOR ***********/
  
   ///Constructor needs pointer to simulation, id, and its level
-  RM(Simulation* s, unsigned int id, int level);
+  RM(unsigned int id, int level);
 
   /*********** INHERITED FUNCTIONS ***********/
 

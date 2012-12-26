@@ -19,9 +19,6 @@ class Dispatcher : public Thread {
 
   /*********** VARIABLES ***********/
 
-  ///Pointer to simulation
-  Simulation *sim;
-  
   ///Periodicity of the task to be dispatched
   _task_periodicity periodicity;
 
@@ -36,7 +33,7 @@ class Dispatcher : public Thread {
   /*********** CONSTRUCTOR ***********/
 
   ///Contructor needs Simulation pointer, and a disp_id
-  Dispatcher (Simulation *s, unsigned int id);
+  Dispatcher (unsigned int id);
 
   /*********** INHERITED FUNCTIONS ***********/
 

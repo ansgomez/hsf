@@ -6,7 +6,6 @@
 #include <time.h>
 
 class Dispatcher;
-class Simulation;
 
 /***************************************
  *        CLASS DECLARATION            * 
@@ -24,15 +23,12 @@ class Task {
   ///Pointer to the task's dispatcher
   Dispatcher *dispatcher;
 
-  ///Pointer to the simulation
-  Simulation *sim;
-
  public:
  
   /*********** CONSTRUCTOR ***********/
   
   ///Constructor needs pointer to simulation, dispatcher, and its load type
-  Task(Simulation *s, Dispatcher *disp, _task_load load);
+  Task(Dispatcher *disp, _task_load load);
 
   /*********** MEMBER FUNCTIONS ***********/
 

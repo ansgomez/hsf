@@ -3,12 +3,11 @@
 #include "core/Simulation.h"
 #include "core/Worker.h"
 #include "pthread/Priorities.h"
-#include "pthread/Thread.h"
-#include "results/Trace.h"
-#include "util/Enumerations.h"
 
 #include <time.h>
 #include <iostream>
+
+#define _INFO 1
 
 using namespace std;
 
@@ -19,14 +18,13 @@ using namespace std;
 /*********** CONSTRUCTOR ***********/
 
 ///Constructor needs Simulation pointer, and a disp_id
-Dispatcher::Dispatcher (Simulation *s, unsigned int _id) : Thread(s,_id)
+Dispatcher::Dispatcher(unsigned int _id) : Thread(_id)
 {
+
 #if _INFO == 1
   cout << "++New Dispatcher - " << _id << "\n";
 #endif
 
-  sim = s;
-  id = _id;
   thread_type = dispatcher;
 
   //By default periodic
@@ -47,8 +45,16 @@ Dispatcher::Dispatcher (Simulation *s, unsigned int _id) : Thread(s,_id)
 void Dispatcher::wrapper() {
   struct timespec rem;
 
+#if _INFO == 1
+  cout << "Disp: " << id << " waiting for initialization\n";
+#endif
+
   //Wait until the simulation is initialized
-  while(Simulation::isInitialized() == 0);
+  while( !Simulation::isInitialized() );
+  
+#if _INFO == 1
+  cout << "Disp: " << id << " begining execution \n";
+#endif
 
   //if offset != 0, sleep before dispatching
   if(offset.tv_nsec != 0 || offset.tv_sec !=0) {
@@ -66,9 +72,7 @@ void Dispatcher::wrapper() {
 
 ///This function sets the dispatcher's priority to DISP_PR
 void Dispatcher::activate() {
-  pthread_getschedparam(thread, &policy, &thread_param);
-  thread_param.sched_priority = Priorities::get_disp_pr(); //active priority
-  pthread_setschedparam(thread, SCHED_FIFO, &thread_param);
+  setPriority(Priorities::get_disp_pr());
 }
 
 ///This virtual function should be implemented by the subclasses

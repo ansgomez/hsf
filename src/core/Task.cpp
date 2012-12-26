@@ -1,10 +1,11 @@
 #include "core/Task.h"
 
 #include "core/Dispatcher.h"
-#include "core/Simulation.h"
 #include "util/TimeUtil.h"
 
 #include <iostream>
+
+using namespace std;
 
 /***************************************
  *        CLASS DEFINITION             * 
@@ -12,8 +13,7 @@
 
 /*********** CONSTRUCTOR ***********/
 
-Task::Task(Simulation *s, Dispatcher *disp, _task_load load) {
-  sim = s;
+Task::Task(Dispatcher *disp, _task_load load) {
   dispatcher = disp;
   task_load = load;
 }

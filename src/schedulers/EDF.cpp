@@ -1,10 +1,10 @@
 #include "schedulers/EDF.h"
 
+#include "core/Simulation.h"
 #include "core/Criteria.h"
 #include "core/Runnable.h"
 #include "core/RunnableQueue.h"
 #include "core/Scheduler.h"
-#include "core/Simulation.h"
 #include "pthread/Priorities.h"
 #include "results/Trace.h"
 #include "util/Enumerations.h"
@@ -21,7 +21,7 @@
 /*********** CONSTRUCTOR ***********/
 
 ///Constructor needs pointer to simulation
-EDF::EDF(Simulation *s, unsigned int id, int level) : Scheduler(s, id, level) {
+EDF::EDF(unsigned int _id, int level) : Scheduler(_id, level) {
 #if _INFO==1
   cout << "Creating EDF with ID: " << id << endl;
 #endif
@@ -153,7 +153,7 @@ void EDF::renew_job(Runnable* r) {
 ///This function performs the actual scheduling (figuring out the order of execution for its load)
 void EDF::schedule() {
 
-  while(Simulation::isSimulating() == 1) {
+  while(Simulation::isSimulating()) {
     //Wait for an event to ocurr
     sem_wait(&event_sem);
     //todo make sure that event_sem isn't posted more than once (unless necessary)

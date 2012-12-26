@@ -2,8 +2,10 @@
 
 #include "core/Simulation.h"
 
+using namespace std;
+
 int main(int argc, char** argv) {
-    
+
   Simulation *sim = new Simulation("hsf.xml", 1, "simulation");
 
   sim->simulate();

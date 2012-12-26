@@ -6,13 +6,14 @@ bin/
 *.png
 *.svg
 *.eps
+*.xml
 *~
 *#
 \#*
 .DS_Store
 
 ##### Metrics #####
-metrics/
+scripts/
 
 ##### Documentation Files #####
 Doxyfile

@@ -2,7 +2,7 @@
 
 
 ///Constructor needs pointer to simulation, id, and its level
-SchedulerCBS::SchedulerCBS(Simulation* s, unsigned int id, int level) : Scheduler(s, id, level) {
+SchedulerCBS::SchedulerCBS(unsigned int id, int level) : Scheduler(id, level) {
 
 }
 

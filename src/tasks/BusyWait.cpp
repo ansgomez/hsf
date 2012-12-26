@@ -1,10 +1,9 @@
 #include "tasks/BusyWait.h"
 
-#include "util/TimeUtil.h"
-#include "util/Operators.h"
 #include "core/Dispatcher.h"
 #include "core/Simulation.h"
-#include "core/Worker.h"
+#include "util/Operators.h"
+#include "util/TimeUtil.h"
 
 #include <iostream>
 
@@ -17,7 +16,7 @@ using namespace std;
 /*********** CONSTRUCTOR ***********/
 
 ///The constructor requires a pointer to the simulation, its own dispatcher, and the WCET
-BusyWait::BusyWait(Simulation *s, Dispatcher *disp, struct timespec wcet) : Task(s, disp, busy_wait) {
+BusyWait::BusyWait(Dispatcher *disp, struct timespec wcet) : Task(disp, busy_wait) {
   WCET = wcet;
 }
 
@@ -40,7 +39,5 @@ void BusyWait::fire() {
       count += 100;
       start = end;
     }
-  } while ( count < wcet_us && Simulation::isSimulating()==1 ); 
-
-  //TODO if(now() > deadline()) -> add to missed_deadlines
+  } while ( count < wcet_us && Simulation::isSimulating()); 
 }

@@ -29,9 +29,9 @@
 ///This attribute holds how long the simulation will last
 struct timespec Simulation::simTime;
 ///This attribute indicate if the simulation is initialized
-bool Simulation::initialized;
+bool Simulation::initialized=false;
 ///This attribute indicates if there is currently a simulation
-bool Simulation::simulating;  
+bool Simulation::simulating=false;  
 
 /*********** CONSTRUCTOR ***********/
   ///Constructor needs the path to xml and the cpu_set
@@ -99,9 +99,10 @@ void Simulation::initialize() {
   //Reserve some memory for vectors
   disp.reserve(50);
   worker_id.reserve(50);
+  Statistics::initialize();
 
   //Idle should be the first thread to be created
-  idle = new Idle(this);
+  idle = new Idle();
 
   cout << "Loading xml file...\n";
 
@@ -154,7 +155,9 @@ void Simulation::simulate() {
   cout << "**Simulating**\n" ;
 
   //Set simulation variables
-  Simulation::simulating = true;  
+  Statistics::enable();
+  initialized=true;
+  simulating=true;
   TimeUtil::setOffset();
 
   //Activate threads
@@ -164,12 +167,13 @@ void Simulation::simulate() {
   //Sleep for the duration of the simulation
   nanosleep(&simTime, &rem);
 
-  //Deactivate threads
-  Simulation::simulating = false;  
   cout << "***Done***\n";
+  //Deactivate threads
+  simulating=false;
+  Statistics::disable();
 
   //Join all other threads
-  join_all();
+  //join_all();
 
   cout << "Saving results...\n";
 

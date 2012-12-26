@@ -2,16 +2,16 @@
 
 #include "core/Criteria.h"
 #include "core/Intermediary.h"
-#include "core/Runnable.h"
 #include "core/Simulation.h"
 #include "core/Task.h"
 #include "pthread/Priorities.h"
 #include "results/Statistics.h"
-#include "util/Enumerations.h" 
 #include "util/Operators.h"
 #include "util/TimeUtil.h"
 
 #include <iostream>
+
+#define _INFO 1
 
 /***************************************
  *        CLASS DEFINITION             * 
@@ -19,18 +19,20 @@
 
 /*********** CONSTRUCTOR ***********/
 
-Worker::Worker(Simulation *s, Intermediary *p, unsigned int _id, _task_load tl) : Runnable(s, _id) {
+Worker::Worker(Intermediary *p, unsigned int _id, _task_load tl) : Runnable(_id) {
 #if _INFO == 1
-  cout << "Creating Worker with ID: " << _id << endl;
+  cout << "++New Worker \t - " << _id << endl;
 #endif
 
-  sim = s;
-  id = _id;
   parent = p;
   thread_type = worker;
 
   //Register worker id with simulation
-  sim->add_worker_id(_id);
+  //sim->add_worker_id(_id);
+
+  arrival_times.reserve(100);
+
+  relativeDeadline = TimeUtil::Millis(20);
 
   sem_init(&wrapper_sem, 0, 0); //signal semaphore
   sem_init(&activation_sem, 0, 1); //mutex semaphore
@@ -51,15 +53,22 @@ void Worker::join() {
 
 ///This inherited function will be executed by the worker thread
 void Worker::wrapper() {
+#if _INFO == 1
+  cout << "Worker: " << id << " waiting for initialization\n";
+#endif
   //Wait until the simulation is initialized
-  while(Simulation::isInitialized() == 0);
+  while( !Simulation::isInitialized());
 
-  while (Simulation::isSimulating() == 1) {
+#if _INFO == 1
+  cout << "Worker: " << id << " begining execution\n";
+#endif
+
+  while (Simulation::isSimulating()) {
     sem_wait(&wrapper_sem);
 
     Statistics::addTrace(worker, id, task_start);
 
-    if( Simulation::isSimulating() == 1) {
+    if( Simulation::isSimulating() ) {
       if(load != NULL) {
 	load->fire();    
       }
@@ -67,6 +76,8 @@ void Worker::wrapper() {
 	cout << "Worker error: load is null!\n";
       }
     }
+
+    //TODO if(now() > deadline()) -> add to missed_deadlines
 
     Statistics::addTrace(worker, id, task_end);
 
@@ -144,7 +155,9 @@ void Worker::job_finished() {
 
 ///This function will be called by the dispatcher thread, and will post to the wrapper_sem
 void Worker::new_job() {
-  //fix: struct timespec realtiveDeadline is not a param
+
+  cout << "Worker " << id << " got a new job!";
+
   sem_wait(&arrival_sem);
   arrival_times.push_back(TimeUtil::getTime() + relativeDeadline);
 
@@ -162,6 +175,8 @@ void Worker::new_job() {
 
   //Post to worker thread
   sem_post(&wrapper_sem);
+
+  cout << "Exiting new job\n";
 }
 
 /********************* GETTER AND SETTER FUNCTIONS *********************/

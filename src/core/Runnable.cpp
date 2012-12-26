@@ -1,8 +1,6 @@
 #include "core/Runnable.h"
 
 #include "core/Criteria.h"
-#include "core/Scheduler.h"
-#include "core/Simulation.h"
 #include "core/Task.h"
 #include "criteria/InclusiveCriteria.h"
 #include "pthread/Priorities.h"
@@ -16,8 +14,7 @@
 
 /*********** CONSTRUCTOR ***********/
 
-Runnable::Runnable(Simulation *s, unsigned int _id) : Thread(s,_id) {
-  sim = s;
+Runnable::Runnable(unsigned int _id) : Thread(_id) {
   state = deactivated;
 
   //TODO: parametrize this!

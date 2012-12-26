@@ -16,12 +16,12 @@
 
 /*********** CONSTRUCTOR ***********/
 
-PeriodicJitter::PeriodicJitter(Simulation *s, unsigned int id) : Dispatcher(s,id) {
+PeriodicJitter::PeriodicJitter(unsigned int id) : Dispatcher(id) {
   period =  TimeUtil::Millis(20);
-
-  srand(time(NULL));
-
   deltaPeriod = TimeUtil::Millis(5);
+
+  //seed random numbers for calculating jitter
+  srand(time(NULL));
 }
 
 /*********** INHERITED FUNCTIONS ***********/
@@ -32,7 +32,7 @@ void PeriodicJitter::dispatch() {
   struct timespec newPeriod, rem;
   double random;
 
-  while (Simulation::isSimulating() ==  1) {
+  while (Simulation::isSimulating()) {
 
     Statistics::addTrace(dispatcher, worker->getId(), task_arrival);
 
@@ -43,7 +43,7 @@ void PeriodicJitter::dispatch() {
       cout << "Dispatcher error: worker is null!\n";
     }
 
-    if(Simulation::isSimulating() ==  1) {
+    if(Simulation::isSimulating()) {
       random = (1+(rand()%200))/100.0; //random in [1/100,2]
       newPeriod = period + jitter - random*jitter - deltaPeriod;
       //deltaPeriod keeps the timing to n*P+-jitter

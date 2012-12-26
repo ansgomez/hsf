@@ -36,7 +36,7 @@ class TDMA : public Scheduler {
   /*********** CONSTRUCTOR ***********/
 
   ///Constructor needs pointer to simulation, its ID, and its level
-  TDMA(Simulation *s, unsigned int id, int level);
+  TDMA(unsigned int id, int level);
 
   /*********** INHERITED FUNCTIONS ***********/
 

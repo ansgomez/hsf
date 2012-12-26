@@ -58,12 +58,12 @@ void Statistics::addRuntime(enum _thread_type type, unsigned int id, struct time
 
 ///This function adds a trace to the vector
 void Statistics::addTrace(enum _thread_type type, unsigned int t_id, enum _task_action act) {
+
   if(state == 1) {
     Trace t;
     struct timespec aux;
 
     aux = TimeUtil::getTime(relative);
-
     sem_wait(&trace_sem);
       t.setTrace(aux, type, t_id, act);
       traces.push_back(t);
@@ -98,7 +98,6 @@ void Statistics::initialize() {
 ///This function saves to custom csv file
 void Statistics::toFile(string filePrefix) {  
   ofstream file;
-
   /************ SAVING MISSED DEADLINES *********/
   MissedDeadline aux_m;
   file.open((filePrefix+"_missedDeadlines.csv").data());
@@ -128,5 +127,4 @@ void Statistics::toFile(string filePrefix) {
     file << aux_t.toString() << "\n"; 
   }
   file.close();
-  
 }

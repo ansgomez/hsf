@@ -21,7 +21,7 @@ using namespace std;
 /*********** CONSTRUCTOR ***********/
 
 ///Constructor needs pointer to simulation
-TDMA::TDMA(Simulation *s, unsigned int id, int level) : Scheduler(s, id, level) {
+TDMA::TDMA(unsigned int _id, int level) : Scheduler(_id, level) {
 #if _INFO==1
   cout << "Creating TDMA with ID: " << id << endl;
 #endif
@@ -129,20 +129,20 @@ void TDMA::schedule(){
   cout << "Began scheduling...\n";
 #endif
 
-  while (Simulation::isSimulating() == 1) {
+  while (Simulation::isSimulating()) {
     
-    for(active_index=0; active_index<(int)timeslots.size() && Simulation::isSimulating()==1; active_index++) {
+    for(active_index=0; active_index<(int)timeslots.size() && Simulation::isSimulating(); active_index++) {
 
       time_slot = timeslots[active_index];
 
       exit = false;
 
-      while(exit == false && Simulation::isSimulating()==1) {
+      while(exit == false && Simulation::isSimulating() ) {
 
 	sem_wait(&schedule_sem);
 
 	//If simulation ended while asleep, break
-	if(Simulation::isSimulating()==0) {
+	if( !Simulation::isSimulating() ) {
 	  sem_post(&schedule_sem);
 	  break;
 	}
@@ -163,7 +163,7 @@ void TDMA::schedule(){
 	sem_post(&timing_sem);
 
 	//If simulation ended while asleep, break
-	if(Simulation::isSimulating()==0) {
+	if( !Simulation::isSimulating() ) {
 	  sem_post(&schedule_sem);
 	  break;
 	}

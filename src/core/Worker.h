@@ -8,8 +8,6 @@
 #include <vector>
 
 class Intermediary;
-class Scheduler;
-class Simulation;
 class Task;
 
 using namespace std;
@@ -38,9 +36,6 @@ class Worker : public Runnable {
   ///This variable determines each job's deadline (deadline = arrival_time + relativeDeadline)
   struct timespec relativeDeadline;
 
-  ///Pointer to simulation
-  Simulation* sim;
-
   /**** SEMAPHORES ****/
 
   ///Semaphore to control the activation/deactivation of the thread
@@ -52,7 +47,7 @@ class Worker : public Runnable {
 
   /*********** CONSTRUCTOR ***********/
  public:
-  Worker(Simulation *s, Intermediary *sched, unsigned int id, _task_load tl);
+  Worker(Intermediary *p, unsigned int _id, _task_load tl);
 
   /*********** INHERITED FUNCTIONS ***********/
 

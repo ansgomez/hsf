@@ -5,8 +5,6 @@
 #include "util/Enumerations.h"
 
 class Intermediary;
-class Simulation;
-class Scheduler;
 class Task;
 class Criteria;
 
@@ -29,9 +27,6 @@ class Runnable : public Thread {
   ///Pointer to the scheduler that this runnable belongs to
   Intermediary* parent;
 
-  ///Pointer to simulation
-  Simulation* sim;
-
   ///Auxiliary variable to hold the state of runnable
   _runnable_state state;
 
@@ -40,7 +35,7 @@ class Runnable : public Thread {
   /*********** CONSTRUCTOR ***********/
 
   ///Constructor needs simulation pointer and an id
-  Runnable(Simulation *s, unsigned int _id);
+  Runnable(unsigned int _id);
 
   /*********** INHERITED FUNCTIONS ***********/
   

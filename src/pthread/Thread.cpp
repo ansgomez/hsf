@@ -1,6 +1,5 @@
 #include "pthread/Thread.h"
 
-#include "core/Simulation.h"
 #include "pthread/Priorities.h"
 #include "results/Statistics.h"
 
@@ -18,9 +17,8 @@ using namespace std;
 /*********** CONSTRUCTOR ***********/
 
 ///Constructor needs nothing to create thread (with inactive priotity). Note that there should never be a simple Thread object because its wrapper function is null. (It should be called from a subclass)
-Thread::Thread(Simulation *s, unsigned int _id) {
+Thread::Thread(unsigned int _id) {
 
-  sim = s;
   id = _id;
 
 #if _INFO==1
@@ -36,9 +34,7 @@ Thread::Thread(Simulation *s, unsigned int _id) {
   }
                 
   //Setting its priority
-  pthread_getschedparam(thread, &policy, &thread_param);
-  thread_param.sched_priority = Priorities::get_inactive_pr();
-  pthread_setschedparam(thread, SCHED_FIFO, &thread_param);	  
+  setPriority(Priorities::get_inactive_pr());	  
 }
 
 Thread::~Thread() {

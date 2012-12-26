@@ -5,8 +5,6 @@
 
 #include <pthread.h>
 
-class Simulation;
-
 /***************************************
  *        CLASS DECLARATION            * 
  ***************************************/
@@ -22,9 +20,6 @@ class Thread {
 
   ///This is an auxiliary variable to set the thread's priority
   int policy;
-
-  ///Pointer to the simulation
-  Simulation* sim;
 
   ///The actual pthread variable
   pthread_t thread;
@@ -43,7 +38,7 @@ class Thread {
   /*********** CONSTRUCTOR ***********/
 
   ///Constructor needs nothing to create thread (with inactive priotity);
-  Thread(Simulation *s, unsigned int _id);
+  Thread(unsigned int _id);
   ~Thread();
 
   /*********** MEMBER FUNCTIONS ***********/

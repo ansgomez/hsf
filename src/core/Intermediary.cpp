@@ -1,7 +1,5 @@
 #include "core/Intermediary.h"
 
-#include "core/Simulation.h"
-
 #include <iostream>
 
 using namespace std;
@@ -13,7 +11,7 @@ using namespace std;
 /*********** CONSTRUCTOR ***********/
 
 ///Constructor needs runnable's id
-Intermediary::Intermediary(unsigned int _id) : Runnable(new Simulation("",1,""), _id) {
+Intermediary::Intermediary(unsigned int _id) : Runnable(_id) {
   //empty
 }
 

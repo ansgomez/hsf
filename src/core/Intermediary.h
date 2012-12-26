@@ -1,11 +1,8 @@
 #ifndef _INTERMEDIARY_H
 #define _INTERMEDIARY_H
 
-#include "core/Worker.h"
 #include "core/Runnable.h"
 #include "util/Enumerations.h"
-
-#include <vector>
 
 /***************************************
  *        CLASS DECLARATION            * 

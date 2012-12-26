@@ -13,9 +13,7 @@
 /*********** CONSTRUCTOR ***********/
 
 ///The constructor needs the simulation pointer
-Idle::Idle(Simulation *s) : Thread(s,0) {
-  sim = s;
-
+Idle::Idle() : Thread(0) {
   thread_type = idle;
 
   setPriority(Priorities::get_idle_pr());
@@ -39,7 +37,7 @@ void Idle::run() {
   cout << "Starting Idle thread\n";
 #endif
 
-  while (Simulation::isSimulating() == 1);
+  while (Simulation::isSimulating());
 
 #if _INFO == 1
   cout << "Exiting Idle thread\n";

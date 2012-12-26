@@ -1,7 +1,7 @@
 #include "dispatchers/Periodic.h"
 
-#include "core/Worker.h"
 #include "core/Simulation.h"
+#include "core/Worker.h"
 #include "results/Statistics.h"
 #include "util/Operators.h"
 #include "util/TimeUtil.h"
@@ -14,7 +14,7 @@
 
 /*********** CONSTRUCTOR ***********/
 
-Periodic::Periodic(Simulation *s, unsigned int id) : Dispatcher(s,id) {
+Periodic::Periodic(unsigned int id) : Dispatcher(id) {
   period =  TimeUtil::Millis(20);
 }
 
@@ -25,18 +25,20 @@ Periodic::Periodic(Simulation *s, unsigned int id) : Dispatcher(s,id) {
 void Periodic::dispatch() {
   struct timespec rem;
 
-  while (Simulation::isSimulating() ==  1) {
+  while (Simulation::isSimulating()) {
 
     Statistics::addTrace(dispatcher, worker->getId(), task_arrival);
 
     if(worker != NULL) {
-      worker->new_job();
+      cout << "Disp : " << id << " is registering new job\n";
+      //worker->new_job();
+      cout << "Disp : " << id << " is continuing execution\n";
     }
     else {
       cout << "Dispatcher error: worker is null!\n";
     }
 
-    if(Simulation::isSimulating() ==  1) {
+    if(Simulation::isSimulating()) {
       nanosleep(&period, &rem);
     }
   }

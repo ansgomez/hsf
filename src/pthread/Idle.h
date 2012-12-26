@@ -15,15 +15,12 @@ class Idle : public Thread {
 
   /*********** VARIABLES ***********/
 
-  ///Pointer to simulation
-  Simulation *sim;
-
  public:
 
   /*********** CONSTRUCTOR ***********/
 
   ///Constructor needs simulation pointer
-  Idle(Simulation *s);
+  Idle();
 
   /*********** INHERITED FUNCTIONS ***********/
   

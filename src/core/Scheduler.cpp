@@ -1,9 +1,10 @@
 #include "core/Scheduler.h"
 
-#include "core/Intermediary.h"
 #include "core/Simulation.h"
 
 #include <iostream>
+
+#define _INFO 1
 
 using namespace std;
 
@@ -14,9 +15,11 @@ using namespace std;
 /*********** CONSTRUCTOR ***********/
 
 ///Constructor needs pointer to simulation as well as the scheduler's id and hierarchical level
-Scheduler::Scheduler(Simulation *s, unsigned int _id, int _level) : Intermediary(_id){
-  sim = s;
-  id = _id;
+Scheduler::Scheduler(unsigned int _id, int _level) : Intermediary(_id){
+#if _INFO == 1
+  cout << "++New Scheduler - " << _id << "\n";
+#endif
+
   thread_type = scheduler;
   level = _level;
 }
@@ -33,8 +36,16 @@ void Scheduler::join() {
 ///This is the pthread's wrapper function
 void Scheduler::wrapper() {
 
+#if _INFO == 1
+  cout << "Sched: " << id << " waiting for initialization\n";
+#endif
+
   //Wait until the simulation is initialized
-  while(Simulation::isInitialized() == 0);
+  while( ! Simulation::isInitialized());
+
+#if _INFO == 1
+  cout << "Sched: " << id << " begining execution\n";
+#endif
 
   schedule();
 }

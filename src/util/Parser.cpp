@@ -72,7 +72,7 @@ Dispatcher* Parser::parseDispatcher(xml_node disp_node, unsigned int *id) {
 #endif
 
   if(periodicity == "periodic") {
-    Periodic *p = new Periodic(sim, *id);
+    Periodic *p = new Periodic(*id);
     p->setPeriod(parseTime(disp_node.child("period")));
     disp = (Dispatcher*) p;
     sim->addDispatcher(disp);   
@@ -87,7 +87,7 @@ Dispatcher* Parser::parseDispatcher(xml_node disp_node, unsigned int *id) {
 ///This function receives and TDMA node, and parses its load
 Scheduler* Parser::parseTDMA(xml_node sched_node, unsigned int *id, int level) {
 
-  TDMA *sched = new TDMA(sim, *id, level);
+  TDMA *sched = new TDMA(*id, level);
 
   //iterate through all of the children nodes
   for (xml_node load = sched_node.first_child(); load; load = load.next_sibling()) {
@@ -162,9 +162,9 @@ Worker* Parser::parseWorker(xml_node worker_node, unsigned int *id) {
 #if _INFO==1
     cout << "Creating Worker " << *id << endl;
 #endif
-    BusyWait *bw = new BusyWait(sim, d, parseTime(worker_node.child("wcet")));
+    BusyWait *bw = new BusyWait(d, parseTime(worker_node.child("wcet")));
     Scheduler *parent = NULL;
-    worker = new Worker(sim, parent, *id, busy_wait);
+    worker = new Worker(parent, *id, busy_wait);
     worker->setLoad(bw);
     d->setWorker(worker);
   }
