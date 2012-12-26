@@ -12,14 +12,15 @@ class Task;
 
 using namespace std;
 
-/********************************************************************************
- * CLASS DECLARATION
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DECLARATION            * 
+ ***************************************/
 
 class Worker : public Runnable {
-  /*********** VARIABLES ***********/
+
  private:
+
+  /*********** VARIABLES ***********/
 
   ///Vector to hold arrival times of active tasks
   vector<struct timespec> arrival_times;

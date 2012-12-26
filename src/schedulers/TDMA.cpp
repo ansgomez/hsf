@@ -12,6 +12,8 @@
 #include <iostream>
 #include <errno.h>
 
+#define _INFO 0
+
 using namespace std;
 
 /***************************************
@@ -153,6 +155,9 @@ void TDMA::schedule(){
 	clock_gettime(CLOCK_REALTIME, &timeA);
 
 	if(load[active_index] != NULL) {
+	  //#if _INFO==1
+	  //cout << "TDMA (" << id << ") is activating: " << load[active_index]->getId() << endl;
+	  //#endif
 	  load[active_index]->activate();
 	}
 

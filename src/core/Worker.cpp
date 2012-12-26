@@ -4,6 +4,7 @@
 #include "core/Intermediary.h"
 #include "core/Simulation.h"
 #include "core/Task.h"
+#include "criteria/InclusiveCriteria.h"
 #include "pthread/Priorities.h"
 #include "results/Statistics.h"
 #include "util/Operators.h"
@@ -30,6 +31,7 @@ Worker::Worker(Intermediary *p, unsigned int _id, _task_load tl) : Runnable(_id)
   //Register worker id with simulation
   //sim->add_worker_id(_id);
 
+  criteria = new InclusiveCriteria();
   arrival_times.reserve(100);
 
   relativeDeadline = TimeUtil::Millis(20);
@@ -64,7 +66,12 @@ void Worker::wrapper() {
 #endif
 
   while (Simulation::isSimulating()) {
+    
+    //cout << "Worker: " << id << " waiting for a job...\n";
+
     sem_wait(&wrapper_sem);
+
+    //cout << "Worker: " << id << " is processing a job...\n";
 
     Statistics::addTrace(worker, id, task_start);
 
@@ -82,7 +89,13 @@ void Worker::wrapper() {
     Statistics::addTrace(worker, id, task_end);
 
     //remove arrival_time from schedulable criteria
-    parent->job_finished(id);
+    if(parent != NULL) {
+      parent->job_finished(id);
+    }
+    else {
+      cout << "Worker::wrapper - parent is null!\n";
+    }
+
   }
 }
 
@@ -139,15 +152,30 @@ void Worker::job_finished() {
   //If there are any jobs left on queue, register new head
   if(arrival_times.size() > 0) {
     //Update objeect's schedulable criteria
-    criteria->setDeadline(arrival_times[0]+relativeDeadline);
+    if(criteria != NULL) {
+      criteria->setDeadline(arrival_times[0]+relativeDeadline);
+    }
+    else {
+      cout << "Worker::job_finished - criteria is null!\n";
+    }
 
-    //Notify parent of new head
-    parent->renew_job(this);
+    //Notify parent of new arrival
+    if (parent != NULL ) {
+      parent->renew_job(this);
+    }
+    else {
+      cout << "Worker::job_finished - parent is null!\n";
+    }
   }
   //If no jobs are pending, remove from parent
   else {
     //Remove job from parents' queue
-    parent->job_finished(id);
+    if(parent != NULL) {
+      parent->job_finished(id);
+    }
+    else {
+      cout << "Worker::job_finished - parent is null!\n";
+    }
   }
 
   sem_post(&arrival_sem);
@@ -156,27 +184,37 @@ void Worker::job_finished() {
 ///This function will be called by the dispatcher thread, and will post to the wrapper_sem
 void Worker::new_job() {
 
-  cout << "Worker " << id << " got a new job!";
-
+  //cout << "Worker " << id << " got a new job! \n";
+  
   sem_wait(&arrival_sem);
+
   arrival_times.push_back(TimeUtil::getTime() + relativeDeadline);
 
   //If there were no active jobs before, register event
   if(arrival_times.size() == 1) {
     //Update schedulable criteria
-    criteria->setDeadline(arrival_times[0]);
+    if( criteria != NULL ) {
+      criteria->setDeadline(arrival_times[0]);
+    }
+    else {
+      cout << "Worker::new_job - criteria is null!\n";
+    }
 
     //Notify parent of new arrival
-    parent->new_job(this);
+    if (parent != NULL ) {
+      parent->new_job(this);
+    }
+    else {
+      cout << "Worker::new_job - parent is null!\n";
+    }
   }
   //Otherwise, the worker is already executing a job and when that finished, the next job will be renewed with the parent
 
+  //End critical section
   sem_post(&arrival_sem);
 
   //Post to worker thread
   sem_post(&wrapper_sem);
-
-  cout << "Exiting new job\n";
 }
 
 /********************* GETTER AND SETTER FUNCTIONS *********************/

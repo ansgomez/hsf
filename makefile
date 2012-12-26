@@ -25,7 +25,7 @@ MAINOBJ=$(MAIN_SRC:.cpp=.out)
 
 #################    MAIN TARGETS   #################
 
-all: libraries hsf #executable
+all: libraries hsf executable
 
 hsf: core criteria dispatchers pthread queues results schedulers servers tasks util 
 

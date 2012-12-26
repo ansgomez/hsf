@@ -30,8 +30,8 @@ void Periodic::dispatch() {
     Statistics::addTrace(dispatcher, worker->getId(), task_arrival);
 
     if(worker != NULL) {
-      cout << "Disp : " << id << " is registering new job\n";
-      //worker->new_job();
+      cout << "Disp : " << id << " is registering a new job\n";
+      worker->new_job();
       cout << "Disp : " << id << " is continuing execution\n";
     }
     else {
