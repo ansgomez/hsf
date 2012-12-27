@@ -10,17 +10,7 @@ TASK_END = 4;
 thread_ids=unique(traces(:,2));
 num_threads = length(thread_ids);
 
-%MAX_TRACES=length( find(traces(:,3)==4)  );
-%response_times_ms = zeros(MAX_TRACES, num_threads);
-
 actions=traces(:,3);
-
-%output file
-%fileout = strcat(name, '_resp_ms_summary.txt');
-%fid = fopen(fileout, "w");
-
-%fprintf(fid, 'Response Times (ms): \n\n');
-%fprintf(fid, 'ID    N_Jobs      MIN       AVG       MAX \n');
 
 for i1=1:num_threads
 	
@@ -41,20 +31,6 @@ for i1=1:num_threads
     end
     
     N = count(response_times_ms(:,i1));
-
-    if N == 0
-    	continue;
-    end 
-
-    min_i = minimum(response_times_ms(:,i1));
-    avg = average(response_times_ms(:,i1));
-    max_i =  max(response_times_ms(:,i1));
-    
-    if N ~= 0
-%         fprintf(fid, '%2d    %3d      %7.3f    %7.3f    %7.3f \n',thread_ids(i1), N,  min_i, avg, max_i);
-    else
-%         fprintf(fid, '%d - has no completed jobs!\n', thread_ids(i1));
-    end 
 end
 
 name_resp = strcat(name,'_resp_ms.csv');

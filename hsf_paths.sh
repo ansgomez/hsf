@@ -1,6 +1,6 @@
 #!/bin/bash
 
-HSF=/home/gomeza/git/HSF
+HSF=/home/mary/git/HSF
 export HSF
 
 PATH=$PATH:$HSF/bin
