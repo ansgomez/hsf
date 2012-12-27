@@ -1,6 +1,6 @@
 function runtime(name)
 clear total;
-input = strcat(name, "_stats.csv");
+input = strcat(name, "_runtimes.csv");
 trace = csvread(input);
 
 %THREAD TYPES

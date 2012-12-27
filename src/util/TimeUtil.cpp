@@ -62,6 +62,12 @@ unsigned long int TimeUtil::convert_us(struct timespec t1)
   return ul;
 }
 
+///Converts a timespec to unsigned long msecs
+unsigned long int TimeUtil::convert_ms(struct timespec t1) {
+  unsigned long int ul = (unsigned long int) (t1.tv_sec)*1000 + (unsigned long int)(t1.tv_nsec)/1000000;
+  return ul;
+}
+
 ///This function returns a timespec with the specified microseconds
 struct timespec TimeUtil::Micros(long int us) {
   struct timespec aux;

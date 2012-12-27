@@ -105,7 +105,7 @@ do
        #Generate XML, execute HSf, and perform analysis
        php "$topology".php $sim_time $periodicity $load $slot $gamma $n > hsf.xml   
        sudo bin/main.out
-       sudo octave --no-window-system -qf metrics/analysis ../simulation
+       sudo octave --no-window-system -qf scripts/octave/analysis ../simulation
 
        #Copy intermediate results
        PREFIX=$DIR/gamma_"$gamma"/ntasks_"$n"

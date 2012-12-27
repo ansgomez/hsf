@@ -1,5 +1,5 @@
 #! /bin/octave -qf
-cd metrics/
+cd scripts/octave/
 response_time( argv(){1} );
 execution_time( argv(){1} );
 runtime( argv(){1} );

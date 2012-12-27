@@ -38,6 +38,9 @@ class TimeUtil {
   ///Converts a timespec to unsigned long usecs
   static unsigned long int convert_us(struct timespec t1);
 
+  ///Converts a timespec to unsigned long msecs
+  static unsigned long int convert_ms(struct timespec t1);
+
   ///This function returns a timespec with the specified microseconds
   static struct timespec Micros(long int us);
 

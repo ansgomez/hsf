@@ -1,5 +1,16 @@
 #include "SimulationFigure.h"
 
+#include "util/Operators.h"
+#include "util/TimeUtil.h"
+
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <string.h>
+#include <vector>
+
+using namespace std;
+
 /********************************************************************************
  * VARIABLES
  ********************************************************************************
@@ -14,20 +25,214 @@ const char *plot_color[] = {"k", "b", "r", "g", "q", "c", "p", "h", "u", "P", "M
 
 //Constructor set some default values
 SimulationFigure::SimulationFigure(string _path) {
-  path = _path+"_figure.png";
+
+  path = _path;
   height = 0.75;
   width = 0.5;
   n_plots = 1;
-  base = 0;
+  base = 0.05;
   plot_offset = 0;
   arrow_length = 1.3;
+
   gr = new mglGraph;
-  x1=0; x2=1; y1=0; y2=1;
+  x1=0; x2=100; y1=0; y2=1.5;
+}
+
+//This function draws an arrival arrow at time t, with an option label
+void SimulationFigure::drawArrival(int plot, double time, char *label, int color) {
+  if(gr!=NULL) {
+    gr->ColumnPlot(n_plots, plot, plot_offset);
+    gr->SetRanges(x1,x2,y1,y2);
+          
+    //Draw Arrow
+    gr->Line(mglPoint(time,base), mglPoint(time,base+height*arrow_length), "A1");
+          
+    //Draw Label
+    float xpt[] = {time,NaN}; float ypt[] = {height*arrow_length+0.05, NaN};
+    gr->Label(mglData(2, xpt), mglData(2, ypt), label);
+  }
+}
+//This function draws a rectangle of a defined color starting at time t and a relative width
+void SimulationFigure::drawJob(int plot, double start, double end, int clr) {
+  //Assign plot color, unless it's overwritten
+  int color = (clr!=-1)? clr:plot+1;
+  if(gr!=NULL) {
+    gr->ColumnPlot(n_plots, plot, plot_offset);
+    gr->SetRanges(x1,x2,y1,y2);
+    //Draw Face
+    gr->Face(mglPoint(start,base), mglPoint(end,base), mglPoint(start,base+height), mglPoint(end,base+height), plot_color[color]);
+  }
+}
+
+//This function draws an arrow indicating that the scheduler activated plot_i during this time
+void SimulationFigure::drawSched(int plot, double sched_start, double sched_end, int clr) {
+  //Assign plot color, unless it's overwritten
+  if(gr!=NULL) {
+    gr->ColumnPlot(n_plots, plot, plot_offset);
+    gr->SetRanges(x1,x2,y1,y2);
+    gr->Line(mglPoint(sched_start,base+height*1.1), mglPoint(sched_end,base+height*1.1), "KK");
+  }
+}
+
+//This function exports the figure to an eps file
+void SimulationFigure::exportEPS() {
+  string path2 = path + "_figure.eps";
+  if(gr!=NULL) {
+    gr->WriteEPS(path2.data(),"");
+    printf("Saved Simulation Figure _ EPS\n");
+  }
+  else {
+    printf("ERROR: Graph was null\n");
+  }
+}
+
+//This function exports the figure to a png file
+void SimulationFigure::exportPNG() {
+  string path2 = path + "_figure.png";
+  if(gr!=NULL) {
+    gr->WritePNG(path2.data(),"",false);
+    printf("Saved Simulation Figure _ PNG\n");
+  }
+  else {
+    printf("ERROR: Graph was null\n");
+  }
+}
+
+//This function exports the figure to an eps file
+void SimulationFigure::exportSVG() {
+  string path2 = path + "_figure.svg";
+  if(gr!=NULL) {
+    gr->WriteSVG(path2.data(),"");
+    printf("Saved Simulation Figure _ SVG\n");
+  }
+  else {
+    printf("ERROR: Graph was null\n");
+  }
+}
+
+///This function generates a figure from traces
+void SimulationFigure::generateFigure() {
+  char label[30]; 
+  char title[20];
+  unsigned int c;
+ 
+  vector<unsigned int>::iterator it;
+  int id;
+
+  unsigned int n_workers = worker_id.size();
+
+  vector<unsigned int> start_sched_us, start_time;
+  start_sched_us.reserve(n_workers);
+  start_time.reserve(n_workers);
+  
+
+  struct timespec range = TimeUtil::Millis(200);
+  
+  //Define values
+  setNPlots(n_workers);
+  setTimeRange(TimeUtil::convert_ms(range));
+
+  //Initialize each worker plot
+  for(c=0;c<n_workers;c++) {
+    start_time[c] = 0;
+    start_sched_us[c] = 0;
+
+    sprintf(title, "Worker %d ", c+1);
+    initPlot(c, title);
+  }
+
+  //Iterate through traces and build job trace
+  for(c=0; c<traces.size() ;c++) {
+    it = find(worker_id.begin(), worker_id.end(), traces[c].getId());
+    id = (int) (it-worker_id.begin()); //get the index where the ID was found
+
+    if(traces[c].getTimestamp() > range)
+      break;
+
+    switch(traces[c].getAction()) {
+    case task_arrival:
+      //TODO add label to aperiodic tasks with the computation time...
+
+      strcpy(label, "Job\0");
+      drawArrival(id, TimeUtil::convert_ms(traces[c].getTimestamp()), label);
+      break;   
+
+    case task_start:
+      start_time[id] = TimeUtil::convert_us(traces[c].getTimestamp());
+      break;
+
+    case sched_start:
+      start_sched_us[id] = TimeUtil::convert_us(traces[c].getTimestamp());
+
+      if(start_time[id] != 0) {
+	start_time[id] = start_sched_us[id];
+      }
+      break;
+
+    case sched_end:
+      if(true) { 
+	float x = start_sched_us[id]/1000;
+	drawSched(id, x,TimeUtil::convert_ms(traces[c].getTimestamp()) );
+      }
+
+      if(start_time[id] != 0) {
+	float x = start_time[id]/1000;
+	drawJob(id, x, TimeUtil::convert_ms(traces[c].getTimestamp()) );
+      }
+
+      break;
+
+    case task_end:
+      float x = start_time[id]/1000;
+      drawJob(id, x, TimeUtil::convert_ms(traces[c].getTimestamp()) );
+      start_time[id] = 0;
+      break;
+    }
+  }
+  exportEPS();
+  exportSVG();
+}
+
+
+///This function imports data from a CSV file
+void SimulationFigure::importCSV(string name) {
+  cout << "Trying to read from file...\n";
+
+  //Tranforms name to c string
+  char *cstr = new char[name.length() + 1];
+  strcpy(cstr, name.c_str());
+
+  ifstream infile;
+  infile.open(cstr);
+
+  string   line;
+  while(getline(infile,line)) {
+    parseLine(line);
+  }
+}
+
+//Initialize a plot with y-label and default settings (ticks, ranges, etc)
+void SimulationFigure::initPlot(int plot, char *name) { 
+  if(gr!=NULL) {
+    gr->ColumnPlot(n_plots, plot, plot_offset);
+    gr->SetRanges(x1,x2,y1,y2);
+    gr->Label('y', name, 1); 
+    gr->SetTicks('x', 5, 0);
+    gr->Axis("xT");
+  }
 }
 
 //Set the number of plots for the figure
 void SimulationFigure::setNPlots(int n) {
   n_plots = n;
+}
+
+//Sets the size of the figure, as well as the title and x label
+void SimulationFigure::setSize(int x, int y) {
+  if (gr!=NULL) {
+    gr->SetSize(x,y);;
+    gr->Label('x',"Time [ms]",0, 0);
+  }
 }
 
 //Set the ranges of the figure
@@ -38,84 +243,96 @@ void SimulationFigure::setRanges(double x1, double x2, double y1, double y2) {
   this->y2 = y2;
 }
 
-//Sets the size of the figure, as well as the title and x label
-void SimulationFigure::setSize(int x, int y) {
-  if (gr!=NULL) {
-    gr->SetSize(x,y);
-    gr->Title("HSF Simulation Results","", 6);
-    gr->Label('x',"Time[ms]",0, 0);
-  }
-}
-
 //Set the x domain of the current plot and the corresponding ranges of the figure
 void SimulationFigure::setTimeRange(double t) {
-  //Size depends on the range
-  setSize((int)ceil(t)*UNIT_WIDTH, PLOT_HEIGHT*n_plots);
-  setRanges(0,t,-0.25,1.5);
-     
+  this->x2 = t;
+  setSize((int)ceil(t)*UNIT_WIDTH, PLOT_HEIGHT);
 }
 
-//Initialize a plot with y-label and default settings (ticks, ranges, etc)
-void SimulationFigure::initPlot(int plot, char *name) { 
-  if(gr!=NULL) {
-    gr->ColumnPlot(n_plots, plot, plot_offset);
-    gr->SetRanges(x1,x2,y1,y2);
-    gr->SetOrigin(0, base);
-    //gr->Box("r");
-    gr->Label('y'+'n', name, 1, 1);
-    gr->SetTicks('x', 1, 0);
-    gr->SetTicks('y', 1, 0);
-    gr->Axis("xT");
+///This function parses one line from a CSV file
+void SimulationFigure::parseLine(string line) {
+  struct timespec ts;
+  enum _task_action task_action;
+  unsigned int id;
+  char *str;
+  Trace aux;
+
+  //Tranforms line to c string
+  char *cstr = new char[line.length() + 1];
+  strcpy(cstr, line.c_str());
+
+  //Tokenize c string
+  str = strtok(cstr, ",");
+ 
+  //Extract and parse the timestamp
+  ts = parseTimespec(str);
+  
+  //Extract and parse the thread id
+  str = strtok(NULL, ",");
+  id = (unsigned int) atoi(str);
+
+  //Add ID to worker_id vector
+  workerID_vector(id);
+  printWorkerID();
+
+  //Extract and parse the enum task_action
+  str = strtok(NULL, ",");
+  task_action = static_cast<_task_action> (atoi(str));
+
+  //Set the auxiliary Trace
+  aux.setTrace(ts, idle, id, task_action);
+
+  //Add to the JobTrace to the vector
+  traces.push_back(aux);
+
+  delete []cstr;
+  
+}
+// This Function structs timespec 
+struct timespec SimulationFigure::parseTimespec(char *str){
+  struct timespec aux;
+  unsigned long long int ns, ns2;
+  unsigned long int nsec=0;
+  unsigned long int sec;
+  unsigned long long int t;
+ 
+  if (strlen(str)> 12){
+    cout << "Timespec Parser ERROR , number is too big"<< endl;
+    return TimeUtil::Millis(0);
+  }
+  else
+  {
+    t = atoi(str);
+    ns =  t * (unsigned long long int) 1000;
+    sec = static_cast <unsigned long int> (ns / 1000000000);
+    ns2 = (sec*(unsigned long long int)1000000000);
+    nsec = (unsigned long int)(ns - ns2);
+    aux.tv_sec = sec;
+    aux.tv_nsec = nsec;
+  
+    return aux;
   }
 }
 
-//This function draws an arrow indicating that the scheduler activated plot_i during this time
-void SimulationFigure::drawSched(int plot, double sched_start, double sched_end, int clr) {
-  //Assign plot color, unless it's overwritten
-  //int color = (clr!=-1)? clr:plot+1;
-  if(gr!=NULL) {
-    gr->ColumnPlot(n_plots, plot, plot_offset);
-    gr->SetRanges(x1,x2,y1,y2);
-    gr->Line(mglPoint(sched_start,base+height*1.1), mglPoint(sched_end,base+height*1.1), "KK");
-	
+// This function prints the worker IDs
+void SimulationFigure::printWorkerID(){
+ unsigned  int i; 
+ for (i=0 ; i < worker_id.size();i++){
+   cout << "WORKER ID "  <<i <<" is equal to " << worker_id[i]<< endl; 
+   }
+}
+
+// This function produces a vector of worked IDs
+void SimulationFigure::workerID_vector(unsigned int id){
+ if (worker_id.size()==0)
+       worker_id.push_back(id);
+  else
+  {
+    if (find (worker_id.begin(), worker_id.end(), id)!=worker_id.end())
+      return ;
+    else
+      worker_id.push_back(id);
   }
 }
 
-//This function draws a rectangle of a defined color starting at time t and a relative width
-void SimulationFigure::drawJob(int plot, double start, double end, int clr) {
-  //Assign plot color, unless it's overwritten
-  int color = (clr!=-1)? clr:plot+1;
-  if(gr!=NULL) {
-    gr->ColumnPlot(n_plots, plot, plot_offset);
-    gr->SetRanges(x1,x2,y1,y2);
-    gr->SetOrigin(0, base);
-    //Draw Face
-    gr->Face(mglPoint(start,base), mglPoint(end,base), mglPoint(start,base+height), mglPoint(end,base+height), plot_color[color]);
-  }
-}
 
-//This function draws an arrival arrow at time t, with an option label
-void SimulationFigure::drawArrival(int plot, double time, char *label, int color) {
-  if(gr!=NULL) {
-    gr->ColumnPlot(n_plots, plot, plot_offset);
-    gr->SetRanges(x1,x2,y1,y2);
-          
-    //Draw Arrow
-    gr->Line(mglPoint(time,base), mglPoint(time,base+height*arrow_length), "A2");
-          
-    //Draw Label
-    float xpt[] = {time,NaN}; float ypt[] = {height*arrow_length, NaN};
-    gr->Label(mglData(2, xpt), mglData(2, ypt), label);
-  }
-}
-
-//This function exports the figure to a png file
-void SimulationFigure::exportPNG() {
-  if(gr!=NULL) {
-    gr->WritePNG(path.data(),"",false);
-    printf("Saved Simulation Figure\n");
-  }
-  else {
-    printf("ERROR: Graph was null\n");
-  }
-}
