@@ -1,0 +1,9 @@
+HSF
+
+In your terminal, type:
+
+source hsf_paths.sh
+
+This will set a new $HSF variable, and add to your $PATH variable.
+
+You can also add that line to you ~/.bashrc file.

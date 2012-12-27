@@ -24,6 +24,7 @@ MATHGL= -rdynamic $(LIBDIR)/mathgl/libmgl.$(ARCH).so.6.0.0
 #SOURCE FILES
 HSFSRC=mainHSF.cpp
 SIMFIGSRC=mainSimulationFigure.cpp
+ANALYZESRC=mainAnalyze.cpp
 
 #################    MAIN TARGETS   #################
 
@@ -107,6 +108,10 @@ simfig:
 	$(CXX) $(CFLAGS) -c $(SRCDIR)/$(SIMFIGSRC) -o $(OBJDIR)/simfig.o $(CARG)    #compile mainSimulationFigure.cpp
 	$(CXX) $(LFLAGS) $(SIMGFIGOBJ) $(OBJDIR)/simfig.o $(MATHGL) -o $(BINDIR)/simfig -lrt
 
+################# ANALYZE TOOL      #################
+analyze:
+	$(CXX) $(CFLAGS) -c $(SRCDIR)/$(ANALYZESRC) -o $(OBJDIR)/mainAnalyze.o
+	$(CXX) $(LFLAGS) $(OBJDIR)/mainAnalyze.o -o $(BINDIR)/analyze 
 
 #################     LIBRARIES     #################
 lib: libraries
