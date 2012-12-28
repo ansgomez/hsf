@@ -31,7 +31,7 @@ SHOWSRC=mainShow.cpp
 
 all: directories libraries hsf executable analyze simfig show
 
-hsf: core criteria dispatchers pthread queues results schedulers servers tasks util 
+hsf: core criteria dispatchers pthread queues results schedulers servers tasks util exe
 
 #################     DIRECTORIES   #################
 

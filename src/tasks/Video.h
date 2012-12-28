@@ -28,7 +28,7 @@ class Video : public Task {
 
   /*********** INHERITED FUNCTIONS ***********/
   
-  /**** FROM CRITERIA ****/
+  /**** FROM TASK ****/
   
   //This function will decode one mjpeg frame
   void fire();

@@ -18,6 +18,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <stdio.h>
+#include <sys/stat.h>
 #include <pthread.h>
 
 /***************************************
@@ -47,6 +48,14 @@ Simulation::Simulation(string _xml_path, int cpu, string nm) {
   if ((sched_setscheduler(0, SCHED_FIFO, &param) != 0)) {
     cout << "Run with root\n";
     pthread_exit(0);
+  }
+
+  //Check if file exist...
+  struct stat buf;
+  if (stat(xml_path.c_str(), &buf) == -1) {
+    cout << "\nSimulation::Simulation() error! File '" << xml_path << "' not found...\n";
+    xml_path = "error";
+    return;
   }
 
   int n_cpus = sysconf( _SC_NPROCESSORS_ONLN );
@@ -151,6 +160,12 @@ void Simulation::join_all() {
 
 ///This function begins the simulation
 void Simulation::simulate() {
+
+  if(xml_path.compare("error") == 0) {
+    cout << "\nSimulation::simulate() error! Simulation was not loaded correctly!\n";
+    return;
+  }
+
   struct timespec rem;
   cout << "**Simulating**\n" ;
 
