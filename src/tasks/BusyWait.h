@@ -25,7 +25,7 @@ class BusyWait : public Task {
 
   /*********** INHERITED FUNCTIONS ***********/
   
-  /**** FROM CRITERIA ****/
+  /**** FROM TASK ****/
   
   //This function will perform one task with execution time WCET
   void fire();

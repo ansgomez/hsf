@@ -18,15 +18,18 @@ using namespace std;
 
 const char *plot_color[] = {"k", "b", "r", "g", "q", "c", "p", "h", "u", "P", "M"};
 
-/********************************************************************************
- * CONSTRUCTORS AND METHODS
- ********************************************************************************
- */
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
 
-//Constructor set some default values
-SimulationFigure::SimulationFigure(string _path) {
+/*********** CONSTRUCTOR ***********/
 
-  path = _path;
+///Constructor needs the prefix to the '_traces.csv' file
+SimulationFigure::SimulationFigure(string _prefix) {
+
+  prefix = _prefix;
+
+  //setting default values
   height = 0.75;
   width = 0.5;
   n_plots = 1;
@@ -36,6 +39,9 @@ SimulationFigure::SimulationFigure(string _path) {
 
   gr = new mglGraph;
   x1=0; x2=100; y1=0; y2=1.5;
+
+
+  importCSV();
 }
 
 //This function draws an arrival arrow at time t, with an option label
@@ -74,44 +80,44 @@ void SimulationFigure::drawSched(int plot, double sched_start, double sched_end,
   }
 }
 
-//This function exports the figure to an eps file
+//This function exports the mgl graph to an eps file
 void SimulationFigure::exportEPS() {
-  string path2 = path + "_figure.eps";
+  string path = prefix + "_figure.eps";
   if(gr!=NULL) {
-    gr->WriteEPS(path2.data(),"");
-    printf("Saved Simulation Figure _ EPS\n");
+    gr->WriteEPS(path.data(),"");
+    printf("***   Saved EPS Figure\t\t***\n");
   }
   else {
     printf("ERROR: Graph was null\n");
   }
 }
 
-//This function exports the figure to a png file
+//This function exports the mgl graph to a png file
 void SimulationFigure::exportPNG() {
-  string path2 = path + "_figure.png";
+  string path = prefix + "_figure.png";
   if(gr!=NULL) {
-    gr->WritePNG(path2.data(),"",false);
-    printf("Saved Simulation Figure _ PNG\n");
+    gr->WritePNG(path.data(),"",false);
+    printf("***   Saved PNG Figure\t\t***\n");
   }
   else {
     printf("ERROR: Graph was null\n");
   }
 }
 
-//This function exports the figure to an eps file
+//This function exports the mgl graph to an svg file
 void SimulationFigure::exportSVG() {
-  string path2 = path + "_figure.svg";
+  string path = prefix + "_figure.svg";
   if(gr!=NULL) {
-    gr->WriteSVG(path2.data(),"");
-    printf("Saved Simulation Figure _ SVG\n");
+    gr->WriteSVG(path.data(),"");
+    printf("***   Saved SVG Figure\t\t***\n");
   }
   else {
     printf("ERROR: Graph was null\n");
   }
 }
 
-///This function generates a figure from traces
-void SimulationFigure::generateFigure() {
+///This function generates a figure from the trace vector
+void SimulationFigure::genFig() {
   char label[30]; 
   char title[20];
   unsigned int c;
@@ -189,14 +195,27 @@ void SimulationFigure::generateFigure() {
       break;
     }
   }
+}
+
+///This function first generates a figure in memory (by calling genFig()) and automatically exports them to EPS and SVG file formats
+void SimulationFigure::generateFigures() {
+  //first generate the mgl graph
+  genFig();
+
+  //then export graph to figures
   exportEPS();
   exportSVG();
 }
 
 
-///This function imports data from a CSV file
-void SimulationFigure::importCSV(string name) {
+///This function imports data from a CSV file with the previously set prefix
+void SimulationFigure::importCSV() {
+
+#if _INFO==1
   cout << "Trying to read from file...\n";
+#endif
+  
+  string name = prefix + "_traces.csv";
 
   //Tranforms name to c string
   char *cstr = new char[name.length() + 1];
@@ -220,33 +239,6 @@ void SimulationFigure::initPlot(int plot, char *name) {
     gr->SetTicks('x', 5, 0);
     gr->Axis("xT");
   }
-}
-
-//Set the number of plots for the figure
-void SimulationFigure::setNPlots(int n) {
-  n_plots = n;
-}
-
-//Sets the size of the figure, as well as the title and x label
-void SimulationFigure::setSize(int x, int y) {
-  if (gr!=NULL) {
-    gr->SetSize(x,y);;
-    gr->Label('x',"Time [ms]",0, 0);
-  }
-}
-
-//Set the ranges of the figure
-void SimulationFigure::setRanges(double x1, double x2, double y1, double y2) {
-  this->x1 = x1;
-  this->x2 = x2;
-  this->y1 = y1;
-  this->y2 = y2;
-}
-
-//Set the x domain of the current plot and the corresponding ranges of the figure
-void SimulationFigure::setTimeRange(double t) {
-  this->x2 = t;
-  setSize((int)ceil(t)*UNIT_WIDTH, PLOT_HEIGHT);
 }
 
 ///This function parses one line from a CSV file
@@ -273,7 +265,10 @@ void SimulationFigure::parseLine(string line) {
 
   //Add ID to worker_id vector
   workerID_vector(id);
+
+#if _INFO==1
   printWorkerID();
+#endif
 
   //Extract and parse the enum task_action
   str = strtok(NULL, ",");
@@ -288,7 +283,7 @@ void SimulationFigure::parseLine(string line) {
   delete []cstr;
   
 }
-// This Function structs timespec 
+//This Function parses a struct timespec 
 struct timespec SimulationFigure::parseTimespec(char *str){
   struct timespec aux;
   unsigned long long int ns, ns2;
@@ -314,12 +309,39 @@ struct timespec SimulationFigure::parseTimespec(char *str){
   }
 }
 
-// This function prints the worker IDs
+//This auxiliary function prints the imported worker IDs
 void SimulationFigure::printWorkerID(){
  unsigned  int i; 
  for (i=0 ; i < worker_id.size();i++){
    cout << "WORKER ID "  <<i <<" is equal to " << worker_id[i]<< endl; 
    }
+}
+
+//Set the number of plots for the figure
+void SimulationFigure::setNPlots(int n) {
+  n_plots = n;
+}
+
+//Set the ranges of the figure
+void SimulationFigure::setRanges(double x1, double x2, double y1, double y2) {
+  this->x1 = x1;
+  this->x2 = x2;
+  this->y1 = y1;
+  this->y2 = y2;
+}
+
+//Sets the size of the figure, as well as the title and x label
+void SimulationFigure::setSize(int x, int y) {
+  if (gr!=NULL) {
+    gr->SetSize(x,y);;
+    gr->Label('x',"Time [ms]",0, 0);
+  }
+}
+
+//Set the x domain of the current plot and the corresponding ranges of the figure
+void SimulationFigure::setTimeRange(double t) {
+  this->x2 = t;
+  setSize((int)ceil(t)*UNIT_WIDTH, PLOT_HEIGHT);
 }
 
 // This function produces a vector of worked IDs

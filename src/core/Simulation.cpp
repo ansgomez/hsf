@@ -18,6 +18,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <stdio.h>
+#include <sys/stat.h>
 #include <pthread.h>
 
 /***************************************
@@ -47,6 +48,14 @@ Simulation::Simulation(string _xml_path, int cpu, string nm) {
   if ((sched_setscheduler(0, SCHED_FIFO, &param) != 0)) {
     cout << "Run with root\n";
     pthread_exit(0);
+  }
+
+  //Check if file exist...
+  struct stat buf;
+  if (stat(xml_path.c_str(), &buf) == -1) {
+    cout << "\nSimulation::Simulation() error! File '" << xml_path << "' not found...\n";
+    xml_path = "error";
+    return;
   }
 
   int n_cpus = sysconf( _SC_NPROCESSORS_ONLN );
@@ -104,8 +113,6 @@ void Simulation::initialize() {
   //Idle should be the first thread to be created
   idle = new Idle();
 
-  cout << "Loading xml file...\n";
-
   Parser *parser = new Parser(this);
 
   parser->parseFile(xml_path);
@@ -151,8 +158,14 @@ void Simulation::join_all() {
 
 ///This function begins the simulation
 void Simulation::simulate() {
+
+  if(xml_path.compare("error") == 0) {
+    cout << "\nSimulation::simulate() error! Simulation was not loaded correctly!\n";
+    return;
+  }
+
   struct timespec rem;
-  cout << "**Simulating**\n" ;
+  cout << "***   Simulating\t\t***\n" ;
 
   //Set simulation variables
   Statistics::enable();
@@ -167,7 +180,7 @@ void Simulation::simulate() {
   //Sleep for the duration of the simulation
   nanosleep(&simTime, &rem);
 
-  cout << "***Done***\n";
+  cout << "***   Done\t\t\t***\n";
   //Deactivate threads
   simulating=false;
   Statistics::disable();
@@ -175,12 +188,14 @@ void Simulation::simulate() {
   //Join all other threads
   join_all();
 
+#if _INFO==1
   cout << "Saving results...\n";
+#endif
 
   //Save results to file
   Statistics::toFile(name);
 
-  cout << "All results have been saved!\n";
+  cout << "***   Results Saved!\t\t***\n\n";
 }
 
 /*********** STATIC FUNCTIONS ***********/

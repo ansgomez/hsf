@@ -1,7 +1,13 @@
 function show_execution_time(name)
 
-name_exec_ms = strcat(name,'_exec_ms.csv');
-exec_ms = csvread(name_exec_ms);
+name_exec = strcat(name,'_exec_ms.csv');
+
+if exist(name_exec, "file") == 0
+  fprintf("File: '%s' was not found!\n", name_exec);
+  return;
+end
+
+exec_ms = csvread(name_exec);
 
 [num_job , num_worker] = size(exec_ms);
 

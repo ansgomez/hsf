@@ -20,7 +20,9 @@ BusyWait::BusyWait(Dispatcher *disp, struct timespec wcet) : Task(disp, busy_wai
   WCET = wcet;
 }
 
-/*********** MEMBER FUNCTIONS ***********/
+/*********** INHERITED FUNCTIONS ***********/
+
+/**** FROM TASK ****/
 
 void BusyWait::fire() {
 #if _DEBUG == 1

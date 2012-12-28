@@ -19,19 +19,25 @@ SRCDIR=src
 
 #Libraries
 XML=xml/pugixml.cpp
-MATHGL= -rdynamic $(LIBDIR)/mathgl/libmgl.$(ARCH).so.6.0.0
+MATHGL= -rdynamic /usr/lib/libmgl.so.7.0.0
 
 #SOURCE FILES
 HSFSRC=mainHSF.cpp
 SIMFIGSRC=mainSimulationFigure.cpp
 ANALYZESRC=mainAnalyze.cpp
 SHOWSRC=mainShow.cpp
+SIMULATESRC=mainSimulate.cpp
 
 #################    MAIN TARGETS   #################
 
-all: libraries hsf executable
+all: directories libraries hsf executable tools
 
-hsf: core criteria dispatchers pthread queues results schedulers servers tasks util 
+hsf: core criteria dispatchers pthread queues results schedulers servers tasks util exe
+
+#################     DIRECTORIES   #################
+
+directories:
+	mkdir -p $(BINDIR) $(OBJDIR) $(OBJDIR)/hsf $(OBJDIR)/lib
 
 #################        HSF        #################
 
@@ -98,9 +104,10 @@ $(UTIL):
 
 #################  HSF EXECUTABLE   #################
 exe: executable
+HSFLIBOBJS=$(OBJDIR)/lib/mjpeg.o $(OBJDIR)/lib/processframe.o $(OBJDIR)/lib/pugixml.o
 executable:  
 	$(CXX) $(CFLAGS) -c $(SRCDIR)/$(HSFSRC) -o $(OBJDIR)/hsf.o $(CARG)    #compile mainHSF.cpp
-	$(CXX) $(LFLAGS) $(OBJDIR)/hsf/*.o $(OBJDIR)/lib/*.o $(OBJDIR)/hsf.o -o $(BINDIR)/hsf $(LARG)  #link all object files
+	$(CXX) $(LFLAGS) $(OBJDIR)/hsf/*.o $(HSFLIBOBJS) $(OBJDIR)/hsf.o -o $(BINDIR)/hsf $(LARG)  #link all object files
 
 ################# SIMFIG EXECUTABLE #################
 SIMGFIGOBJ:=$(OBJDIR)/hsf/Trace.o $(OBJDIR)/hsf/Operators.o $(OBJDIR)/hsf/TimeUtil.o $(OBJDIR)/hsf/Enumerations.o $(OBJDIR)/lib/SimulationFigure.o
@@ -119,6 +126,11 @@ show:
 	$(CXX) $(CFLAGS) -c $(SRCDIR)/$(SHOWSRC) -o $(OBJDIR)/mainShow.o
 	$(CXX) $(LFLAGS) $(OBJDIR)/mainShow.o -o $(BINDIR)/show 
 
+#################   SIMULATE TOOL   #################
+simulate:
+	$(CXX) $(CFLAGS) -c $(SRCDIR)/$(SIMULATESRC) -o $(OBJDIR)/mainSimulate.o
+	$(CXX) $(LFLAGS) $(OBJDIR)/mainSimulate.o -o $(BINDIR)/simulate
+
 #################     LIBRARIES     #################
 lib: libraries
 libraries: XML MJPEG
@@ -134,6 +146,8 @@ $(MJPEG_SRC):
 	$(CXX) $(M_FLAGS) $(LIBDIR)/mjpeg/$@.c -o $(OBJDIR)/lib/$@.o
 
 #################  MISCELLANEOUS   #################
+
+tools: simulate analyze simfig show 
 
 run:
 	sudo $(OBJDIR)/$(EXEC)

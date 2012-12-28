@@ -18,7 +18,9 @@ Video::Video(Dispatcher *disp) : Task(disp, video) {
   state = mjpeg_init();
 }
 
-/*********** MEMBER FUNCTIONS ***********/
+/*********** INHERITED FUNCTIONS ***********/
+
+/**** FROM TASK ****/
 
 void Video::fire() {
   mjpeg_fire(state);

@@ -52,7 +52,9 @@ void interpret(char *str);
 /*********** MAIN FUNCTION  ***********/
 int main(int argn, char **argv) {
 
+#if _INFO==1
   cout << "Starting HSF's analyze tool\n";
+#endif
 
   ///If there are input parameters, interpret them
   if(argn > 1) {
@@ -62,7 +64,7 @@ int main(int argn, char **argv) {
   }
   ///otherwise analyze all by default, 
   else {
-    cout << "Analyzing all...\n";
+    cout << "\n***   Analyzing all metrics!\t***\n\n";
     analyzeExecutionTimes();
     analyzeResponseTimes();
     analyzeUtilization();
@@ -71,7 +73,9 @@ int main(int argn, char **argv) {
     analyzeWorkerCost();
   }
 
+#if _INFO==1
   cout << "\nDone." <<endl;
+#endif
 
   return 0;
 }
