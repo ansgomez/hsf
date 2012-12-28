@@ -15,7 +15,7 @@ if exist(name_runtimes, "file") == 0
   return;
 end
 
-runTime = csvread(name_traces);
+runTime = csvread(name_runtimes);
 
 %CONSTANTS
 SCHED_START=1;
@@ -80,16 +80,16 @@ worker = find(runTime(:,1)==4);
 w_id = runTime(worker,2);
 
 %sorts the workers ID
-sorted_id = sort (w_id);
+sorted_id = sort(w_id);
 
 %calculates the sum of execution runtime for each worker
-for i=1:size(w_id);
+for i=1:size(w_id)
   sum_exec_runtime(i)= runTime(find(runTime(:,2)==sorted_id(i)),3);
 end
 
 %calculates the ratio of 2 execution times
 ratio = sum_exec_traces ./(sum_exec_runtime*0.001);
-ratio = ratio';
+ratio = ratio'; #'
 
 name_workerCost = strcat(name,'_workerCost.csv');
 csvwrite(name_workerCost, ratio);

@@ -56,7 +56,7 @@ void Parser::parseFile(string filePath) {
   Scheduler *top = (Scheduler*) parseTDMA(top_sched, &id, 0);
   sim->setTopScheduler(top);
 
-  cout << "... '" << sim_node.attribute("name").value() << "' has been loaded\n";
+  cout << "\n***   Loaded '" << sim_node.attribute("name").value() << "'\t***\n";
 }
 
 /*********** PRIVATE MEMBER FUNCTIONS ***********/

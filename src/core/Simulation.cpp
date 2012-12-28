@@ -113,8 +113,6 @@ void Simulation::initialize() {
   //Idle should be the first thread to be created
   idle = new Idle();
 
-  cout << "Loading xml file...\n";
-
   Parser *parser = new Parser(this);
 
   parser->parseFile(xml_path);
@@ -167,7 +165,7 @@ void Simulation::simulate() {
   }
 
   struct timespec rem;
-  cout << "**Simulating**\n" ;
+  cout << "***   Simulating\t\t***\n" ;
 
   //Set simulation variables
   Statistics::enable();
@@ -182,7 +180,7 @@ void Simulation::simulate() {
   //Sleep for the duration of the simulation
   nanosleep(&simTime, &rem);
 
-  cout << "***Done***\n";
+  cout << "***   Done\t\t\t***\n";
   //Deactivate threads
   simulating=false;
   Statistics::disable();
@@ -190,12 +188,14 @@ void Simulation::simulate() {
   //Join all other threads
   join_all();
 
+#if _INFO==1
   cout << "Saving results...\n";
+#endif
 
   //Save results to file
   Statistics::toFile(name);
 
-  cout << "All results have been saved!\n";
+  cout << "***   Results Saved!\t\t***\n\n";
 }
 
 /*********** STATIC FUNCTIONS ***********/

@@ -26,10 +26,11 @@ HSFSRC=mainHSF.cpp
 SIMFIGSRC=mainSimulationFigure.cpp
 ANALYZESRC=mainAnalyze.cpp
 SHOWSRC=mainShow.cpp
+SIMULATESRC=mainSimulate.cpp
 
 #################    MAIN TARGETS   #################
 
-all: directories libraries hsf executable analyze simfig show
+all: directories libraries hsf executable tools
 
 hsf: core criteria dispatchers pthread queues results schedulers servers tasks util exe
 
@@ -125,6 +126,11 @@ show:
 	$(CXX) $(CFLAGS) -c $(SRCDIR)/$(SHOWSRC) -o $(OBJDIR)/mainShow.o
 	$(CXX) $(LFLAGS) $(OBJDIR)/mainShow.o -o $(BINDIR)/show 
 
+#################   SIMULATE TOOL   #################
+simulate:
+	$(CXX) $(CFLAGS) -c $(SRCDIR)/$(SIMULATESRC) -o $(OBJDIR)/mainSimulate.o
+	$(CXX) $(LFLAGS) $(OBJDIR)/mainSimulate.o -o $(BINDIR)/simulate
+
 #################     LIBRARIES     #################
 lib: libraries
 libraries: XML MJPEG
@@ -140,6 +146,8 @@ $(MJPEG_SRC):
 	$(CXX) $(M_FLAGS) $(LIBDIR)/mjpeg/$@.c -o $(OBJDIR)/lib/$@.o
 
 #################  MISCELLANEOUS   #################
+
+tools: simulate analyze simfig show 
 
 run:
 	sudo $(OBJDIR)/$(EXEC)

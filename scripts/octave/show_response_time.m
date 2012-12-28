@@ -3,7 +3,7 @@ function show_response_time ( name )
 name_resp = strcat(name,'_resp_ms.csv');
 
 if exist(name_resp, "file") == 0
-  fprintf("\nFile: '%s' was not found!\n", name_resp);
+  fprintf("File: '%s' was not found!\n", name_resp);
   return;
 end
 

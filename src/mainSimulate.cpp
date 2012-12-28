@@ -18,44 +18,73 @@ string prefix="simulation";
 /*********** FUNCTIONS ***********/
 
 ///This function interprets all input parameters
-void interpret(char *str);
+void interpret(string str);
 
-///This functions executes, analyzes and shows the metrics of the input file
+///This function executes, analyzes and shows the metrics of the input file
 void simulate(string f);
 
 /*********** MAIN FUNCTION  ***********/
 int main(int argn, char **argv) {
+  string* aux;
 
-  cout << "Starting HSF's simulate tool\n";
+#if _INFO==1
+  cout << "\nStarting HSF's simulate tool\n\n";
+#endif
 
   ///If there are input parameters, interpret them
   if(argn > 1) {
     for(int i=1;i<=argn;i++) {
-      interpret(new string(argv[i]));
+
+      if(argv[i] == NULL)
+	continue;
+
+      aux = new string(argv[i]);
+      interpret(*aux);
+      free(aux);
     }
   }
   ///otherwise analyze all by default, 
   else {
-    simulate("hsf");
+    simulate("simulation");
   }
 
+#if _INFO==1
   cout << "\nDone." <<endl;
+#endif
 
   return 0;
 }
 
-///This functions executes, analyzes and shows the metrics of the input file
-void simulate(string f) {
-  
+///This function executes, analyzes and shows the metrics of the input file
+void simulate(string prefix) {
+  string aux;
+
+  //Call hsf
+  aux = "sudo hsf " + prefix;
+  system(aux.c_str());
+
+  //Call analyze
+  aux = "analyze " + prefix;
+  system(aux.c_str());  
+
+  //Call simfig
+  aux = "simfig " + prefix;
+  system(aux.c_str());
+
+  //Call show
+  aux = "show " + prefix;
+  system(aux.c_str());
+
+  //Call simhtml
 }
 
 ///This function interprets all input parameters
-void interpret(char *str) {
-  
+void interpret(string str) {
+
   //check if filename doesn't have an .xml extension, and if so add it
-  if(str.find(".xml") == string::npos) {
-    str = str+".xml";
+  if(str.find(".xml") != string::npos) {
+    str = str.substr(0,str.size()-4);
   }
 
-  cout << "Going to simulate: " << str << end;
+  simulate(str);
 }
