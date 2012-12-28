@@ -14,9 +14,6 @@ obj/
 \#*
 .DS_Store
 
-##### Metrics #####
-scripts/
-
 ##### Documentation Files #####
 Doxyfile
 doc/

@@ -1,9 +1,9 @@
-function execution_time(name)
+function workerCost(name)
 name_traces = strcat(name,'_traces.csv');
-
-
-
 traces = csvread(name_traces);
+
+name_traces = strcat(name,'_runtimes.csv');
+runTime = csvread(name_traces);
 
 %CONSTANTS
 SCHED_START=1;
@@ -52,21 +52,33 @@ for i1=1:num_threads;
              end
         end
     end
-    
-    N = count(exec_ms(:,i1));
- 
-    if N == 0
-    	continue;
-    end
 
-    min_i = minimum(exec_ms(:,i1));
-    avg = average(exec_ms(:,i1));
-    max_i  =  max(exec_ms(:,i1)) ;
-    total =  sum(exec_ms(:,i1));
-    
+end
+[num_job , num_worker] = size(exec_ms);
+
+%calculates the matrix of workers execution time from the trace file
+for i=1:num_worker;
+  sum_exec_traces(i) = sum(exec_ms(:,i));
 end
 
-name_exec = strcat(name,'_exec_ms.csv');
-csvwrite(name_exec, exec_ms);
+%finds the indecis of workers
+worker = find(runTime(:,1)==4);
 
-clear all;
+%finds the workers ID
+w_id = runTime(worker,2);
+
+%sorts the workers ID
+sorted_id = sort (w_id);
+
+%calculates the sum of execution runtime for each worker
+for i=1:size(w_id);
+  sum_exec_runtime(i)= runTime(find(runTime(:,2)==sorted_id(i)),3);
+end
+
+%calculates the ratio of 2 execution times
+ratio = sum_exec_traces ./(sum_exec_runtime*0.001);
+ratio = ratio';
+
+name_workerCost = strcat(name,'_workerCost.csv');
+csvwrite(name_workerCost, ratio);
+

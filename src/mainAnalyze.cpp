@@ -31,6 +31,21 @@ string prefix="simulation";
 ///This function calls the execution_times script to produce "$prefix_execution_times.csv"
 void analyzeExecutionTimes();
 
+///This function calls the response_times script to produce "$prefix_response_times.csv"
+void analyzeResponseTimes();
+
+///This function calls the Utilization script to produce "$prefix_Utilization.csv"
+void analyzeUtilization();
+
+///This function calls the Resource Allocation Cost script to produce "$prefix_alloc_cost_us.csv"
+void  analyzeResourceAllocationCost();
+
+///This function calls the analyzeSystemCost script to show "$prefix_System Cost"
+void  analyzeSystemCost();
+
+////This function calls the analyzeWorkerCost script to show "$prefix_Worker Cost"
+void analyzeWorkerCost();
+
 ///This function interprets all input parameters
 void interpret(char *str);
 
@@ -49,6 +64,11 @@ int main(int argn, char **argv) {
   else {
     cout << "Analyzing all...\n";
     analyzeExecutionTimes();
+    analyzeResponseTimes();
+    analyzeUtilization();
+    analyzeResourceAllocationCost();
+    analyzeSystemCost();
+    analyzeWorkerCost();
   }
 
   cout << "\nDone." <<endl;
@@ -59,7 +79,52 @@ int main(int argn, char **argv) {
 
 ///This function calls the execution_times script to produce "$prefix_execution_times.csv"
 void analyzeExecutionTimes() {
-  string cmd = "octave --no-window-system -p $HSF/scripts/octave -qf --eval \"execution_time('" + prefix + "')\"";
+  cout << "Calculating Execution Times...\n";
+
+  string cmd = "octave --no-window-system -q --eval \"execution_time('" + prefix + "')\"";
+
+  system(cmd.c_str());
+}
+
+///This function calls the response_times script to produce "$prefix_response_times.csv"
+void analyzeResponseTimes() {
+  cout << "Calculating Response Times...\n";
+
+  string cmd = "octave --no-window-system -q --eval \"response_time('" + prefix + "')\"";
+  
+  system(cmd.c_str());
+}
+
+///This function calls the Utilization script to produce "$prefix_Utilization.csv"
+void analyzeUtilization(){
+  cout << "Calculating Utilization...\n";
+
+  string cmd = "octave --no-window-system -q --eval \"utilization('" + prefix + "')\"";
+
+  system(cmd.c_str());
+}
+
+///This function calls the ResourceAllocationCost script to produce "$prefix_alloc_cost_us.csv"
+void  analyzeResourceAllocationCost(){
+  cout << "Calculating Resource Allocation Cost...\n";
+
+  string cmd = "octave --no-window-system -q --eval \"resourceAllocationCost('" + prefix + "')\"";
+
+  system(cmd.c_str());
+}
+
+///This function calls the analyzeSystemCost script to show "$prefix_System Cost"
+void  analyzeSystemCost(){
+  cout << "Calculating System Cost...\n";
+  string cmd = "octave --no-window-system -q --eval \"systemCost('" + prefix + "')\"";
+
+  system(cmd.c_str());
+}
+
+////This function calls the analyzeWorkerCost script to show "$prefix_Worker Cost"
+void analyzeWorkerCost(){
+  cout << "Calculating Worker Cost...\n";
+  string cmd = "octave --no-window-system -q --eval \"workerCost('" + prefix + "')\"";
 
   system(cmd.c_str());
 }

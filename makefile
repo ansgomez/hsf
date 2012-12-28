@@ -5,7 +5,7 @@ CXX=g++
 CFLAGS=-Wall -I./src/
 CARG=-lrt
 LFLAGS= -lm 
-LARG=-ldl -lpthread -lrt -lGLU -lGL -lSM -lICE -lX11 -lXext -lpng -lz -Wl-rpath
+LARG=-ldl -lpthread -lrt -lSM -lICE -lX11 -lXext -lpng -lz -Wl-rpath #-lGLU -lGL
 M_FLAGS=-Wall -pthread -c -g -DVIEWER -lX11 #MJPEG Flags
 
 #Architecture dependent variable
@@ -25,12 +25,18 @@ MATHGL= -rdynamic $(LIBDIR)/mathgl/libmgl.$(ARCH).so.6.0.0
 HSFSRC=mainHSF.cpp
 SIMFIGSRC=mainSimulationFigure.cpp
 ANALYZESRC=mainAnalyze.cpp
+SHOWSRC=mainShow.cpp
 
 #################    MAIN TARGETS   #################
 
-all: libraries hsf executable
+all: directories libraries hsf executable
 
 hsf: core criteria dispatchers pthread queues results schedulers servers tasks util 
+
+#################     DIRECTORIES   #################
+
+directories:
+	mkdir -p $(BINDIR) $(OBJDIR) $(OBJDIR)/hsf $(OBJDIR)/lib
 
 #################        HSF        #################
 
@@ -108,10 +114,15 @@ simfig:
 	$(CXX) $(CFLAGS) -c $(SRCDIR)/$(SIMFIGSRC) -o $(OBJDIR)/simfig.o $(CARG)    #compile mainSimulationFigure.cpp
 	$(CXX) $(LFLAGS) $(SIMGFIGOBJ) $(OBJDIR)/simfig.o $(MATHGL) -o $(BINDIR)/simfig -lrt
 
-################# ANALYZE TOOL      #################
+#################   ANALYZE TOOL    #################
 analyze:
 	$(CXX) $(CFLAGS) -c $(SRCDIR)/$(ANALYZESRC) -o $(OBJDIR)/mainAnalyze.o
 	$(CXX) $(LFLAGS) $(OBJDIR)/mainAnalyze.o -o $(BINDIR)/analyze 
+
+#################    SHOW   TOOL    #################
+show:
+	$(CXX) $(CFLAGS) -c $(SRCDIR)/$(SHOWSRC) -o $(OBJDIR)/mainShow.o
+	$(CXX) $(LFLAGS) $(OBJDIR)/mainShow.o -o $(BINDIR)/show 
 
 #################     LIBRARIES     #################
 lib: libraries
