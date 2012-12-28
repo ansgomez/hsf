@@ -19,7 +19,7 @@ SRCDIR=src
 
 #Libraries
 XML=xml/pugixml.cpp
-MATHGL= -rdynamic $(LIBDIR)/mathgl/libmgl.$(ARCH).so.6.0.0
+MATHGL= -rdynamic /usr/lib/libmgl.so.7.0.0
 
 #SOURCE FILES
 HSFSRC=mainHSF.cpp
@@ -29,7 +29,7 @@ SHOWSRC=mainShow.cpp
 
 #################    MAIN TARGETS   #################
 
-all: directories libraries hsf executable
+all: directories libraries hsf executable analyze simfig show
 
 hsf: core criteria dispatchers pthread queues results schedulers servers tasks util 
 
@@ -103,9 +103,10 @@ $(UTIL):
 
 #################  HSF EXECUTABLE   #################
 exe: executable
+HSFLIBOBJS=$(OBJDIR)/lib/mjpeg.o $(OBJDIR)/lib/processframe.o $(OBJDIR)/lib/pugixml.o
 executable:  
 	$(CXX) $(CFLAGS) -c $(SRCDIR)/$(HSFSRC) -o $(OBJDIR)/hsf.o $(CARG)    #compile mainHSF.cpp
-	$(CXX) $(LFLAGS) $(OBJDIR)/hsf/*.o $(OBJDIR)/lib/*.o $(OBJDIR)/hsf.o -o $(BINDIR)/hsf $(LARG)  #link all object files
+	$(CXX) $(LFLAGS) $(OBJDIR)/hsf/*.o $(HSFLIBOBJS) $(OBJDIR)/hsf.o -o $(BINDIR)/hsf $(LARG)  #link all object files
 
 ################# SIMFIG EXECUTABLE #################
 SIMGFIGOBJ:=$(OBJDIR)/hsf/Trace.o $(OBJDIR)/hsf/Operators.o $(OBJDIR)/hsf/TimeUtil.o $(OBJDIR)/hsf/Enumerations.o $(OBJDIR)/lib/SimulationFigure.o

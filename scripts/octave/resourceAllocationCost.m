@@ -1,6 +1,12 @@
 function resourceAllocationCost(name)
 
 name_runtimes = strcat(name,'_runtimes.csv');
+
+if exist(name_runtimes, "file") == 0
+  fprintf("\nFile: '%s' was not found!\n", name_runtimes);
+  return;
+end
+
 runTime = csvread(name_runtimes);
 
 %finds the indeces of the sched and serv threads
