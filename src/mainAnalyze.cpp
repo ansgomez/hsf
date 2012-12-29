@@ -28,7 +28,7 @@ using namespace std;
 string prefix="simulation";
 vector <string> inputMetric, inputPrefix;
 const char *metricsVector[] = {"execution_times","exec","response_times","resp","utilization","util","resource_allocation_cost","alloc", "system_cost","sys","worker_cost","worker", "all"};
-vector <string> metrics(metricsVector, (metricsVector)+13);
+vector <string> metrics(metricsVector, (metricsVector)+sizeof(metricsVector)/sizeof(metricsVector[0]));
 
 /*********** FUNCTIONS ***********/
 

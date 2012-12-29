@@ -3,7 +3,7 @@ function resourceAllocationCost(name)
 name_runtimes = strcat(name,'_runtimes.csv');
 
 if exist(name_runtimes, "file") == 0
-  fprintf("\nFile: '%s' was not found!\n", name_runtimes);
+  fprintf("\n   File: '%s' was not found!\n", name_runtimes);
   return;
 end
 

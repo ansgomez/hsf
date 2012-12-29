@@ -40,7 +40,7 @@ total_perc = work_perc + non_work_perc + idle_perc;
 outfile = strcat(name, "_runtimes_summary.txt");
 fid = fopen(outfile, "w");
 
-fprintf(fid, "\n\nRuntime Statistics: \n\n");
+fprintf(fid, "Runtime Statistics: \n\n");
 fprintf(fid, "Work:    %12d us  (%2.3f%%)\n", work_time, work_perc);
 fprintf(fid, "Non Work:%12d us  (%2.3f%%)\n", non_work_time, non_work_perc);
 fprintf(fid, "Idle:    %12d us  (%2.3f%%)\n",idle_time, idle_perc);

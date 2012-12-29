@@ -2,7 +2,7 @@ function workerCost(name)
 name_traces = strcat(name,'_traces.csv');
 
 if exist(name_traces, "file") == 0
-  fprintf("\nFile: '%s' was not found!\n", name_traces);
+  fprintf("\n   File: '%s' was not found!\n", name_traces);
   return;
 end
 
@@ -11,7 +11,7 @@ traces = csvread(name_traces);
 name_runtimes = strcat(name,'_runtimes.csv');
 
 if exist(name_runtimes, "file") == 0
-  fprintf("\nFile: '%s' was not found!\n", name_runtimes);
+  fprintf("\n   File: '%s' was not found!\n", name_runtimes);
   return;
 end
 

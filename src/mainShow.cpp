@@ -15,9 +15,11 @@
  *
  *********************************/
 
+#include <algorithm>
 #include <iostream>
 #include <stdlib.h>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -25,6 +27,9 @@ using namespace std;
 
 ///This variable holds the prefix for the input files (_traces, _runtimes, _missedDeadlines).
 string prefix="simulation";
+vector <string> inputMetric, inputPrefix;
+const char *metricsVector[] = {"execution_times","exec","response_times","resp","utilization","util","resource_allocation_cost","alloc", "system_cost","sys","worker_cost","worker", "all"};
+vector <string> metrics(metricsVector, (metricsVector)+sizeof(metricsVector)/sizeof(metricsVector[0]));
 
 /*********** FUNCTIONS ***********/
 
@@ -47,12 +52,38 @@ void  showSystemCost();
 ///This function calls the showWorkerCost script to show "$prefix_Worker Cost"
 void  showWorkerCost();
 
+
 ///This function interprets all input parameters
-void interpret(char *str);
+void interpret(string str);
+
+///This function process all the imput metrices with all prefixes
+void process();
+
+///checks if the input string calls for execution function
+bool isExecution(string str);
+
+////checks if the input string calls for ResponseTimes function
+bool isResponseTimes(string str);
+
+///checks if the input string calls for utilization function
+bool isUtilization(string str);
+
+////checks if the input string calls for resource allocation function
+bool isResourceAllocationCost(string str);
+
+///checks if the input string calls for system cost function
+bool isSystemCost(string str);
+
+///checks if the input string calls for worker cost functio
+bool isWorkerCost(string str);
+
+///checks if the input string calls for all functions
+bool isAll(string str);
 
 /*********** MAIN FUNCTION  ***********/
 int main(int argn, char **argv) {
 
+  string* aux;
 #if _INFO==1
   cout << "Starting HSF's show tool\n";
 #endif
@@ -60,9 +91,20 @@ int main(int argn, char **argv) {
   ///If there are input pArameters, interpret them
   if(argn > 1) {
     for(int i=1;i<=argn;i++) {
-      interpret(argv[i]);
+      if(argv[i] == NULL)
+	continue;
+
+      aux = new string(argv[i]);
+      interpret(*aux);
     }
-  }
+
+    if(inputMetric.size() == 0)
+      inputMetric.push_back("all");
+    if(inputPrefix.size() == 0)
+      inputPrefix.push_back("simulation");
+   
+    process ();
+  }   
   ///otherwise analyze all by default, 
   else {
     cout << "***   Showing all metrics!\t***\n\n";
@@ -128,6 +170,99 @@ void  showWorkerCost(){
   system(cmd.c_str());
 }
 ///This function interprets all input parameters
-void interpret(char *str) {
-  //empty
+void interpret(string str) {
+  if (find (metrics.begin(), metrics.end(), str)!=metrics.end()){
+    inputMetric.push_back(str);
+  }
+  else
+    inputPrefix.push_back(str);
+}
+
+///This function process 
+void process (){
+  unsigned int i,j;
+ 
+   for (i=0; i< inputPrefix.size(); i++){
+     prefix = inputPrefix[i];
+     for (j=0; j< inputMetric.size() ; j++){
+
+       if( isExecution(inputMetric[j]) )
+	 showExecutionTimes();
+       if ( isResponseTimes(inputMetric[j]) )
+	 showResponseTimes();
+       if ( isUtilization(inputMetric[j]) )
+	  showUtilization();
+       if ( isResourceAllocationCost(inputMetric[j]) )
+	  showResourceAllocationCost();
+       if ( isSystemCost(inputMetric[j]) )
+	  showSystemCost();
+       if ( isWorkerCost(inputMetric[j]) )
+	  showWorkerCost();
+       if ( isAll(inputMetric[j]) ){
+	 cout << "\n***   Showing all metrics!\t***\n\n";
+	  showExecutionTimes();
+	  showResponseTimes();
+	  showUtilization();
+	  showResourceAllocationCost();
+	  showSystemCost();
+	  showWorkerCost();
+       }
+     }
+   }
+}
+
+///checks if the input string calls for execution function
+bool isExecution(string str){
+  if ((str.compare(metricsVector[0])==0)||(str.compare(metricsVector[1])==0))
+      return true;
+  else
+      return false;
+}
+
+///checks if the input string calls for ResponseTimes function
+bool isResponseTimes(string str){
+  if ((str.compare(metricsVector[2])==0)||(str.compare(metricsVector[3])==0))
+      return true;
+  else
+      return false;
+}
+
+///checks if the input string calls for utilization function
+bool isUtilization(string str){
+  if ((str.compare(metricsVector[4])==0)||(str.compare(metricsVector[5])==0))
+      return true;
+  else
+      return false;
+}
+
+///checks if the input string calls for resource allocation function
+bool isResourceAllocationCost(string str){
+  if ((str.compare(metricsVector[6])==0)||(str.compare(metricsVector[7])==0))
+      return true;
+  else
+      return false;
+}
+
+///checks if the input string calls for system cost function
+bool isSystemCost(string str){
+  if ((str.compare(metricsVector[8])==0)||(str.compare(metricsVector[9])==0))
+      return true;
+  else
+      return false;
+}
+
+///checks if the input string calls for worker cost function
+bool isWorkerCost(string str){
+  if ((str.compare(metricsVector[10])==0)||(str.compare(metricsVector[11])==0))
+      return true;
+  else
+      return false;
+}
+
+///checks if the input string calls for all functions
+bool isAll(string str){
+  if ((str.compare(metricsVector[12])==0)||(str.compare("all")==0))
+      return true;
+  else
+      return false;
 }
