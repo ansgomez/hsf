@@ -36,8 +36,7 @@ bool Simulation::simulating=false;
 
 /*********** CONSTRUCTOR ***********/
   ///Constructor needs the path to xml and the cpu_set
-Simulation::Simulation(string _xml_path, int cpu, string nm) {
-  name = nm;
+Simulation::Simulation(string _xml_path, int cpu) {
   simTime = TimeUtil::Seconds(1); 
   initialized = false;
   simulating = false;

@@ -7,8 +7,11 @@
 #include "core/Simulation.h"
 #include "core/Worker.h"
 #include "dispatchers/Periodic.h"
+#include "dispatchers/PeriodicJitter.h"
+#include "schedulers/EDF.h"
 #include "schedulers/TDMA.h"
 #include "tasks/BusyWait.h"
+#include "tasks/Video.h"
 #include "util/Enumerations.h"
 #include "util/Operators.h"
 #include "util/TimeUtil.h"
@@ -52,8 +55,7 @@ void Parser::parseFile(string filePath) {
   //Create top_sched node
   xml_node top_sched = sim_node.child("runnable");
 
-  //if TDMA
-  Scheduler *top = (Scheduler*) parseTDMA(top_sched, &id, 0);
+  Scheduler *top = parseScheduler(top_sched, &id, 0); 
   sim->setTopScheduler(top);
 
   cout << "\n***   Loaded '" << sim_node.attribute("name").value() << "'\t***\n";
@@ -78,6 +80,13 @@ Dispatcher* Parser::parseDispatcher(xml_node disp_node, unsigned int *id) {
     disp = (Dispatcher*) p;
     sim->addDispatcher(disp);   
   }
+  else if(periodicity == "periodic_jitter") {
+    PeriodicJitter *p = new PeriodicJitter(sim, *id);
+    p->setPeriod(parseTime(disp_node.child("period")));
+    p->setJitter(parseTime(disp_node.child("jitter")));
+    disp = (Dispatcher*) p;
+    sim->addDispatcher(disp);   
+  }
   else {
     cout << "Parser Error: Runnable " << *id << "'s periodicity was not recognized\n";
   }
@@ -85,13 +94,34 @@ Dispatcher* Parser::parseDispatcher(xml_node disp_node, unsigned int *id) {
   return disp;
 }
 
+
+///This function receives a Scheduler and it call on the appropiate parsing function to return the full object
+Scheduler* Parser::parseScheduler(xml_node sched_node, unsigned int *id, int level) {
+
+  Scheduler *aux = NULL;
+  string alg = sched_node.attribute("algorithm").as_string();
+
+  if(alg == "TDMA") {
+    aux = (Scheduler*) parseTDMA(sched_node, id, level);
+  }
+  else if(alg="EDF") {
+    aux = (Scheduler*) parseEDF(sched_node, id, level);
+  }
+  else {
+    cout << "Parser error: '" << type << "' algorithm was not recognized\n";
+  }
+
+  return aux; 
+}
+
+
 ///This function receives and TDMA node, and parses its load
-TDMA* Parser::parseTDMA(xml_node sched_node, unsigned int *id, int level) {
+TDMA* Parser::parseTDMA(xml_node tdma_node, unsigned int *id, int level) {
 
   TDMA *sched = new TDMA(*id, level);
 
   //iterate through all of the children nodes
-  for (xml_node load = sched_node.first_child(); load; load = load.next_sibling()) {
+  for (xml_node load = tdma_node.first_child(); load; load = load.next_sibling()) {
     string type = load.attribute("type").as_string();
 
     //If child is worker, parse a worker
@@ -121,7 +151,7 @@ TDMA* Parser::parseTDMA(xml_node sched_node, unsigned int *id, int level) {
   }
   
   //TIME SLOTS
-  xml_node time_slots = sched_node.child("time_slots");
+  xml_node time_slots = tdma_node.child("time_slots");
   for (xml_node slot = time_slots.first_child(); slot; slot = slot.next_sibling()) {
     sched->add_slot(parseTime(slot));
   }
@@ -167,6 +197,19 @@ Worker* Parser::parseWorker(ResourceAllocator* parent, xml_node worker_node, uns
 
     worker = new Worker(parent, *id, busy_wait);
     worker->setLoad(bw);
+    d->setWorker(worker);
+  }
+  else if(load == "video") {
+    Dispatcher *d = parseDispatcher(worker_node, id);
+    *id = *id + 1;  
+
+#if _INFO==1
+    cout << "Creating Worker " << *id << endl;
+#endif
+
+    Video *vid = new Video(d);
+    worker = new Worker( parent, *id, video);
+    worker->setLoad(vid);
     d->setWorker(worker);
   }
   else {

@@ -1,6 +1,7 @@
 #include "core/RunnableQueue.h"
 
 #include "core/Criteria.h"
+#include "core/Runnable.h"
 
 #include <iostream>
 #include <stdlib.h>

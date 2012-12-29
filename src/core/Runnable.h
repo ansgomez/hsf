@@ -4,9 +4,9 @@
 #include "pthread/Thread.h"
 #include "util/Enumerations.h"
 
+class Criteria;
 class ResourceAllocator;
 class Task;
-class Criteria;
 
 /***************************************
  *        CLASS DECLARATION            * 
@@ -18,17 +18,20 @@ class Runnable : public Thread {
 
   /*********** VARIABLES ***********/
 
+  ///Auxiliary variable to hold the state of runnable
+  _runnable_state state;
+
   ///Runnable's schedulable criteria (this is the criteria used to schedule it)
   Criteria* criteria;
-  
-  ///Pointer to Task currently being 'executed' by the runnable
-  Task* current_task;
 
   ///Pointer to the scheduler that this runnable belongs to
   ResourceAllocator* parent;
 
-  ///Auxiliary variable to hold the state of runnable
-  _runnable_state state;
+  ///Pointer to Runnable currently being 'executed' by the runnable
+  Runnable* current_runnable;
+  
+  ///Pointer to Task currently being 'executed' by the runnable
+  Task* current_task;
 
  public:
 

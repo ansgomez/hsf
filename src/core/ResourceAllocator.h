@@ -1,5 +1,5 @@
-#ifndef _INTERMEDIARY_H
-#define _INTERMEDIARY_H
+#ifndef _RESOURCE_ALLOCATOR_H
+#define _RESOURCE_ALLOCATOR_H
 
 #include "core/Runnable.h"
 #include "util/Enumerations.h"
