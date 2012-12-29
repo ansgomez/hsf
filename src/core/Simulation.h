@@ -70,7 +70,7 @@ class Simulation {
   /*********** CONSTRUCTOR ***********/
 
   ///Constructor needs the path to xml and the cpu_set
-  Simulation(string xml_path, int cpu, string name);
+  Simulation(string xml_path, int cpu);
 
   /*********** MEMBER FUNCTIONS ***********/
 

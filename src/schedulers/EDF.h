@@ -3,7 +3,7 @@
 
 #include "core/Scheduler.h"
 
-#include <vector>
+#include <deque>
 
 class RunnableQueue;
 
@@ -21,13 +21,13 @@ class EDF : public Scheduler {
   RunnableQueue* activeQueue;
 
   ///This queue holds the ids of runnables in the active queue who already finished
-  vector<unsigned int> jobFinishedQueue;
+  deque<unsigned int> jobFinishedQueue;
 
-  ///These queues are used to hold runnables with active jobs, or those with jobs pending
-  RunnableQueue* newJobQueue;
+  ///This queue holds the Runnables who are registering new jobs
+  deque<Runnable*> newJobQueue;
 
   ///Semaphores to ensure proper execution
-  sem_t activation_sem, event_sem, jobfinished_sem, newjob_sem, preempt_sem, schedule_sem;
+  sem_t activation_sem, event_sem, jobfinished_sem, newjob_sem, schedule_sem;
 
  public: 
 

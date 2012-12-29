@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
 
       //if file exists, simulate it!
       if (stat(file->c_str(), &buf) != -1) {
-	sim = new Simulation(*file, 1, "simulation");
+	sim = new Simulation(*file, 1);
 	sim->simulate();
 
 	if (argc > 2)
@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
 
     //if file exists, simulate it!
     if (stat(file->c_str(), &buf) != -1) {
-      sim = new Simulation("simulation.xml", 1, "simulation");
+      sim = new Simulation("simulation.xml", 1);
       sim->simulate();
       free(sim);
     }

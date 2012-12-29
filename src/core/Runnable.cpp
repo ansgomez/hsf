@@ -15,10 +15,11 @@
 /*********** CONSTRUCTOR ***********/
 
 Runnable::Runnable(unsigned int _id) : Thread(_id) {
+  //Default initial values
   state = deactivated;
-
-  //TODO: parametrize this!
-  criteria = (Criteria *) (new InclusiveCriteria());
+  criteria = NULL;
+  current_runnable = this;
+  current_task = NULL;
 }
 
 /*********** INHERITED FUNCTIONS ***********/

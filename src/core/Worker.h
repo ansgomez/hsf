@@ -5,7 +5,7 @@
 #include "util/Enumerations.h"
 
 #include <semaphore.h>
-#include <vector>
+#include <deque>
 
 class ResourceAllocator;
 class Task;
@@ -23,15 +23,15 @@ class Worker : public Runnable {
   /*********** VARIABLES ***********/
 
   ///Vector to hold arrival times of active tasks
-  vector<struct timespec> arrival_times;
+  deque<struct timespec> arrival_times;
   
   ///Pointer to the scheduler handling this worker
   ResourceAllocator* parent;
 
   ///Pointer to the task to be executed by the worker
-  Task* load;
+  Task* task;
   
-  ///Type of task load (busy_wait, video)
+  ///Type of task load (busy_wait, video, etc)
   enum _task_load task_load;
 
   ///This variable determines each job's deadline (deadline = arrival_time + relativeDeadline)

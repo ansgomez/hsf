@@ -1,7 +1,7 @@
 #ifndef _RUNNABLEQUEUE_H
 #define _RUNNABLEQUEUE_H
 
-#include "core/Runnable.h"
+class Runnable;
 
 /***************************************
  *        CLASS DECLARATION            * 
@@ -41,7 +41,7 @@ class RunnableQueue {
   void deleteRunnable(unsigned int id);
 
   ///This function inserts the new runnable in the queue depending on the derived class' criteria
-  virtual void insertRunnable(Runnable *newRunnable);
+  virtual void insertRunnable(Runnable* newRunnable);
 
   ///This function reads the head of the queue and returns a pointer to the runnable
   Runnable* peek_front();

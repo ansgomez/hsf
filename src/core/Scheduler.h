@@ -19,11 +19,11 @@ class Scheduler : public ResourceAllocator {
  
   /*********** VARIABLES ***********/
 
-  ///This variable stores the type of scheduler
-  _sched_type sched_type;
-
   ///This variable holds the level of the scheduler (helps assign correct hierarchical priority)
   int level;
+
+  ///This variable stores the type of scheduler
+  _sched_type sched_type;
 
  public:
  
