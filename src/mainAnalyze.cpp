@@ -27,7 +27,7 @@ using namespace std;
 ///This variable holds the prefix for the input files (_traces, _runtimes, _missedDeadlines).
 string prefix="simulation";
 vector <string> inputMetric, inputPrefix;
-const char *metricsVector[] = {"execution_times","exec","response_times","resp","utilization","util","resource_allocation_cost","alloc", "system_cost","sys","worker_cost","worker", "all"};
+const char *metricsVector[] = {"execution_times","exec","response_times","resp","utilization","util","resource_allocation_cost","alloc", "system_cost","sys","worker_cost","worker", "all","exe"};
 vector <string> metrics(metricsVector, (metricsVector)+sizeof(metricsVector)/sizeof(metricsVector[0]));
 
 /*********** FUNCTIONS ***********/
@@ -91,8 +91,7 @@ int main(int argn, char **argv) {
     
     for(int i=1;i<=argn;i++) {  
       if(argv[i] == NULL)
-	continue;
-      
+	continue;     
       
       aux = new string(argv[i]);
       interpret(*aux);
@@ -220,7 +219,7 @@ void process (){
 
 ///checks if the input string calls for execution function
 bool isExecution(string str){
-  if ((str.compare(metricsVector[0])==0)||(str.compare(metricsVector[1])==0))
+  if ((str.compare(metricsVector[0])==0)||(str.compare(metricsVector[1])==0)||(str.compare(metricsVector[13])==0))
       return true;
   else
       return false;
