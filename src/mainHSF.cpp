@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
       free(file);
     }
   }
-  //Else look for default hsf.xml
+  //Else look for default simulation.xml
   else {
     file = new string("simulation.xml");
 
