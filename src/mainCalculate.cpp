@@ -14,7 +14,6 @@
  * All of the above             (all)
  *
  *********************************/
-
 #include <algorithm>
 #include <iostream>
 #include <stdlib.h>
@@ -33,25 +32,23 @@ vector <string> metrics(metricsVector, (metricsVector)+sizeof(metricsVector)/siz
 
 /*********** FUNCTIONS ***********/
 
-///This function calls the show_execution_times script to produce "$prefix_execution_times.csv"
-void showExecutionTimes();
+///This function calls the execution_times script to produce "$prefix_execution_times.csv"
+void calculateExecutionTimes();
 
-///This function calls the show_response_times script to produce "$prefix_response_times.csv"
-void showResponseTimes();
+///This function calls the response_times script to produce "$prefix_response_times.csv"
+void calculateResponseTimes();
 
-///This function calls the show_Utilization script to produce "$prefix_Utilization.csv"
-void showUtilization();
+///This function calls the Utilization script to produce "$prefix_Utilization.csv"
+void calculateUtilization();
 
 ///This function calls the Resource Allocation Cost script to produce "$prefix_alloc_cost_us.csv"
-void  showResourceAllocationCost();
+void  calculateResourceAllocationCost();
 
+///This function calls the SystemCost script to show "$prefix_System Cost"
+void  calculateSystemCost();
 
-///This function calls the showSystemCost script to show "$prefix_System Cost"
-void  showSystemCost();
-
-///This function calls the showWorkerCost script to show "$prefix_Worker Cost"
-void  showWorkerCost();
-
+////This function calls the WorkerCost script to show "$prefix_Worker Cost"
+void calculateWorkerCost();
 
 ///This function interprets all input parameters
 void interpret(string str);
@@ -84,16 +81,18 @@ bool isAll(string str);
 int main(int argn, char **argv) {
 
   string* aux;
+
 #if _INFO==1
-  cout << "Starting HSF's show tool\n";
+  cout << "Starting HSF's calculate tool\n";
 #endif
 
-  ///If there are input pArameters, interpret them
+  ///If there are input parameters, interpret them
   if(argn > 1) {
-    for(int i=1;i<=argn;i++) {
+    
+    for(int i=1;i<=argn;i++) {  
       if(argv[i] == NULL)
-	continue;
-
+	continue;     
+      
       aux = new string(argv[i]);
       interpret(*aux);
     }
@@ -102,20 +101,20 @@ int main(int argn, char **argv) {
       inputMetric.push_back("all");
     if(inputPrefix.size() == 0)
       inputPrefix.push_back("simulation");
-   
+
     cout << endl;
 
     process ();
-  }   
-  ///otherwise analyze all by default, 
+  }
+  ///otherwise calculate all by default, 
   else {
-    cout << "\n***   Showing all metrics!\t***\n\n";
-    showExecutionTimes();
-    showResponseTimes();
-    showUtilization();
-    showResourceAllocationCost();
-    showSystemCost();
-    showWorkerCost();
+    cout << "\n***   Calculating all metrics!\t***\n\n";
+    calculateExecutionTimes();
+    calculateResponseTimes();
+    calculateUtilization();
+    calculateResourceAllocationCost();
+    calculateSystemCost();
+    calculateWorkerCost();
   }
 
 #if _INFO==1
@@ -126,51 +125,58 @@ int main(int argn, char **argv) {
 }
 
 
-///This function calls the show_execution_times script to show "$prefix_execution_times"
-void showExecutionTimes() {
-  string cmd = "octave --no-window-system -q --eval \"show_execution_time('" + prefix + "')\"";
+///This function calls the execution_times script to produce "$prefix_execution_times.csv"
+void calculateExecutionTimes() {
+  cout << "Calculating Execution Times...\n";
+
+  string cmd = "octave --no-window-system -q --eval \"execution_time('" + prefix + "')\"";
 
   system(cmd.c_str());
 }
 
-///This function calls the show_response_times sCript to show "$prefix_response_times"
-void showResponseTimes() {
-  string cmd = "octave --no-window-system -q --eval \"show_response_time('" + prefix + "')\"";
+///This function calls the response_times script to produce "$prefix_response_times.csv"
+void calculateResponseTimes() {
+  cout << "Calculating Response Times...\n";
+
+  string cmd = "octave --no-window-system -q --eval \"response_time('" + prefix + "')\"";
+  
+  system(cmd.c_str());
+}
+
+///This function calls the Utilization script to produce "$prefix_Utilization.csv"
+void calculateUtilization(){
+  cout << "Calculating Utilization...\n";
+
+  string cmd = "octave --no-window-system -q --eval \"utilization('" + prefix + "')\"";
 
   system(cmd.c_str());
 }
 
-///This function calls the show_utilization script to show "$prefix_utilization"
-void showUtilization() {
-  string cmd = "octave --no-window-system -q --eval \"show_utilization('" + prefix + "')\"";
+///This function calls the ResourceAllocationCost script to produce "$prefix_alloc_cost_us.csv"
+void  calculateResourceAllocationCost(){
+  cout << "Calculating Resource Allocation Cost...\n";
+
+  string cmd = "octave --no-window-system -q --eval \"resourceAllocationCost('" + prefix + "')\"";
 
   system(cmd.c_str());
 }
 
-///This function calls the showResourceAllocationCost script to show "$prefix_Resource Allocation Cost"
-void  showResourceAllocationCost(){
- 
-  string cmd = "octave --no-window-system -q --eval \"show_resourceAllocationCost('" + prefix + "')\"";
+///This function calls the SystemCost script to show "$prefix_System Cost"
+void  calculateSystemCost(){
+  cout << "Calculating System Cost...\n";
+  string cmd = "octave --no-window-system -q --eval \"systemCost('" + prefix + "')\"";
 
   system(cmd.c_str());
 }
 
-
-///This function calls the showSystemCost script to show "$prefix_System Cost"
-void  showSystemCost(){
- 
-  string cmd = "octave --no-window-system -q --eval \"show_systemCost('" + prefix + "')\"";
-
-  system(cmd.c_str());
-}
-
-///This function calls the showWorkerCost script to show "$prefix_Worker Cost"
-void  showWorkerCost(){
- 
-  string cmd = "octave --no-window-system -q --eval \"show_workerCost('" + prefix + "')\"";
+////This function calls the WorkerCost script to show "$prefix_Worker Cost"
+void calculateWorkerCost(){
+  cout << "Calculating Worker Cost...\n";
+  string cmd = "octave --no-window-system -q --eval \"workerCost('" + prefix + "')\"";
 
   system(cmd.c_str());
 }
+
 ///This function interprets all input parameters
 void interpret(string str) {
 
@@ -190,25 +196,25 @@ void process (){
      for (j=0; j< inputMetric.size() ; j++){
 
        if( isExecution(inputMetric[j]) )
-	 showExecutionTimes();
+	 calculateExecutionTimes();
        if ( isResponseTimes(inputMetric[j]) )
-	 showResponseTimes();
+	 calculateResponseTimes();
        if ( isUtilization(inputMetric[j]) )
-	  showUtilization();
+	  calculateUtilization();
        if ( isResourceAllocationCost(inputMetric[j]) )
-	  showResourceAllocationCost();
+	  calculateResourceAllocationCost();
        if ( isSystemCost(inputMetric[j]) )
-	  showSystemCost();
+	  calculateSystemCost();
        if ( isWorkerCost(inputMetric[j]) )
-	  showWorkerCost();
+	  calculateWorkerCost();
        if ( isAll(inputMetric[j]) ){
-	 cout << "***   Showing all metrics!\t***\n\n";
-	 showExecutionTimes();
-	 showResponseTimes();
-	  showUtilization();
-	  showResourceAllocationCost();
-	  showSystemCost();
-	  showWorkerCost();
+	 cout << "***   Calculating all metrics!\t***\n\n";
+	  calculateExecutionTimes();
+	  calculateResponseTimes();
+	  calculateUtilization();
+	  calculateResourceAllocationCost();
+	  calculateSystemCost();
+	  calculateWorkerCost();
        }
      }
    }

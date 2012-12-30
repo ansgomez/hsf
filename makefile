@@ -24,7 +24,7 @@ MATHGL= -rdynamic /usr/lib/libmgl.so.7.0.0
 #SOURCE FILES
 HSFSRC=mainHSF.cpp
 SIMFIGSRC=mainSimulationFigure.cpp
-ANALYZESRC=mainAnalyze.cpp
+CALCULATESRC=mainCalculate.cpp
 SHOWSRC=mainShow.cpp
 SIMULATESRC=mainSimulate.cpp
 
@@ -116,10 +116,10 @@ simfig:
 	$(CXX) $(CFLAGS) -c $(SRCDIR)/$(SIMFIGSRC) -o $(OBJDIR)/simfig.o $(CARG)    #compile mainSimulationFigure.cpp
 	$(CXX) $(LFLAGS) $(SIMGFIGOBJ) $(OBJDIR)/simfig.o $(MATHGL) -o $(BINDIR)/simfig -lrt
 
-#################   ANALYZE TOOL    #################
-analyze:
-	$(CXX) $(CFLAGS) -c $(SRCDIR)/$(ANALYZESRC) -o $(OBJDIR)/mainAnalyze.o
-	$(CXX) $(LFLAGS) $(OBJDIR)/mainAnalyze.o -o $(BINDIR)/analyze 
+#################   CALCULATE TOOL    #################
+calculate:
+	$(CXX) $(CFLAGS) -c $(SRCDIR)/$(CALCULATESRC) -o $(OBJDIR)/mainCalculate.o
+	$(CXX) $(LFLAGS) $(OBJDIR)/mainCalculate.o -o $(BINDIR)/calculate 
 
 #################    SHOW   TOOL    #################
 show:
