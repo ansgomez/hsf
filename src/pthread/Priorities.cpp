@@ -10,19 +10,19 @@
 /*********** MEMBER FUNCTIONS ***********/
 
 int Priorities::get_main_pr() {
-  return 5+MAX_LEVELS;
+  return 7+MAX_LEVELS;
 }
 
 int Priorities::get_disp_pr() {
-  return 5+MAX_LEVELS-1;
+  return 6+MAX_LEVELS;
 }
 
 int Priorities::get_sched_pr(int level) {
-  if(level<0 || level>=MAX_LEVELS) {
+  if(level<0 || level>MAX_LEVELS) {
     return -1;
   }
   else {
-     return 4+MAX_LEVELS-level; 
+     return 5+MAX_LEVELS-level; 
   }
 }
 

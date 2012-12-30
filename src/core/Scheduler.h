@@ -36,6 +36,9 @@ class Scheduler : public ResourceAllocator {
 
   /**** FROM THREAD ****/
 
+  ///Calling this function will block the calling thread until this thread exits
+  virtual void join();
+
   ///This is the pthread's wrapper function
   void wrapper();
 

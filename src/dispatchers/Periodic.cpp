@@ -8,6 +8,8 @@
 
 #include <iostream>
 
+using namespace std;
+
 #define _INFO 0
 
 /***************************************
@@ -33,7 +35,7 @@ void Periodic::dispatch() {
 
     if(worker != NULL) {
 #if _INFO==1
-      cout << "Disp : " << id << " is registering a new job @t=" << TimeUtil::getTimeUSec() << "\n";
+      cout << "Disp : " << id << " is registering a new job\n";// @t=" << TimeUtil::getTimeUSec() << "\n";
 #endif
       worker->new_job();
     }

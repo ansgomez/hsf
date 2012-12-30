@@ -20,6 +20,7 @@ using namespace std;
 Thread::Thread(unsigned int _id) {
 
   id = _id;
+  joined = false;
 
 #if _INFO==1
   cout << "Thread " << _id << " created\n";
@@ -45,12 +46,24 @@ Thread::~Thread() {
 
 ///This function blocks the calling thread until this thread exits
 void Thread::join() {
+  if(joined) {
+    return;
+  }
+  //cout << "Thread " << id << " is being joined\n";
   pthread_join(thread, NULL);
+  //cout << "Thread " << id << " has been joined\n";
+  joined = true;
 }
 
 ///Copy of the join() method -> in case join() is redefined by a subclass
 void Thread::join2() {
+  if(joined) {
+    return;
+  }
+  //cout << "Thread " << id << " is being joined\n";
   pthread_join(thread, NULL);
+  //cout << "Thread " << id << " has been joined\n";
+  joined = true;
 }
 
 ///The runnable thread points to this static function. This function recieves a Thread object, and calls the wrapper function in that object
