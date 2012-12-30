@@ -153,5 +153,7 @@ run:
 	sudo $(OBJDIR)/$(EXEC)
 
 clean:
-	rm -fr $(BINDIR)/*.o*
-	rm -fr $(OBJDIR)/*.o*
+	rm -fr $(BINDIR)/*
+	rm -fr $(OBJDIR)/*.o
+	rm -fr $(OBJDIR)/hsf/*.o
+	rm -fr $(OBJDIR)/lib/*.o

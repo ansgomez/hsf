@@ -44,9 +44,6 @@ class Runnable : public Thread {
   
   /**** FROM THREAD ****/
 
-  ///This function joins the calling thread with the object's pthread
-  void join();
-
   ///This function will be defined by subclasses
   virtual void wrapper();
 

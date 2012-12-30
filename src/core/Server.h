@@ -19,9 +19,6 @@ class Server : public ResourceAllocator {
   
   /**** FROM THREAD ****/
 
-  ///This function rewrites the join method to account for the server's load
-  void join();
-
   ///This is the pthread's wrapper function
   void wrapper();
   

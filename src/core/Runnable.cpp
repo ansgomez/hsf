@@ -26,12 +26,6 @@ Runnable::Runnable(unsigned int _id) : Thread(_id) {
 
 /**** FROM THREAD ****/
 
-///This function joins the calling thread with the object's pthread
-void Runnable::join() {
-  //empty
-  cout << "Runnable::join - This should not print!\n";
-}
-
 ///This function will be executed by the pthread
 void Runnable::wrapper() {
   //empty

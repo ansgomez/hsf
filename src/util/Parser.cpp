@@ -76,17 +76,20 @@ Dispatcher* Parser::parseDispatcher(xml_node disp_node, unsigned int *id) {
     Periodic *p = new Periodic(*id);
     p->setPeriod(parseTime(disp_node.child("period")));
     disp = (Dispatcher*) p;
-    sim->addDispatcher(disp);   
   }
   else if(periodicity == "periodic_jitter") {
     PeriodicJitter *p = new PeriodicJitter(*id);
     p->setPeriod(parseTime(disp_node.child("period")));
     p->setJitter(parseTime(disp_node.child("jitter")));
     disp = (Dispatcher*) p;
-    sim->addDispatcher(disp);   
   }
   else {
     cout << "Parser Error: Runnable " << *id << "'s periodicity was not recognized\n";
+  }
+
+  if(disp!=NULL) {
+    sim->addDispatcher(disp); 
+    sim->addThread((Thread*)disp);
   }
 
   return disp;
@@ -122,26 +125,27 @@ EDF* Parser::parseEDF(xml_node edf_node, unsigned int *id, int level) {
 ///This function receives a Scheduler and it call on the appropiate parsing function to return the full object
 Scheduler* Parser::parseScheduler(ResourceAllocator* parent, xml_node sched_node, unsigned int *id, int level) {
 
-  Scheduler *aux = NULL;
+  Scheduler *sched = NULL;
   string alg = sched_node.attribute("algorithm").as_string();
 
   //Call the appropiate parsing function
   if(alg == "TDMA") {
-    aux = (Scheduler*) parseTDMA(sched_node, id, level);
+    sched = (Scheduler*) parseTDMA(sched_node, id, level);
   }
   else if(alg == "EDF") {
-    aux = (Scheduler*) parseEDF(sched_node, id, level);
+    sched = (Scheduler*) parseEDF(sched_node, id, level);
   }
   else {
     cout << "Parser error: '" << alg << "' algorithm was not recognized\n";
   }
 
   //set the parent
-  if(aux != NULL) {
-    aux->setParent(parent);
+  if(sched != NULL) {
+    sched->setParent(parent);
+    sim->addThread((Thread*)sched);
   }
 
-  return aux; 
+  return sched; 
 }
 
 
@@ -239,6 +243,11 @@ Worker* Parser::parseWorker(ResourceAllocator* parent, xml_node worker_node, uns
   }
   else {
     cout << "Parser error: Worker " << *id << "'s load was not recognized\n";
+  }
+
+  if(worker!=NULL) {
+    //Register thread with simulation object
+    sim->addThread((Thread*)worker);
   }
 
   return worker;

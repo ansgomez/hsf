@@ -27,12 +27,16 @@ Worker::Worker(ResourceAllocator *p, unsigned int _id, _task_load tl) : Runnable
 
   parent = p;
   thread_type = worker;
+  task_load = tl;
+  Statistics::addWorkerId(_id);
 
   criteria = new InclusiveCriteria();
   //arrival_times.reserve(100);
 
+  //Default value for relativeDeadline
   relativeDeadline = TimeUtil::Millis(20);
 
+  //Semaphore initialization
   sem_init(&activation_sem, 0, 1); //mutex semaphore
   sem_init(&arrival_sem, 0, 1); //mutex semaphore
   sem_init(&wrapper_sem, 0, 0); //signal semaphore
@@ -47,7 +51,7 @@ void Worker::join() {
   //Post to sem in case worker is blocked
   sem_post(&wrapper_sem);
 
-  pthread_join(thread, NULL);
+  join2();
 }
 
 ///This inherited function will be executed by the worker thread

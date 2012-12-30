@@ -45,6 +45,14 @@ EDF::EDF(unsigned int _id, int level) : Scheduler(_id, level) {
 
 /*********** INHERITED FUNCTIONS ***********/
 
+/**** FROM THREAD  ****/
+
+///This function redefines Thread::join() to take into account the EDF unblocking mechanism...
+void EDF::join() {
+  sem_post(&event_sem);
+  join2();
+}
+
 /**** FROM RUNNABLE  ****/
 
 ///This function rewrites the activate method to 'activate' both the scheduler as well as its load - this runs in the higher level scheduler thread
@@ -55,7 +63,7 @@ void EDF::activate() {
 #endif
 
   if(state == activated) {
-    cout << "EDF::activate error - already activated!\n";
+    cout << "EDF::activate() error - already activated!\n";
   }
 
   sem_wait(&activation_sem);
@@ -63,20 +71,16 @@ void EDF::activate() {
     state = activated;
 
     //Activate current head of active_queue (if any) only when there are 
-    //any new jobs (since the current job might have to be preempted)
+    //no new jobs (since the current job might have to be preempted)
     sem_wait(&newjob_sem);
       //If there are no new jobs pending
       if(newJobQueue.size() == 0) {
         //activate current head of queue
-	if(activeQueue == NULL)
-	  cout << "EDF:activate activeQueue is null!\n";
-
         if(activeQueue->peek_front() != NULL) {
           activeQueue->peek_front()->activate();
         }
       }
-
-      //else, wait for scheduler to execute and process the new jobs himself
+      //if there are new jobs, wait for scheduler to process the new jobs himself
     sem_post(&newjob_sem); 
   sem_post(&activation_sem);
 
@@ -88,23 +92,19 @@ void EDF::activate() {
 ///This function rewrites the deactivate method both the scheduler (through its semaphores) as well as its load
 void EDF::deactivate() {
   if(state == deactivated) {
-    cout << "EDF::deactivate error - already deactivated!\n";
+    cout << "EDF::deactivate() error - already deactivated!\n";
   }
 
   sem_wait(&activation_sem);
-  sem_wait(&schedule_sem);
-
-  //Deactivate currently active job (if any)
-  if(activeQueue->peek_front() != NULL) {
-    activeQueue->peek_front()->deactivate();
-  }
-
-  //Decrease the priority
-  setPriority(Priorities::get_inactive_pr());
-
-  state = deactivated;
-
-  sem_post(&schedule_sem);
+    sem_wait(&schedule_sem);
+      //Deactivate currently active job (if any)
+      if(activeQueue->peek_front() != NULL) {
+        activeQueue->peek_front()->deactivate();
+      }
+      //Decrease the priority
+      setPriority(Priorities::get_inactive_pr());
+      state = deactivated;
+    sem_post(&schedule_sem);
   sem_post(&activation_sem);
 }
 
@@ -119,7 +119,13 @@ void EDF::job_finished(unsigned int runnable_id) {
 
   //Add id to jobfinishedQueue
   sem_wait(&jobfinished_sem);
-  jobFinishedQueue.push_back(runnable_id);
+    jobFinishedQueue.push_back(runnable_id);
+    if(jobFinishedQueue.size()>1 || newJobQueue.size()>0) {
+      cout << "registering job finished...\n";
+      sem_post(&newjob_sem); 
+      return;
+    }
+    cout << "registering job finished & event...\n";
   sem_post(&jobfinished_sem);
 
   //Register event with parent allocator
@@ -127,10 +133,10 @@ void EDF::job_finished(unsigned int runnable_id) {
     parent->job_finished(id);
   }
   else if (level != 0) {
-    cout << "EDF::job_finished - non-top level entity has null parent!\n";
+    cout << "EDF::job_finished() - non-top level entity has null parent!\n";
   }
 
-  //At this point, current object might loose priority, 
+  //At this point, current object might have lost priority...
 
   //Register event with this scheduler
   sem_wait(&schedule_sem);
@@ -147,12 +153,16 @@ void EDF::new_job(Runnable* obj) {
 #endif
 
   //Add new arrival to newjob_queue
+  cout << "new_job is waiting\n";
   sem_wait(&newjob_sem);
+  cout << "new_job is adding...\n";
     newJobQueue.push_back(obj);
+    if(newJobQueue.size()>1 || jobFinishedQueue.size()>0) {
+      cout << "registering new job...\n";
+      sem_post(&newjob_sem); 
+      return;
+    }
   sem_post(&newjob_sem); 
-
-  if(newJobQueue.size()>1)
-    return;
 
   //Verify if current head (if any) has earlier deadline
   if(activeQueue->getSize() > 0) {
@@ -165,14 +175,18 @@ void EDF::new_job(Runnable* obj) {
     }
   }
 
-  cout << "registering new head...\n";
+  cout << "registering new job & event...\n";
 
-  //Set object's schedulable criteria 
+  //Set the scheduler's criteria equal to its load's criteria
   criteria = obj->getCriteria();
  
   //Notify parent of new head
-  if(parent!=NULL)
+  if(parent!=NULL) {
     parent->new_job(this);
+  }
+  else if (level != 0) {
+    cout << "EDF::new_job() - non-top level entity has null parent!\n";
+  }
 
   //Alert scheduler of event 
   sem_wait(&schedule_sem);
@@ -201,41 +215,45 @@ void EDF::schedule() {
 
     //Wait for an event to ocurr
     sem_wait(&event_sem);
-    //TODO: make sure that event_sem isn't posted more than once (unless necessary)
 
+    //If simulation ended while blocked, break
+    if( !Simulation::isSimulating() )  break;
+    
+    //cout << "sched is waiting for sem\n";
     sem_wait(&schedule_sem);
-    currentRunnable = activeQueue->peek_front();
 
-    //Deactivate currently active job (if any) in order to process new/finished jobs
-    if(currentRunnable != NULL) {
-      currentRunnable->deactivate();
-    }
+    cout << "sched obtained sem: " << newJobQueue.size() << ":" << jobFinishedQueue.size() << "\n";
+      currentRunnable = activeQueue->peek_front();
 
-    //Add every new job to the activeQueue
-    sem_wait(&newjob_sem);
-      while(newJobQueue.size() > 0) {
-        activeQueue->insertRunnable(newJobQueue.front());//insert head of newJobQueue
-        newJobQueue.pop_front();//erase head of newJobQueue
+      //Deactivate currently active job (if any) in order to process new/finished jobs
+      if(currentRunnable != NULL) {
+        currentRunnable->deactivate();
       }
-    sem_post(&newjob_sem);
+      
+      /***** handle new jobs *****/
+      sem_wait(&newjob_sem);
+        cout << "sched handling new job!\n";
+        while(newJobQueue.size() > 0) {
+          activeQueue->insertRunnable(newJobQueue.front());//insert head of newJobQueue
+          newJobQueue.pop_front();//erase head of newJobQueue
+        }
+      sem_post(&newjob_sem);
+      
+      /***** handle finihed jobs *****/
+      sem_wait(&jobfinished_sem);
+        cout << "sched handling job finished!\n";
+        while(jobFinishedQueue.size() > 0) {
+          activeQueue->deleteRunnable(jobFinishedQueue.front());//erase from RunnableQueue
+          jobFinishedQueue.pop_front();//erase from jobFinishedQueue
+        }
+      sem_post(&jobfinished_sem);
 
-    //Remove any finished jobs from the active queue
-    sem_wait(&jobfinished_sem);
-      while(jobFinishedQueue.size() > 0) {
-        activeQueue->deleteRunnable(jobFinishedQueue.front());//erase from RunnableQueue
-	jobFinishedQueue.pop_front();//erase from jobFinishedQueue
+      //If activeQueue has a job, activate it
+      if(activeQueue->getSize() > 0) {
+        activeQueue->peek_front()->activate();
       }
-    sem_post(&jobfinished_sem);
 
-    //If activeQueue is empty, release sched_sem, and wait for next event
-    if(activeQueue->getSize() == 0) {
-      sem_post(&schedule_sem);
-      continue;
-    }
-
-    //Otherwise, activate head of activeQueue
-    activeQueue->peek_front()->activate();
-
+      //cout << "schedule() is releasing sem...\n";
     //Release sched_sem
     sem_post(&schedule_sem);
   }

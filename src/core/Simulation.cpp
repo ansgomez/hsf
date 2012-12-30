@@ -1,5 +1,4 @@
 #include "core/Simulation.h"
-//#include "defines.h"
 
 #include "core/Dispatcher.h"
 #include "core/Scheduler.h"
@@ -9,6 +8,7 @@
 #include "dispatchers/Periodic.h"
 #include "pthread/Idle.h"
 #include "pthread/Priorities.h"
+#include "pthread/Thread.h"
 #include "results/Statistics.h"
 #include "results/Trace.h"
 #include "util/Operators.h"
@@ -16,10 +16,10 @@
 #include "util/TimeUtil.h"
 
 #include <iostream>
-#include <unistd.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <sys/stat.h>
-#include <pthread.h>
+#include <unistd.h>
 
 /***************************************
  *        CLASS DEFINITION             * 
@@ -92,21 +92,20 @@ void Simulation::activate_dispatchers() {
   }
 }
 
-///This function should be called by the Worker constructor to 'register' its id
-void Simulation::add_worker_id(unsigned int _id) {
-#if _INFO ==1
-  cout << "Adding Worker ID: " << _id << endl;
-#endif 
+///This function adds dispatchers to the simulation object
+void Simulation::addDispatcher(Dispatcher *d) {
+  disp.push_back(d);
+}
 
-  worker_id.push_back(_id);
-
+///This function adds thread pointers to the simulation object
+void Simulation::addThread(Thread* t) {
+  threads.push_back(t);
 }
 
 ///This function initializes all of the objects
 void Simulation::initialize() {
   //Reserve some memory for vectors
   disp.reserve(50);
-  worker_id.reserve(50);
   Statistics::initialize();
 
   //Idle should be the first thread to be created
@@ -121,32 +120,18 @@ void Simulation::initialize() {
 
 ///This function waits for all other thread to join
 void Simulation::join_all() {
-  //Wait for all dispatchers
+  Thread* t;
+
 #if _DEBUG==1
-  cout << "Waiting for dispatchers...\n";
+  cout << "Joining all threads...\n";
 #endif
 
-  for(unsigned int c=0;c<disp.size();c++) {
-    if(disp[c] != NULL) {
-      disp[c]->join();
+  for(unsigned int i=0;i<threads.size();i++) {
+    t = threads[i];
+
+    if(t!=NULL) {
+      t->join();
     }
-  }
-
-#if _DEBUG==1
-  cout << "Waiting for idle...\n";
-#endif
-   
-  if(idle != NULL) {
-    idle->join();
-  }
-
-  //Wait for top_sched
-#if _DEBUG==1
-  cout << "Waiting for top_sched...\n";
-#endif
-
-  if(top_sched != NULL) {
-    top_sched->join();
   }
 
 #if _INFO==1
@@ -216,19 +201,9 @@ bool Simulation::isSimulating() {
 
 /*********** GETTER AND SETTER FUNCTIONS ***********/
 
-///This function adds dispatchers to the simulation object
-void Simulation::addDispatcher(Dispatcher *d) {
-  disp.push_back(d);
-}
-
 ///This function returns the name of the simulation
 string Simulation::getName() {
   return name;
-}
-
-///This function returns a vector of the worker id's
-vector<unsigned int> Simulation::getWorker_id() {
-  return worker_id;
 }
 
 ///This function sets the duration of the simulation

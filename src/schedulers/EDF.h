@@ -38,6 +38,11 @@ class EDF : public Scheduler {
 
   /*********** INHERITED FUNCTIONS ***********/
 
+  /**** FROM THREAD  ****/
+
+  ///This function redefines Thread::join() to take into account EDF unblocking mechanism...
+  void join();
+
   /**** FROM RUNNABLE  ****/
   
   ///This function rewrites the activate method to activate both the scheduler(through its semaphores) as well as its load - this runs in the dispatcher thread
