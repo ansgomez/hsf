@@ -28,7 +28,7 @@ using namespace std;
 ///This variable holds the prefix for the input files (_traces, _runtimes, _missedDeadlines).
 string prefix="simulation";
 vector <string> inputMetric, inputPrefix;
-const char *metricsVector[] = {"execution_times","exec","response_times","resp","utilization","util","resource_allocation_cost","alloc", "system_cost","sys","worker_cost","worker", "all","exe"};
+const char *metricsVector[] = {"execution_times","exec","response_times","resp","utilization","util","resource_allocation_cost","alloc", "system_cost","sys","worker_cost","worker", "all","exe", "throughput"};
 vector <string> metrics(metricsVector, (metricsVector)+sizeof(metricsVector)/sizeof(metricsVector[0]));
 
 /*********** FUNCTIONS ***********/
@@ -52,6 +52,8 @@ void  showSystemCost();
 ///This function calls the showWorkerCost script to show "$prefix_Worker Cost"
 void  showWorkerCost();
 
+///This function calls the showThroughput script to show "$prefix_Throughput"
+void showThroughput();
 
 ///This function interprets all input parameters
 void interpret(string str);
@@ -64,6 +66,9 @@ bool isExecution(string str);
 
 ////checks if the input string calls for ResponseTimes function
 bool isResponseTimes(string str);
+
+///checks if the input string calls for throughput function
+bool isThroughput(string str);
 
 ///checks if the input string calls for utilization function
 bool isUtilization(string str);
@@ -79,6 +84,7 @@ bool isWorkerCost(string str);
 
 ///checks if the input string calls for all functions
 bool isAll(string str);
+
 
 /*********** MAIN FUNCTION  ***********/
 int main(int argn, char **argv) {
@@ -112,6 +118,7 @@ int main(int argn, char **argv) {
     cout << "\n***   Showing all metrics!\t***\n\n";
     showExecutionTimes();
     showResponseTimes();
+    showThroughput();
     showUtilization();
     showResourceAllocationCost();
     showSystemCost();
@@ -171,6 +178,16 @@ void  showWorkerCost(){
 
   system(cmd.c_str());
 }
+
+///This function calls the showThroughput script to show "$prefix_Throughput"
+void showThroughput(){
+
+  string cmd = "octave --no-window-system -q --eval \"show_throughput('" + prefix + "')\"";
+
+  system(cmd.c_str());
+
+}
+
 ///This function interprets all input parameters
 void interpret(string str) {
 
@@ -194,21 +211,25 @@ void process (){
        if ( isResponseTimes(inputMetric[j]) )
 	 showResponseTimes();
        if ( isUtilization(inputMetric[j]) )
-	  showUtilization();
+	 showUtilization();
        if ( isResourceAllocationCost(inputMetric[j]) )
-	  showResourceAllocationCost();
+	 showResourceAllocationCost();
        if ( isSystemCost(inputMetric[j]) )
-	  showSystemCost();
+         showSystemCost();
        if ( isWorkerCost(inputMetric[j]) )
-	  showWorkerCost();
+	 showWorkerCost();
+       if ( isThroughput(inputMetric[j]) )
+	 showThroughput();
        if ( isAll(inputMetric[j]) ){
 	 cout << "***   Showing all metrics!\t***\n\n";
 	 showExecutionTimes();
 	 showResponseTimes();
-	  showUtilization();
-	  showResourceAllocationCost();
-	  showSystemCost();
-	  showWorkerCost();
+	 showThroughput();
+	 showUtilization();
+	 showResourceAllocationCost();
+	 showSystemCost();
+	 showWorkerCost();
+	 
        }
      }
    }
@@ -265,6 +286,14 @@ bool isWorkerCost(string str){
 ///checks if the input string calls for all functions
 bool isAll(string str){
   if ((str.compare(metricsVector[12])==0)||(str.compare("all")==0))
+      return true;
+  else
+      return false;
+}
+
+///checks if the input string calls for Throughput function
+bool isThroughput(string str){
+  if ((str.compare(metricsVector[14])==0))
       return true;
   else
       return false;
