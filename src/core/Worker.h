@@ -54,7 +54,7 @@ class Worker : public Runnable {
 
   /**** FROM THREAD ****/
   
-  ///Thisfunction joins the calling thread with the object's pthread
+  ///This join function takes into account the worker's unblocking mechanism
   void join();
 
   ///This inherited function will be executed by the worker thread

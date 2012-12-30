@@ -49,7 +49,7 @@ EDF::EDF(unsigned int _id, int level) : Scheduler(_id, level) {
 
 ///This function redefines Thread::join() to take into account the EDF unblocking mechanism...
 void EDF::join() {
-  cout << "Attempting to join EDF\n";
+  //cout << "Attempting to join EDF\n";
   sem_post(&event_sem);
   sem_post(&schedule_sem);
   sem_post(&activation_sem);
@@ -126,7 +126,7 @@ void EDF::job_finished(unsigned int runnable_id) {
 
   //Add id to jobfinishedQueue
   sem_wait(&jobfinished_sem);
-    cout << "job_finished is adding...\n";
+  //cout << "job_finished is adding...\n";
     jobFinishedQueue.push_back(runnable_id);
     if(jobFinishedQueue.size()>1 || newJobQueue.size()>0) {
       //cout << "registering job finished...\n";
@@ -152,7 +152,7 @@ void EDF::job_finished(unsigned int runnable_id) {
     sem_post(&event_sem); //->posting to event_sem must be protected by sched_sem!
     //sem_post(&schedule_sem);
 
-  cout << "job_finished is done!\n";
+    //cout << "job_finished is done!\n";
 
   sem_post(&schedule_sem);
   //Protecting posts to event_sem assures one event handled per post in the scheduler, otherwise, multiple jobs could be handled from just one post
@@ -190,7 +190,7 @@ void EDF::new_job(Runnable* obj) {
       return;
     }
     else {
-      cout << "EDF::new_job - there will be a new head...\n";
+      //cout << "EDF::new_job - there will be a new head...\n";
     }
   }
 
@@ -211,7 +211,7 @@ void EDF::new_job(Runnable* obj) {
 
     sem_post(&event_sem); //->posting to event_sem must be protected by sched_sem!
 
-  cout << "new_job is done!\n";
+    //cout << "new_job is done!\n";
 
   sem_post(&schedule_sem);
   //Protecting posts to event_sem assures one event handled per post in the scheduler, otherwise, multiple jobs could be handled from just one post
@@ -244,7 +244,7 @@ void EDF::schedule() {
     //cout << "sched is waiting for sem\n";
     sem_wait(&schedule_sem);
 
-    cout << "sched obtained sem: " << newJobQueue.size() << ":" << jobFinishedQueue.size() << "\n";
+    //cout << "sched obtained sem: " << newJobQueue.size() << ":" << jobFinishedQueue.size() << "\n";
       currentRunnable = activeQueue->peek_front();
 
       //Deactivate currently active job (if any) in order to process new/finished jobs
@@ -275,7 +275,7 @@ void EDF::schedule() {
         activeQueue->peek_front()->activate();
       }
 
-    cout << "schedule() is releasing sem...\n";
+      //cout << "schedule() is releasing sem...\n";
     //Release sched_sem
     sem_post(&schedule_sem);
   }

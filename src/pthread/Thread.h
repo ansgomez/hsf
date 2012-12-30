@@ -18,6 +18,9 @@ class Thread {
   ///Thread id - a unique value among all threads in a simulation
   unsigned int id;
 
+  ///Auxiliary variable to determine if thread has been joined
+  bool joined;
+
   ///This is an auxiliary variable to set the thread's priority
   int policy;
 

@@ -46,8 +46,12 @@ Worker::Worker(ResourceAllocator *p, unsigned int _id, _task_load tl) : Runnable
 
 /**** FROM THREAD ****/
 
-///This function joins the calling thread with the object's pthread
+///This join function takes into account the worker's unblocking mechanism
 void Worker::join() {
+  if(parent!=NULL) {
+    parent->join();
+  }
+
   //Post to sem in case worker is blocked
   sem_post(&wrapper_sem);
   sem_post(&activation_sem);
@@ -131,11 +135,10 @@ void Worker::job_finished() {
   sem_wait(&arrival_sem);
     //Erase old arrival time from vector
     arrival_times.pop_front();
-    sem_post(&arrival_sem);
 
     //If there are any jobs left on queue, register new head
     if(arrival_times.size() > 0) {
-      //Update objeect's schedulable criteria
+      //Update object's schedulable criteria
       if(criteria != NULL) {
 	criteria->setArrivalTime(arrival_times.front());
 	criteria->setDeadline(arrival_times.front()+relativeDeadline);
@@ -162,7 +165,7 @@ void Worker::job_finished() {
 	cout << "Worker::job_finished - parent is null!\n";
       }
     }
-
+    sem_post(&arrival_sem);
 }
 
 ///This function will be called by the dispatcher thread, and will post to the wrapper_sem

@@ -41,6 +41,14 @@ Dispatcher::Dispatcher(unsigned int _id) : Thread(_id)
 
 /**** FROM THREAD ****/
 
+///This join function takes into account the dispatcher's unblocking mechanism
+void Dispatcher::join() {
+  if(worker!=NULL) {
+    worker->join();
+  }
+  join2();
+}
+
 ///This is the pthread's wrapper function
 void Dispatcher::wrapper() {
   struct timespec rem;

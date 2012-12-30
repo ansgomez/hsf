@@ -38,6 +38,9 @@ class Dispatcher : public Thread {
   /*********** INHERITED FUNCTIONS ***********/
 
   /**** FROM THREAD ****/
+
+  ///This join function takes into account the dispatcher's unblocking mechanism
+  void join();
   
   ///This is the pthread's wrapper function, calls dispatch -> which has the flagged loop.
   void wrapper();
