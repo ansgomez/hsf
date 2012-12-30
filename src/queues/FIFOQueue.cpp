@@ -1,6 +1,7 @@
 #include "queues/FIFOQueue.h"
 
 #include "core/Criteria.h"
+#include "core/Runnable.h"
 
 #include <stdlib.h>
 

@@ -80,7 +80,7 @@ class Worker : public Runnable {
   ///This function gets the relative deadline
   struct timespec getRelativeDeadline();
   ///This function sets the worker's task
-  void setLoad(Task *t);
+  void setTask(Task *t);
   ///This function sets the relative deadline
   void setRelativeDeadline(struct timespec aux);
 };

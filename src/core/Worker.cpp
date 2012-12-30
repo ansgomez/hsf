@@ -201,7 +201,7 @@ struct timespec Worker::getRelativeDeadline() {
 }
 
 ///This function sets the worker's load
-void Worker::setLoad(Task *t) {
+void Worker::setTask(Task *t) {
   task = t;
 }
 

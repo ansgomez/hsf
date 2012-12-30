@@ -55,7 +55,7 @@ void Parser::parseFile(string filePath) {
   //Create top_sched node
   xml_node top_sched = sim_node.child("runnable");
 
-  Scheduler *top = parseScheduler(top_sched, &id, 0); 
+  Scheduler *top = parseScheduler(NULL, top_sched, &id, 0); 
   sim->setTopScheduler(top);
 
   cout << "\n***   Loaded '" << sim_node.attribute("name").value() << "'\t***\n";
@@ -68,8 +68,6 @@ Dispatcher* Parser::parseDispatcher(xml_node disp_node, unsigned int *id) {
   string periodicity = disp_node.attribute("periodicity").as_string();
   Dispatcher *disp = NULL;
 
-  *id = *id + 1;
-
 #if _INFO==1
   cout << "Creating Dispatcher " << *id << endl;
 #endif
@@ -81,7 +79,7 @@ Dispatcher* Parser::parseDispatcher(xml_node disp_node, unsigned int *id) {
     sim->addDispatcher(disp);   
   }
   else if(periodicity == "periodic_jitter") {
-    PeriodicJitter *p = new PeriodicJitter(sim, *id);
+    PeriodicJitter *p = new PeriodicJitter(*id);
     p->setPeriod(parseTime(disp_node.child("period")));
     p->setJitter(parseTime(disp_node.child("jitter")));
     disp = (Dispatcher*) p;
@@ -94,21 +92,53 @@ Dispatcher* Parser::parseDispatcher(xml_node disp_node, unsigned int *id) {
   return disp;
 }
 
+///This function receives an EDF node and it parses the entire node to return the full object
+EDF* Parser::parseEDF(xml_node edf_node, unsigned int *id, int level) {
+  EDF* edf = new EDF(*id, level);
+
+#if _INFO==1
+    cout << "Creating EDF " << *id << endl;
+#endif
+
+  //iterate through all of the children nodes
+  for (xml_node load = edf_node.first_child(); load; load = load.next_sibling()) {
+    string type = load.attribute("type").as_string();
+
+    *id = *id + 1;
+
+    //If child is worker, parse a worker
+    if( type == "worker" ) {
+      parseWorker((ResourceAllocator*)edf, load, id);
+    }
+    //If child is scheduler, parse the correct scheduler
+    else if( type == "scheduler" ) {
+      parseScheduler((ResourceAllocator*)edf, load, id, level+1);
+    }//end of scheduler
+  }  
+
+  return edf;
+}
 
 ///This function receives a Scheduler and it call on the appropiate parsing function to return the full object
-Scheduler* Parser::parseScheduler(xml_node sched_node, unsigned int *id, int level) {
+Scheduler* Parser::parseScheduler(ResourceAllocator* parent, xml_node sched_node, unsigned int *id, int level) {
 
   Scheduler *aux = NULL;
   string alg = sched_node.attribute("algorithm").as_string();
 
+  //Call the appropiate parsing function
   if(alg == "TDMA") {
     aux = (Scheduler*) parseTDMA(sched_node, id, level);
   }
-  else if(alg="EDF") {
+  else if(alg == "EDF") {
     aux = (Scheduler*) parseEDF(sched_node, id, level);
   }
   else {
-    cout << "Parser error: '" << type << "' algorithm was not recognized\n";
+    cout << "Parser error: '" << alg << "' algorithm was not recognized\n";
+  }
+
+  //set the parent
+  if(aux != NULL) {
+    aux->setParent(parent);
   }
 
   return aux; 
@@ -118,33 +148,28 @@ Scheduler* Parser::parseScheduler(xml_node sched_node, unsigned int *id, int lev
 ///This function receives and TDMA node, and parses its load
 TDMA* Parser::parseTDMA(xml_node tdma_node, unsigned int *id, int level) {
 
-  TDMA *sched = new TDMA(*id, level);
+  TDMA *tdma = new TDMA(*id, level);
+
+#if _INFO==1
+    cout << "Creating TDMA " << *id << endl;
+#endif
 
   //iterate through all of the children nodes
   for (xml_node load = tdma_node.first_child(); load; load = load.next_sibling()) {
     string type = load.attribute("type").as_string();
 
+    *id = *id + 1;
+
     //If child is worker, parse a worker
     if( type == "worker" ) {
-      Worker *w = parseWorker((ResourceAllocator*)sched, load, id);
+      Worker *w = parseWorker((ResourceAllocator*)tdma, load, id);
 
-      sched->add_load((Runnable*) w);
-
+      tdma->add_load((Runnable*) w);
     }
     //If child is scheduler, parse the correct scheduler
     else if( type == "scheduler" ) {
-      string alg = load.attribute("algorithm").as_string();
-
-      if(alg == "TDMA") {
-	*id = *id +1;
-
-	TDMA* s = (TDMA*) parseTDMA(load, id, level+1);
-
-	sched->add_load((Runnable*) s);
-      }//end of tdma
-      else {
-	cout << "Parser error: '" << type << "' algorithm was not recognized\n";
-      }
+      Scheduler* aux = parseScheduler((ResourceAllocator*)tdma, load, id, level+1);
+      tdma->add_load(aux);
     }//end of scheduler
 
     //TODO: only iterate through children of type runnable
@@ -153,10 +178,10 @@ TDMA* Parser::parseTDMA(xml_node tdma_node, unsigned int *id, int level) {
   //TIME SLOTS
   xml_node time_slots = tdma_node.child("time_slots");
   for (xml_node slot = time_slots.first_child(); slot; slot = slot.next_sibling()) {
-    sched->add_slot(parseTime(slot));
+    tdma->add_slot(parseTime(slot));
   }
 
-  return sched;
+  return tdma;
 }
 
 //This function converts an XML "time" node to a timespec
@@ -196,7 +221,7 @@ Worker* Parser::parseWorker(ResourceAllocator* parent, xml_node worker_node, uns
     BusyWait *bw = new BusyWait(d, parseTime(worker_node.child("wcet")));
 
     worker = new Worker(parent, *id, busy_wait);
-    worker->setLoad(bw);
+    worker->setTask(bw);
     d->setWorker(worker);
   }
   else if(load == "video") {
@@ -209,7 +234,7 @@ Worker* Parser::parseWorker(ResourceAllocator* parent, xml_node worker_node, uns
 
     Video *vid = new Video(d);
     worker = new Worker( parent, *id, video);
-    worker->setLoad(vid);
+    worker->setTask(vid);
     d->setWorker(worker);
   }
   else {

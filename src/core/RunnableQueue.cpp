@@ -24,8 +24,13 @@ RunnableQueue::RunnableQueue() {
 
 ///This function deletes the queue's pointer to the Runnable with the specified ifndef
 void RunnableQueue::deleteRunnable(unsigned int id) {
+  if(head==NULL) {
+    cout << "RunnableQueue::deleteRunnable - head is null!\n";
+    return;
+  }
+
   if(head->r->getId() != id) {
-    cout << "RunnableQueue::delete - tried to delete non-active runnable\n";
+    cout << "RunnableQueue::deleteRunnable - tried to delete non-active runnable\n";
   }
   else {
     Node *old = head;
@@ -33,6 +38,7 @@ void RunnableQueue::deleteRunnable(unsigned int id) {
     head = head->next;
     //free the old head
     free(old);
+    size--;
   }
 }
 
@@ -43,16 +49,25 @@ void RunnableQueue::insertRunnable(Runnable *r) {
 
 ///This function reads the head of the queue (destructive read), and returns the pointer to the Runnable
 Runnable* RunnableQueue::peek_back() {
+  if(tail==NULL)
+    return NULL;
+
   return tail->r;
 }
 
 ///This function reads the head of the queue (non-destructive read) and returns a pointer to the runnable
 Runnable* RunnableQueue::peek_front() {
+  if(head==NULL)
+    return NULL;
+
   return head->r;
 }
 
 ///This function reads the head of the queue, erases it from the RunnableQueue, and returns the head pointer
 Runnable* RunnableQueue::pop_front() {
+  if(head==NULL)
+    return NULL;
+
   Runnable* aux = head->r;
 
   deleteRunnable(aux->getId());

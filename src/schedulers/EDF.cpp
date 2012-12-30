@@ -15,6 +15,9 @@
 #include <iostream>
 #include <time.h>
 
+#define _INFO 0
+#define _DEBUG 0
+
 /***************************************
  *        CLASS DEFINITION             * 
  ***************************************/
@@ -47,6 +50,10 @@ EDF::EDF(unsigned int _id, int level) : Scheduler(_id, level) {
 ///This function rewrites the activate method to 'activate' both the scheduler as well as its load - this runs in the higher level scheduler thread
 void EDF::activate() {
 
+#if _DEBUG==1
+  cout << "Activating edf...\n";
+#endif
+
   if(state == activated) {
     cout << "EDF::activate error - already activated!\n";
   }
@@ -54,20 +61,28 @@ void EDF::activate() {
   sem_wait(&activation_sem);
     setPriority(Priorities::get_sched_pr(level));
     state = activated;
- 
+
     //Activate current head of active_queue (if any) only when there are 
     //any new jobs (since the current job might have to be preempted)
     sem_wait(&newjob_sem);
       //If there are no new jobs pending
       if(newJobQueue.size() == 0) {
         //activate current head of queue
+	if(activeQueue == NULL)
+	  cout << "EDF:activate activeQueue is null!\n";
+
         if(activeQueue->peek_front() != NULL) {
           activeQueue->peek_front()->activate();
         }
       }
+
       //else, wait for scheduler to execute and process the new jobs himself
     sem_post(&newjob_sem); 
   sem_post(&activation_sem);
+
+#if _DEBUG==1
+  cout << "Activated edf\n";
+#endif
 }
 
 ///This function rewrites the deactivate method both the scheduler (through its semaphores) as well as its load
@@ -98,13 +113,22 @@ void EDF::deactivate() {
 ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
 void EDF::job_finished(unsigned int runnable_id) {
 
+#if _DEBUG==1
+  cout << "job_finished edf\n";
+#endif
+
   //Add id to jobfinishedQueue
   sem_wait(&jobfinished_sem);
   jobFinishedQueue.push_back(runnable_id);
   sem_post(&jobfinished_sem);
 
   //Register event with parent allocator
-  parent->job_finished(id);
+  if(parent!=NULL) {
+    parent->job_finished(id);
+  }
+  else if (level != 0) {
+    cout << "EDF::job_finished - non-top level entity has null parent!\n";
+  }
 
   //At this point, current object might loose priority, 
 
@@ -117,6 +141,11 @@ void EDF::job_finished(unsigned int runnable_id) {
 
 ///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution. This is executed by the worker thread itself (always of a lower priority than its scheduler)
 void EDF::new_job(Runnable* obj) {
+
+#if _DEBUG==1
+  cout << "new_job edf\n";
+#endif
+
   //Add new arrival to newjob_queue
   sem_wait(&newjob_sem);
     newJobQueue.push_back(obj);
@@ -128,9 +157,12 @@ void EDF::new_job(Runnable* obj) {
     if (activeQueue->peek_front()->getCriteria()->getDeadline() < obj->getCriteria()->getDeadline()) {
       return;
     }
+    else {
+      cout << "EDF::new_job - there will be a new head...\n";
+    }
   }
 
-  //If new job is the new nead, must update everything
+  cout << "registering new head...\n";
 
   //Set object's schedulable criteria 
   criteria = obj->getCriteria();
@@ -156,6 +188,10 @@ void EDF::renew_job(Runnable* r) {
 ///This function performs the actual scheduling (figuring out the order of execution for its load)
 void EDF::schedule() {
 
+#if _DEBUG==1
+  cout << "schedule edf\n";
+#endif
+
   Runnable* currentRunnable;
 
   while(Simulation::isSimulating()) {
@@ -165,7 +201,6 @@ void EDF::schedule() {
     //TODO: make sure that event_sem isn't posted more than once (unless necessary)
 
     sem_wait(&schedule_sem);
-
     currentRunnable = activeQueue->peek_front();
 
     //Deactivate currently active job (if any) in order to process new/finished jobs
@@ -197,6 +232,7 @@ void EDF::schedule() {
 
     //Otherwise, activate head of activeQueue
     activeQueue->peek_front()->activate();
+
     //Release sched_sem
     sem_post(&schedule_sem);
   }

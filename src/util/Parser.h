@@ -54,7 +54,7 @@ class Parser {
   EDF* parseEDF(xml_node edf_node, unsigned int *id, int level);
 
   ///This function receives a Scheduler and it call on the appropiate parsing function to return the full object
-  Scheduler* parseScheduler(xml_node sched_node, unsigned int *id, int level);
+  Scheduler* parseScheduler(ResourceAllocator* parent, xml_node sched_node, unsigned int *id, int level);
 
   ///This function receives a TDMA node and it parses the entire node to return the full object
   TDMA* parseTDMA(xml_node tdma_node, unsigned int *id, int level);

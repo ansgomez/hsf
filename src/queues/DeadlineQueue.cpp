@@ -1,9 +1,13 @@
 #include "queues/DeadlineQueue.h"
 
 #include "core/Criteria.h"
+#include "core/Runnable.h"
 #include "util/Operators.h"
 
 #include <stdlib.h>
+#include <iostream>
+
+using namespace std;
 
 /***************************************
  *        CLASS DEFINITION             * 
@@ -22,6 +26,8 @@ DeadlineQueue::DeadlineQueue() : RunnableQueue() {
 void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
   //increase the size counter
   size++;
+  cout << "DeadlineQueue::insertRunnable - size is now: " << size << endl;
+
   //Base case, the list was empty. The Runnable is now head and tail of queue
   if (head == NULL) {
     head = (Node*) malloc(sizeof(Node));
