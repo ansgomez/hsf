@@ -8,6 +8,8 @@
 
 #include <iostream>
 
+using namespace std;
+
 #define _INFO 0
 
 /***************************************
@@ -32,9 +34,9 @@ void Periodic::dispatch() {
     Statistics::addTrace(dispatcher, worker->getId(), task_arrival);
 
     if(worker != NULL) {
-#if _INFO==1
+      //#if _INFO==0
       cout << "Disp : " << id << " is registering a new job @t=" << TimeUtil::getTimeUSec() << "\n";
-#endif
+      //#endif
       worker->new_job();
     }
     else {

@@ -147,7 +147,7 @@ $(MJPEG_SRC):
 
 #################  MISCELLANEOUS   #################
 
-tools: simulate analyze simfig show 
+tools: simulate calculate simfig show 
 
 run:
 	sudo $(OBJDIR)/$(EXEC)
