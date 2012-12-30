@@ -151,6 +151,9 @@ void EDF::new_job(Runnable* obj) {
     newJobQueue.push_back(obj);
   sem_post(&newjob_sem); 
 
+  if(newJobQueue.size()>1)
+    return;
+
   //Verify if current head (if any) has earlier deadline
   if(activeQueue->getSize() > 0) {
     //If current head's deadline is earlier, no need to register event with scheduler (possibly it "wake-up")
