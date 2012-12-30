@@ -185,8 +185,9 @@ void EDF::new_job(Runnable* obj) {
   //Verify if current head (if any) has earlier deadline
   if(activeQueue->getSize() > 0) {
     //If current head's deadline is earlier, no need to register event with scheduler (possibly it "wake-up")
-    if (activeQueue->peek_front()->getCriteria()->getDeadline() < obj->getCriteria()->getDeadline()) {
+    if (activeQueue->peek_front()->getCriteria()->getDeadline() > obj->getCriteria()->getDeadline()) {
       sem_post(&schedule_sem);
+      cout << "new_job2 is done!\n";
       return;
     }
     else {
@@ -194,7 +195,7 @@ void EDF::new_job(Runnable* obj) {
     }
   }
 
-  cout << "registering new job & event...\n";
+  cout << "new_job & event is done!\n";
 
   //Set the scheduler's criteria equal to its load's criteria
   criteria = obj->getCriteria();
