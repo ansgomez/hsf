@@ -19,11 +19,6 @@ ResourceAllocator::ResourceAllocator(unsigned int _id) : Runnable(_id) {
 
 /**** FROM THREAD ****/
 
-///This function rewrites the join method to account for the scheduler's load (they are all joined)
-void ResourceAllocator::join() {
-  cout << "ResourceAllocator::join - This should not print!\n";
-}
-
 ///This is the pthread's wrapper function
 void ResourceAllocator::wrapper() {
   cout << "ResourceAllocator::wrapper - This should not print!\n";

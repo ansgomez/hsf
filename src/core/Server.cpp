@@ -22,11 +22,6 @@ Server::Server(unsigned int _id) : ResourceAllocator(_id){
 
 /**** FROM THREAD ****/
 
-///This function rewrites the join method to account for the scheduler's load
-void Server::join() {
-  cout << "Server::join() - This should not print!\n";
-}
-
 ///This is the pthread's wrapper function
 void Server::wrapper() {
 

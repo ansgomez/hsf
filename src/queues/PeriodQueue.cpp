@@ -1,6 +1,7 @@
 #include "queues/PeriodQueue.h"
 
 #include "core/Criteria.h"
+#include "core/Runnable.h"
 #include "util/Operators.h"
 
 #include <stdlib.h>

@@ -9,9 +9,10 @@ class Dispatcher;
 class Idle;
 class Parser;
 class Priorities;
-class Trace;
 class Scheduler;
 class Statistics;
+class Thread;
+class Trace;
 
 using namespace std;
 
@@ -56,8 +57,9 @@ class Simulation {
   static bool simulating;  
 
   /**** AUXILIARY ****/
-  ///Auxiliary variable to the SimulationFigure
-  vector<unsigned int> worker_id;
+
+  ///This vector holds a pointer to all Thread's
+  vector<Thread*> threads;
 
   ///Auxiliary variable for the cpu affinity
   cpu_set_t set;
@@ -77,8 +79,11 @@ class Simulation {
   ///This function sets the dispatchers to their 'active' priority.
   void activate_dispatchers();
 
-  ///This function should be called by the Worker constructor to 'register' its id
-  void add_worker_id(unsigned int _id);
+  ///This function adds dispatchers to the simulation object
+  void addDispatcher(Dispatcher *d);
+
+  ///This function adds thread pointers to the simulation object
+  void addThread(Thread* t);
 
   ///This function initializes all of the objects
   void initialize();
@@ -102,17 +107,13 @@ class Simulation {
 
   /*********** GETTER AND SETTER FUNCTIONS ***********/
 
-  ///This function adds dispatchers to the simulation object
-  void addDispatcher(Dispatcher *d);
   ///This function returns the name of the simulation
   string getName();
-  ///This function returns a vector of the worker id's
-  vector<unsigned int> getWorker_id();
   ///This function sets the duration of the simulation
   void setDuration(struct timespec d);
   ///This function sets the name of the simulation
   void setName(string s);
   ///This function sets the top scheduler
-  void setTopScheduler(Scheduler *sched);
+  void setTopScheduler(Scheduler* sched);
 };
 #endif

@@ -21,9 +21,6 @@ class ResourceAllocator : public Runnable {
 
   /**** FROM THREAD ****/
 
-  ///This function rewrites the join method to account for the scheduler's load (they are all joined)
-  virtual void join();
-
   ///This is the pthread's wrapper function
   void wrapper();
   

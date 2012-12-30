@@ -28,11 +28,6 @@ Scheduler::Scheduler(unsigned int _id, int _level) : ResourceAllocator(_id){
 
 /**** FROM THREAD ****/
 
-///This function rewrites the join method to account for the scheduler's load
-void Scheduler::join() {
-  cout << "Scheduler::join() - This should not print!\n";
-}
-
 ///This is the pthread's wrapper function
 void Scheduler::wrapper() {
 

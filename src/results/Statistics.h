@@ -33,6 +33,9 @@ class Statistics {
   ///This vector holds alll of the time traces
   static vector<Trace> traces;
 
+  //This vector holds the thread id's of all workers
+  static vector<unsigned int> workerId;
+
   ///This variable holds the state. When active, calling the ``add'' functions will add to statistics vector. Otherwise, traces will not be saved
   static int state;
 
@@ -54,6 +57,9 @@ class Statistics {
 
   ///This function adds a trace to the vector
   static void addTrace(enum _thread_type type, unsigned int t_id, enum _task_action act);
+
+  ///This function should be called by the Worker constructor to 'register' its id
+  static void addWorkerId(unsigned int id);
 
   ///This function enables the collection of statistics
   static void enable();

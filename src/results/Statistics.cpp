@@ -22,6 +22,9 @@ vector<Trace> Statistics::traces;
 ///This vector holds all of the missed deadlines
 vector<MissedDeadline> Statistics::missedDeadlines;
 
+//This vector holds the thread id's of all workers
+vector<unsigned int> Statistics::workerId;
+
 ///This variable holds the state. If state==1, calling the ``add'' functions will add to statistics vectors. Otherwise, traces will not be saved
 int Statistics::state = 0;
 
@@ -71,6 +74,15 @@ void Statistics::addTrace(enum _thread_type type, unsigned int t_id, enum _task_
   }
 }
 
+///This function should be called by the Worker constructor to 'register' its id
+void Statistics::addWorkerId(unsigned int id) {
+#if _INFO ==1
+  cout << "Adding Worker ID: " << id << endl;
+#endif 
+
+  workerId.push_back(id);
+}
+
 ///This function enables the collection of statistics
 void Statistics::enable() {
   state = 1;
@@ -98,6 +110,7 @@ void Statistics::initialize() {
 ///This function saves to custom csv file
 void Statistics::toFile(string filePrefix) {  
   ofstream file;
+
   /************ SAVING MISSED DEADLINES *********/
   MissedDeadline aux_m;
   file.open((filePrefix+"_missedDeadlines.csv").data());

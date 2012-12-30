@@ -46,6 +46,9 @@ class Thread {
   ///Calling this function will block the calling thread until this thread exits
   virtual void join();
 
+  ///Copy of the join() method -> in case join() is redefined by a subclass
+  virtual void join2();
+
   ///This function is called by the static wrapper. In the Worker object, it should point to fire(), and in the Scheduler object, it should point to schedule()
   virtual void wrapper();
 

@@ -1,9 +1,13 @@
 #include "queues/DeadlineQueue.h"
 
 #include "core/Criteria.h"
+#include "core/Runnable.h"
 #include "util/Operators.h"
 
 #include <stdlib.h>
+#include <iostream>
+
+using namespace std;
 
 /***************************************
  *        CLASS DEFINITION             * 
@@ -22,6 +26,9 @@ DeadlineQueue::DeadlineQueue() : RunnableQueue() {
 void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
   //increase the size counter
   size++;
+
+//cout << "DeadlineQueue::insertRunnable - size is now: " << size << endl;
+
   //Base case, the list was empty. The Runnable is now head and tail of queue
   if (head == NULL) {
     head = (Node*) malloc(sizeof(Node));
@@ -33,7 +40,7 @@ void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
   //In a non-empty queue, the new runnable has earliest deadline (earlier than the head)
   if(head->r->getCriteria()->getDeadline() > newRunnable->getCriteria()->getDeadline() ) {
     //create new node
-    Node *newNode = (Node*) malloc(sizeof(Node));
+    Node* newNode = (Node*) malloc(sizeof(Node));
     newNode->r = newRunnable;
 
     //link new node to old head
@@ -47,7 +54,7 @@ void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
   //In a non-empty queue, the new runnable has the latest deadline (later than the tail)
   if(tail->r->getCriteria()->getDeadline() < newRunnable->getCriteria()->getDeadline() ) {
     //create new node
-    Node *newNode = (Node*) malloc(sizeof(Node));
+    Node* newNode = (Node*) malloc(sizeof(Node));
     newNode->r = newRunnable;
     newNode->next = NULL;
     

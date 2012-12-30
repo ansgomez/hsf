@@ -48,6 +48,11 @@ void Thread::join() {
   pthread_join(thread, NULL);
 }
 
+///Copy of the join() method -> in case join() is redefined by a subclass
+void Thread::join2() {
+  pthread_join(thread, NULL);
+}
+
 ///The runnable thread points to this static function. This function recieves a Thread object, and calls the wrapper function in that object
 void * Thread::static_wrapper(void * This)
 {
