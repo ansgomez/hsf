@@ -13,6 +13,8 @@ obj/
 *#
 \#*
 .DS_Store
+*.o
+.\#*
 
 ##### Documentation Files #####
 Doxyfile

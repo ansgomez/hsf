@@ -5,15 +5,18 @@
  *
  * Metrics include:
  *
- * execution_times              (exec)
+ * execution_times              (exec/exe)
  * response_times               (resp)
  * utilization                  (util)
  * resource_allocation_cost     (alloc)
  * system_implementation_cost   (sys)
+ * worker_cost                  (worker)
+ * throughput                   (throughput)
  * -----------------------------------
  * All of the above             (all)
  *
  *********************************/
+
 #include <algorithm>
 #include <iostream>
 #include <stdlib.h>
@@ -35,20 +38,20 @@ vector <string> metrics(metricsVector, (metricsVector)+sizeof(metricsVector)/siz
 ///This function calls the execution_times script to produce "$prefix_execution_times.csv"
 void calculateExecutionTimes();
 
-///This function calls the response_times script to produce "$prefix_response_times.csv"
-void calculateResponseTimes();
-
-///This function calls the Utilization script to produce "$prefix_Utilization.csv"
-void calculateUtilization();
-
 ///This function calls the Resource Allocation Cost script to produce "$prefix_alloc_cost_us.csv"
 void  calculateResourceAllocationCost();
+
+///This function calls the response_times script to produce "$prefix_response_times.csv"
+void calculateResponseTimes();
 
 ///This function calls the SystemCost script to produce "$prefix_System Cost"
 void  calculateSystemCost();
 
 ///This function calls the throughput script to produce "$prefix_Throughput"
 void calculateThroughput();
+
+///This function calls the Utilization script to produce "$prefix_Utilization.csv"
+void calculateUtilization();
 
 ////This function calls the WorkerCost script to produce "$prefix_Worker Cost"
 void calculateWorkerCost();
@@ -62,11 +65,11 @@ bool isAll(string str);
 ///checks if the input string calls for execution function
 bool isExecution(string str);
 
-////checks if the input string calls for ResponseTimes function
-bool isResponseTimes(string str);
-
 ////checks if the input string calls for resource allocation function
 bool isResourceAllocationCost(string str);
+
+////checks if the input string calls for ResponseTimes function
+bool isResponseTimes(string str);
 
 ///checks if the input string calls for system cost function
 bool isSystemCost(string str);
@@ -142,24 +145,6 @@ void calculateExecutionTimes() {
   system(cmd.c_str());
 }
 
-///This function calls the response_times script to produce "$prefix_response_times.csv"
-void calculateResponseTimes() {
-  cout << "Calculating Response Times...\n";
-
-  string cmd = "octave --no-window-system -q --eval \"response_time('" + prefix + "')\"";
-  
-  system(cmd.c_str());
-}
-
-///This function calls the Utilization script to produce "$prefix_Utilization.csv"
-void calculateUtilization(){
-  cout << "Calculating Utilization...\n";
-
-  string cmd = "octave --no-window-system -q --eval \"utilization('" + prefix + "')\"";
-
-  system(cmd.c_str());
-}
-
 ///This function calls the ResourceAllocationCost script to produce "$prefix_alloc_cost_us.csv"
 void  calculateResourceAllocationCost(){
   cout << "Calculating Resource Allocation Cost...\n";
@@ -169,18 +154,18 @@ void  calculateResourceAllocationCost(){
   system(cmd.c_str());
 }
 
+///This function calls the response_times script to produce "$prefix_response_times.csv"
+void calculateResponseTimes() {
+  cout << "Calculating Response Times...\n";
+
+  string cmd = "octave --no-window-system -q --eval \"response_time('" + prefix + "')\"";
+  
+  system(cmd.c_str());
+}
 ///This function calls the SystemCost script to show "$prefix_System Cost"
 void  calculateSystemCost(){
   cout << "Calculating System Cost...\n";
   string cmd = "octave --no-window-system -q --eval \"systemCost('" + prefix + "')\"";
-
-  system(cmd.c_str());
-}
-
-////This function calls the WorkerCost script to show "$prefix_Worker Cost"
-void calculateWorkerCost(){
-  cout << "Calculating Worker Cost...\n";
-  string cmd = "octave --no-window-system -q --eval \"workerCost('" + prefix + "')\"";
 
   system(cmd.c_str());
 }
@@ -193,6 +178,22 @@ cout << "Calculating Throughput...\n";
   system(cmd.c_str());
 
 }
+///This function calls the Utilization script to produce "$prefix_Utilization.csv"
+void calculateUtilization(){
+  cout << "Calculating Utilization...\n";
+
+  string cmd = "octave --no-window-system -q --eval \"utilization('" + prefix + "')\"";
+
+  system(cmd.c_str());
+}
+
+////This function calls the WorkerCost script to show "$prefix_Worker Cost"
+void calculateWorkerCost(){
+  cout << "Calculating Worker Cost...\n";
+  string cmd = "octave --no-window-system -q --eval \"workerCost('" + prefix + "')\"";
+
+  system(cmd.c_str());
+}
 
 ///This function interprets all input parameters
 void interpret(string str) {
@@ -202,42 +203,6 @@ void interpret(string str) {
     inputMetric.push_back(str);
   else
     inputPrefix.push_back(str);
-}
-
-///This function process 
-void process (){
-  unsigned int i,j;
- 
-   for (i=0; i< inputPrefix.size(); i++){
-     prefix = inputPrefix[i];
-     for (j=0; j< inputMetric.size() ; j++){
-
-       if( isExecution(inputMetric[j]) )
-	 calculateExecutionTimes();
-       if ( isResponseTimes(inputMetric[j]) )
-	 calculateResponseTimes();
-       if ( isUtilization(inputMetric[j]) )
-	 calculateUtilization();
-       if ( isResourceAllocationCost(inputMetric[j]) )
-	 calculateResourceAllocationCost();
-       if ( isSystemCost(inputMetric[j]) )
-	 calculateSystemCost();
-       if ( isWorkerCost(inputMetric[j]) )
-         calculateWorkerCost();
-       if ( isThroughput(inputMetric[j]) )
-	 calculateThroughput();
-       if ( isAll(inputMetric[j]) ){
-	 cout << "***   Calculating all metrics!\t***\n\n";
-	 calculateExecutionTimes();
-	 calculateResponseTimes();
-	 calculateThroughput();
-	 calculateUtilization();
-	 calculateResourceAllocationCost();
-	 calculateSystemCost();
-	 calculateWorkerCost();
-       }
-     }
-   }
 }
 
 ///checks if the input string calls for execution function
@@ -303,3 +268,41 @@ bool isThroughput(string str){
   else
       return false;
 }
+
+///This function process 
+void process (){
+  unsigned int i,j;
+ 
+   for (i=0; i< inputPrefix.size(); i++){
+     prefix = inputPrefix[i];
+     for (j=0; j< inputMetric.size() ; j++){
+
+       if( isExecution(inputMetric[j]) )
+	 calculateExecutionTimes();
+       if ( isResponseTimes(inputMetric[j]) )
+	 calculateResponseTimes();
+       if ( isUtilization(inputMetric[j]) )
+	 calculateUtilization();
+       if ( isResourceAllocationCost(inputMetric[j]) )
+	 calculateResourceAllocationCost();
+       if ( isSystemCost(inputMetric[j]) )
+	 calculateSystemCost();
+       if ( isWorkerCost(inputMetric[j]) )
+         calculateWorkerCost();
+       if ( isThroughput(inputMetric[j]) )
+	 calculateThroughput();
+       if ( isAll(inputMetric[j]) ){
+	 cout << "***   Calculating all metrics!\t***\n\n";
+	 calculateExecutionTimes();
+	 calculateResponseTimes();
+	 calculateThroughput();
+	 calculateUtilization();
+	 calculateResourceAllocationCost();
+	 calculateSystemCost();
+	 calculateWorkerCost();
+       }
+     }
+   }
+}
+
+

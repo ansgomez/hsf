@@ -5,11 +5,13 @@
  *
  * Metrics include:
  *
- * execution_times              (exec)
+ * execution_times              (exec/exe)
  * response_times               (resp)
  * utilization                  (util)
  * resource_allocation_cost     (alloc)
  * system_implementation_cost   (sys)
+ * worker_cost                  (worker)
+ * throughput                   (throughput)
  * -----------------------------------
  * All of the above             (all)
  *
@@ -33,39 +35,23 @@ vector <string> metrics(metricsVector, (metricsVector)+sizeof(metricsVector)/siz
 
 /*********** FUNCTIONS ***********/
 
-///This function calls the show_execution_times script to produce "$prefix_execution_times.csv"
-void showExecutionTimes();
-
-///This function calls the show_response_times script to produce "$prefix_response_times.csv"
-void showResponseTimes();
-
-///This function calls the show_Utilization script to produce "$prefix_Utilization.csv"
-void showUtilization();
-
-///This function calls the Resource Allocation Cost script to produce "$prefix_alloc_cost_us.csv"
-void  showResourceAllocationCost();
-
-
-///This function calls the showSystemCost script to show "$prefix_System Cost"
-void  showSystemCost();
-
-///This function calls the showWorkerCost script to show "$prefix_Worker Cost"
-void  showWorkerCost();
-
-///This function calls the showThroughput script to show "$prefix_Throughput"
-void showThroughput();
-
 ///This function interprets all input parameters
 void interpret(string str);
 
-///This function process all the imput metrices with all prefixes
-void process();
+///checks if the input string calls for all functions
+bool isAll(string str);
 
 ///checks if the input string calls for execution function
 bool isExecution(string str);
 
+////checks if the input string calls for resource allocation function
+bool isResourceAllocationCost(string str);
+
 ////checks if the input string calls for ResponseTimes function
 bool isResponseTimes(string str);
+
+///checks if the input string calls for system cost function
+bool isSystemCost(string str);
 
 ///checks if the input string calls for throughput function
 bool isThroughput(string str);
@@ -73,17 +59,32 @@ bool isThroughput(string str);
 ///checks if the input string calls for utilization function
 bool isUtilization(string str);
 
-////checks if the input string calls for resource allocation function
-bool isResourceAllocationCost(string str);
-
-///checks if the input string calls for system cost function
-bool isSystemCost(string str);
-
 ///checks if the input string calls for worker cost functio
 bool isWorkerCost(string str);
 
-///checks if the input string calls for all functions
-bool isAll(string str);
+///This function process all the imput metrices with all prefixes
+void process();
+
+///This function calls the show_execution_times script to produce "$prefix_execution_times.csv"
+void showExecutionTimes();
+
+///This function calls the Resource Allocation Cost script to produce "$prefix_alloc_cost_us.csv"
+void showResourceAllocationCost();
+
+///This function calls the show_response_times script to produce "$prefix_response_times.csv"
+void showResponseTimes();
+
+///This function calls the showSystemCost script to show "$prefix_System Cost"
+void showSystemCost();
+
+///This function calls the showThroughput script to show "$prefix_Throughput"
+void showThroughput();
+
+///This function calls the show_Utilization script to produce "$prefix_Utilization.csv"
+void showUtilization();
+
+///This function calls the showWorkerCost script to show "$prefix_Worker Cost"
+void showWorkerCost();
 
 
 /*********** MAIN FUNCTION  ***********/
@@ -140,20 +141,6 @@ void showExecutionTimes() {
   system(cmd.c_str());
 }
 
-///This function calls the show_response_times sCript to show "$prefix_response_times"
-void showResponseTimes() {
-  string cmd = "octave --no-window-system -q --eval \"show_response_time('" + prefix + "')\"";
-
-  system(cmd.c_str());
-}
-
-///This function calls the show_utilization script to show "$prefix_utilization"
-void showUtilization() {
-  string cmd = "octave --no-window-system -q --eval \"show_utilization('" + prefix + "')\"";
-
-  system(cmd.c_str());
-}
-
 ///This function calls the showResourceAllocationCost script to show "$prefix_Resource Allocation Cost"
 void  showResourceAllocationCost(){
  
@@ -162,19 +149,17 @@ void  showResourceAllocationCost(){
   system(cmd.c_str());
 }
 
+///This function calls the show_response_times sCript to show "$prefix_response_times"
+void showResponseTimes() {
+  string cmd = "octave --no-window-system -q --eval \"show_response_time('" + prefix + "')\"";
+
+  system(cmd.c_str());
+}
 
 ///This function calls the showSystemCost script to show "$prefix_System Cost"
 void  showSystemCost(){
  
   string cmd = "octave --no-window-system -q --eval \"show_systemCost('" + prefix + "')\"";
-
-  system(cmd.c_str());
-}
-
-///This function calls the showWorkerCost script to show "$prefix_Worker Cost"
-void  showWorkerCost(){
- 
-  string cmd = "octave --no-window-system -q --eval \"show_workerCost('" + prefix + "')\"";
 
   system(cmd.c_str());
 }
@@ -186,6 +171,21 @@ void showThroughput(){
 
   system(cmd.c_str());
 
+}
+
+///This function calls the show_utilization script to show "$prefix_utilization"
+void showUtilization() {
+  string cmd = "octave --no-window-system -q --eval \"show_utilization('" + prefix + "')\"";
+
+  system(cmd.c_str());
+}
+
+///This function calls the showWorkerCost script to show "$prefix_Worker Cost"
+void  showWorkerCost(){
+ 
+  string cmd = "octave --no-window-system -q --eval \"show_workerCost('" + prefix + "')\"";
+
+  system(cmd.c_str());
 }
 
 ///This function interprets all input parameters

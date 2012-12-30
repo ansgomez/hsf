@@ -17,12 +17,14 @@ end
 
 runTime = csvread(name_runtimes);
 
+%calculates simulation time
 simulationTime = sum (runTime(:,3));
 
+%finds thread ids and sorts them
 thread_ids=unique(traces(:,2));
 sorted_ids = sort(thread_ids);
 
-
+%finds the number of jobs for each worker
 for i=1:size(thread_ids,1);
   numJob(i) = size(find(traces(find(traces(:,2)==sorted_ids(i)),3)==4),1);
   throughput(i) =(( numJob(i)/ simulationTime)*10^6);
