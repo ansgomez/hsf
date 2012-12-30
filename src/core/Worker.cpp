@@ -13,6 +13,7 @@
 #include <iostream>
 
 #define _INFO 0
+#define _DEBUG 0
 
 /***************************************
  *        CLASS DEFINITION             * 
@@ -147,9 +148,9 @@ void Worker::job_finished() {
     if (parent != NULL ) {
       parent->renew_job(this);
     }
-      else {
-	cout << "Worker::job_finished - parent is null!\n";
-      }
+    else {
+      cout << "Worker::job_finished - parent is null!\n";
+    }
   }
   //If no jobs are pending, remove from parent
   else {
@@ -160,49 +161,55 @@ void Worker::job_finished() {
       criteria->setDeadline(TimeUtil::Millis(0));
 
       sem_wait(&arrival_sem);
-        //Erase old arrival time from vector
-        arrival_times.pop_front();
+        arrival_times.pop_front(); //Erase old arrival time
       sem_post(&arrival_sem);
-      parent->job_finished(id);
+
+      parent->job_finished(id); //Register event with the parent
     }
     else {
-	cout << "Worker::job_finished - parent is null!\n";
+      cout << "Worker::job_finished - parent is null!\n";
     }
   }
 }
 
 ///This function will be called by the dispatcher thread, and will post to the wrapper_sem
 void Worker::new_job() {
-
-  //cout << "worker::newjob() is waiting\n";
-  sem_wait(&arrival_sem);
   //add arrival time before critical section
-  arrival_times.push_back(TimeUtil::getTime());
-  //End critical section
+  struct timespec aux = TimeUtil::getTime();
+
+#if _DEBUG==1
+  cout << "worker::newjob() is waiting\n";
+#endif
+
+  sem_wait(&arrival_sem);
+    arrival_times.push_back(aux);
   sem_post(&arrival_sem);
 
-  //cout << "worker::newjob() is processing\n";
-    //If there were no active jobs before, register event
-    if(arrival_times.size() == 1) {
+#if _DEBUG==1
+  cout << "worker::newjob() is processing\n";
+#endif
 
-      //Update schedulable criteria
-      if( criteria != NULL ) {
-	criteria->setArrivalTime(arrival_times.front());
-	criteria->setDeadline(arrival_times.front() + relativeDeadline);
-      }
-      else {
-	cout << "Worker::new_job - criteria is null!\n";
-      }
-      
-      //Notify parent of new arrival
-      if (parent != NULL ) {
-	parent->new_job(this);
-      }
-      else {
-	cout << "Worker::new_job - parent is null!\n";
-      }
+  //If there were no active jobs before, register event
+  if(arrival_times.size() == 1) {
+
+    //Update schedulable criteria
+    if( criteria != NULL ) {
+      criteria->setArrivalTime(arrival_times.front());
+      criteria->setDeadline(arrival_times.front() + relativeDeadline);
     }
-    //If there is an active job, job_finished() will take care of 'registering' this new job with parent    
+    else {
+      cout << "Worker::new_job - criteria is null!\n";
+    }
+      
+    //Notify parent of new arrival
+    if (parent != NULL ) {
+      parent->new_job(this);
+    }
+    else {
+      cout << "Worker::new_job - parent is null!\n";
+    }
+  }
+  //If there is an active job, job_finished() will take care of 'registering' this new job with parent    
 
   //Signal the worker thread
   sem_post(&wrapper_sem);
