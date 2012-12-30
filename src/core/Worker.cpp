@@ -167,9 +167,9 @@ void Worker::new_job() {
 
   //add arrival time before critical section
   arrival_times.push_back(TimeUtil::getTime());
-
+  cout << "worker::newjob() is waiting\n";
   sem_wait(&arrival_sem);
-
+  cout << "worker::newjob() is processing\n";
     //If there were no active jobs before, register event
     if(arrival_times.size() == 1) {
 

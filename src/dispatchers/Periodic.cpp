@@ -34,9 +34,9 @@ void Periodic::dispatch() {
     Statistics::addTrace(dispatcher, worker->getId(), task_arrival);
 
     if(worker != NULL) {
-      //#if _INFO==0
-      cout << "Disp : " << id << " is registering a new job @t=" << TimeUtil::getTimeUSec() << "\n";
-      //#endif
+#if _INFO==1
+      cout << "Disp : " << id << " is registering a new job\n";// @t=" << TimeUtil::getTimeUSec() << "\n";
+#endif
       worker->new_job();
     }
     else {
