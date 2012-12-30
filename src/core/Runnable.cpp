@@ -26,6 +26,11 @@ Runnable::Runnable(unsigned int _id) : Thread(_id) {
 
 /**** FROM THREAD ****/
 
+///Calling this function will block the calling thread until this thread exits
+void Runnable::join() {
+  join2();
+}
+
 ///This function will be executed by the pthread
 void Runnable::wrapper() {
   //empty

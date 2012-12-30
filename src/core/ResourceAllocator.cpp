@@ -19,6 +19,11 @@ ResourceAllocator::ResourceAllocator(unsigned int _id) : Runnable(_id) {
 
 /**** FROM THREAD ****/
 
+///Calling this function will block the calling thread until this thread exits
+void ResourceAllocator::join() {
+  join2();
+}
+
 ///This is the pthread's wrapper function
 void ResourceAllocator::wrapper() {
   cout << "ResourceAllocator::wrapper - This should not print!\n";

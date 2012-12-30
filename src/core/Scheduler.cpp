@@ -28,6 +28,11 @@ Scheduler::Scheduler(unsigned int _id, int _level) : ResourceAllocator(_id){
 
 /**** FROM THREAD ****/
 
+///Calling this function will block the calling thread until this thread exits
+void Scheduler::join() {
+  join2();
+}
+
 ///This is the pthread's wrapper function
 void Scheduler::wrapper() {
 

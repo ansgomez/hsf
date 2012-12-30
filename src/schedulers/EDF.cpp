@@ -49,7 +49,12 @@ EDF::EDF(unsigned int _id, int level) : Scheduler(_id, level) {
 
 ///This function redefines Thread::join() to take into account the EDF unblocking mechanism...
 void EDF::join() {
+  cout << "Attempting to join EDF\n";
   sem_post(&event_sem);
+  sem_post(&schedule_sem);
+  sem_post(&activation_sem);
+  sem_post(&newjob_sem);
+  sem_post(&jobfinished_sem);
   join2();
 }
 
@@ -160,19 +165,19 @@ void EDF::new_job(Runnable* obj) {
   cout << "new_job edf\n";
 #endif
 
-  cout << "new_job is waiting for sched\n";
+  //cout << "new_job is waiting for sched\n";
   sem_wait(&schedule_sem);
 
   //Add new arrival to newjob_queue
-  cout << "new_job is waiting for sem\n";
+  //cout << "new_job is waiting for sem\n";
   sem_wait(&newjob_sem);
-  cout << "new_job is adding...\n";
+  //cout << "new_job is adding...\n";
     newJobQueue.push_back(obj);
     if(newJobQueue.size()>1 || jobFinishedQueue.size()>0) {
       //cout << "registering new job...\n";
       sem_post(&newjob_sem); 
       sem_post(&schedule_sem);
-      cout << "new_job is done!\n";
+      //cout << "new_job is done!\n";
       return;
     }
   sem_post(&newjob_sem); 

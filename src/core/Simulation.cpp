@@ -130,6 +130,7 @@ void Simulation::join_all() {
     t = threads[i];
 
     if(t!=NULL) {
+  cout << "Simulation is joining: " << t->getId() << endl;
       t->join();
     }
   }

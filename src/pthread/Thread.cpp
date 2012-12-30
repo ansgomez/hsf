@@ -45,7 +45,9 @@ Thread::~Thread() {
 
 ///This function blocks the calling thread until this thread exits
 void Thread::join() {
+  cout << "Thread " << id << " is being joined\n";
   pthread_join(thread, NULL);
+  cout << "Thread " << id << " has been joined\n";
 }
 
 ///Copy of the join() method -> in case join() is redefined by a subclass

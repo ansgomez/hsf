@@ -50,6 +50,8 @@ Worker::Worker(ResourceAllocator *p, unsigned int _id, _task_load tl) : Runnable
 void Worker::join() {
   //Post to sem in case worker is blocked
   sem_post(&wrapper_sem);
+  sem_post(&activation_sem);
+  sem_post(&arrival_sem);
 
   join2();
 }
@@ -129,6 +131,7 @@ void Worker::job_finished() {
   sem_wait(&arrival_sem);
     //Erase old arrival time from vector
     arrival_times.pop_front();
+    sem_post(&arrival_sem);
 
     //If there are any jobs left on queue, register new head
     if(arrival_times.size() > 0) {
@@ -159,17 +162,20 @@ void Worker::job_finished() {
 	cout << "Worker::job_finished - parent is null!\n";
       }
     }
-  sem_post(&arrival_sem);
+
 }
 
 ///This function will be called by the dispatcher thread, and will post to the wrapper_sem
 void Worker::new_job() {
 
+  //cout << "worker::newjob() is waiting\n";
+  sem_wait(&arrival_sem);
   //add arrival time before critical section
   arrival_times.push_back(TimeUtil::getTime());
-  cout << "worker::newjob() is waiting\n";
-  sem_wait(&arrival_sem);
-  cout << "worker::newjob() is processing\n";
+  //End critical section
+  sem_post(&arrival_sem);
+
+  //cout << "worker::newjob() is processing\n";
     //If there were no active jobs before, register event
     if(arrival_times.size() == 1) {
 
@@ -191,8 +197,6 @@ void Worker::new_job() {
       }
     }
     //If there is an active job, job_finished() will take care of 'registering' this new job with parent    
-  //End critical section
-  sem_post(&arrival_sem);
 
   //Signal the worker thread
   sem_post(&wrapper_sem);

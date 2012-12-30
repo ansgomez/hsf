@@ -44,6 +44,9 @@ class Runnable : public Thread {
   
   /**** FROM THREAD ****/
 
+  ///Calling this function will block the calling thread until this thread exits
+  virtual void join();
+
   ///This function will be defined by subclasses
   virtual void wrapper();
 
