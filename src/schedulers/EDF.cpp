@@ -126,12 +126,12 @@ void EDF::job_finished(unsigned int runnable_id) {
 
   //Add id to jobfinishedQueue
   sem_wait(&jobfinished_sem);
-  //cout << "job_finished is adding...\n";
+  cout << "job_finished is adding...\n";
     jobFinishedQueue.push_back(runnable_id);
     if(jobFinishedQueue.size()>1 || newJobQueue.size()>0) {
-      //cout << "registering job finished...\n";
       sem_post(&newjob_sem); 
       sem_post(&schedule_sem);
+      cout << "job_finished is done!\n";
       return;
     }
     //cout << "registering job finished & event...\n";
@@ -152,7 +152,7 @@ void EDF::job_finished(unsigned int runnable_id) {
     sem_post(&event_sem); //->posting to event_sem must be protected by sched_sem!
     //sem_post(&schedule_sem);
 
-    //cout << "job_finished is done!\n";
+    cout << "job_finished is done!\n";
 
   sem_post(&schedule_sem);
   //Protecting posts to event_sem assures one event handled per post in the scheduler, otherwise, multiple jobs could be handled from just one post
@@ -171,13 +171,13 @@ void EDF::new_job(Runnable* obj) {
   //Add new arrival to newjob_queue
   //cout << "new_job is waiting for sem\n";
   sem_wait(&newjob_sem);
-  //cout << "new_job is adding...\n";
+  cout << "new_job is adding...\n";
     newJobQueue.push_back(obj);
     if(newJobQueue.size()>1 || jobFinishedQueue.size()>0) {
       //cout << "registering new job...\n";
       sem_post(&newjob_sem); 
       sem_post(&schedule_sem);
-      //cout << "new_job is done!\n";
+      cout << "new_job is done!\n";
       return;
     }
   sem_post(&newjob_sem); 
@@ -194,7 +194,7 @@ void EDF::new_job(Runnable* obj) {
     }
   }
 
-  //cout << "registering new job & event...\n";
+  cout << "registering new job & event...\n";
 
   //Set the scheduler's criteria equal to its load's criteria
   criteria = obj->getCriteria();
@@ -264,7 +264,7 @@ void EDF::schedule() {
       /***** handle finihed jobs *****/
       sem_wait(&jobfinished_sem);
         while(jobFinishedQueue.size() > 0) {
-  //cout << "sched handling job finished!\n";
+          cout << "sched handling job finished!\n";
           activeQueue->deleteRunnable(jobFinishedQueue.front());//erase from RunnableQueue
           jobFinishedQueue.pop_front();//erase from jobFinishedQueue
         }

@@ -132,40 +132,43 @@ void Worker::job_finished() {
     return;
   }
 
-  sem_wait(&arrival_sem);
-    //Erase old arrival time from vector
-    arrival_times.pop_front();
-
-    //If there are any jobs left on queue, register new head
-    if(arrival_times.size() > 0) {
-      //Update object's schedulable criteria
-      if(criteria != NULL) {
-	criteria->setArrivalTime(arrival_times.front());
-	criteria->setDeadline(arrival_times.front()+relativeDeadline);
-      }
-      else {
-	cout << "Worker::job_finished - criteria is null!\n";
-      }
-      
-      //Notify parent of new arrival
-      if (parent != NULL ) {
-	parent->renew_job(this);
-      }
-      else {
-	cout << "Worker::job_finished - parent is null!\n";
-      }
+  //If there are any jobs left on queue, register new head
+  if(arrival_times.size() > 1) {
+    //Update object's schedulable criteria
+    if(criteria != NULL) {
+      criteria->setArrivalTime(arrival_times[1]);
+      criteria->setDeadline(arrival_times[1]+relativeDeadline);
     }
-    //If no jobs are pending, remove from parent
     else {
-      //Remove job from parents' queue
-      if(parent != NULL) {
-	parent->job_finished(id);
-      }
+      cout << "Worker::job_finished - criteria is null!\n";
+    }
+    
+    //Notify parent of new arrival
+    if (parent != NULL ) {
+      parent->renew_job(this);
+    }
       else {
 	cout << "Worker::job_finished - parent is null!\n";
       }
+  }
+  //If no jobs are pending, remove from parent
+  else {
+    //Remove job from parents' queue
+    if(parent != NULL) {
+      //Clear schedulable criteria
+      criteria->setArrivalTime(TimeUtil::Millis(0));
+      criteria->setDeadline(TimeUtil::Millis(0));
+
+      sem_wait(&arrival_sem);
+        //Erase old arrival time from vector
+        arrival_times.pop_front();
+      sem_post(&arrival_sem);
+      parent->job_finished(id);
     }
-    sem_post(&arrival_sem);
+    else {
+	cout << "Worker::job_finished - parent is null!\n";
+    }
+  }
 }
 
 ///This function will be called by the dispatcher thread, and will post to the wrapper_sem
