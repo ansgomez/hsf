@@ -63,8 +63,8 @@ void simulate(string prefix) {
   aux = "sudo hsf " + prefix;
   system(aux.c_str());
 
-  //Call analyze
-  aux = "analyze " + prefix;
+  //Call calculate
+  aux = "calculate " + prefix;
   system(aux.c_str());  
 
   //Call simfig

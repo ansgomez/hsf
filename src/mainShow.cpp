@@ -62,7 +62,7 @@ bool isUtilization(string str);
 ///checks if the input string calls for worker cost functio
 bool isWorkerCost(string str);
 
-///This function process all the imput metrices with all prefixes
+///This function process all the input metrices with all prefixes
 void process();
 
 ///This function calls the show_execution_times script to produce "$prefix_execution_times.csv"
@@ -198,14 +198,14 @@ void interpret(string str) {
     inputPrefix.push_back(str);
 }
 
-///This function process 
+///This function process all the input metrices with all prefixes
 void process (){
   unsigned int i,j;
  
    for (i=0; i< inputPrefix.size(); i++){
      prefix = inputPrefix[i];
+     cout << "***  Simulation: " << prefix << "  ***\n\n";
      for (j=0; j< inputMetric.size() ; j++){
-
        if( isExecution(inputMetric[j]) )
 	 showExecutionTimes();
        if ( isResponseTimes(inputMetric[j]) )
@@ -221,7 +221,7 @@ void process (){
        if ( isThroughput(inputMetric[j]) )
 	 showThroughput();
        if ( isAll(inputMetric[j]) ){
-	 cout << "***   Showing all metrics!\t***\n\n";
+	 cout << "  +++   Showing all metrics!\t+++\n\n";
 	 showExecutionTimes();
 	 showResponseTimes();
 	 showThroughput();

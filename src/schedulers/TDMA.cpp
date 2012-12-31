@@ -44,11 +44,11 @@ TDMA::TDMA(unsigned int _id, int level) : Scheduler(_id, level) {
 
 ///This function rewrites the join method to account for the scheduler's load (they are all joined)
 void TDMA::join() {
-  for(unsigned int c=0; c<load.size(); c++) {
-    if( load[c] != NULL) {
-      load[c]->join();
-    }
+  if(parent!=NULL){
+    parent->join();
   }
+
+  join2();
 }
 
 /**** FROM RUNNABLE ****/

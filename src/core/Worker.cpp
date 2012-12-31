@@ -22,9 +22,9 @@
 /*********** CONSTRUCTOR ***********/
 
 Worker::Worker(ResourceAllocator *p, unsigned int _id, _task_load tl) : Runnable(_id) {
-#if _INFO == 1
+  #if _INFO == 1
   cout << "++New Worker \t - " << _id << endl;
-#endif
+  #endif
 
   parent = p;
   thread_type = worker;
@@ -67,9 +67,9 @@ void Worker::wrapper() {
   //Wait until the simulation is initialized
   while( !Simulation::isInitialized() );
 
-#if _INFO == 1
+  #if _INFO == 1
   cout << "Worker: " << id << " begining execution\n";
-#endif
+  #endif
 
   while( Simulation::isSimulating() ) {
 
@@ -177,17 +177,17 @@ void Worker::new_job() {
   //add arrival time before critical section
   struct timespec aux = TimeUtil::getTime();
 
-#if _DEBUG==1
-  cout << "worker::newjob() is waiting\n";
-#endif
+  #if _DEBUG==1
+  cout << "Worker::newjob() is waiting\n";
+  #endif
 
   sem_wait(&arrival_sem);
     arrival_times.push_back(aux);
   sem_post(&arrival_sem);
 
-#if _DEBUG==1
-  cout << "worker::newjob() is processing\n";
-#endif
+  #if _DEBUG==1
+  cout << "Worker::newjob() is processing\n";
+  #endif
 
   //If there were no active jobs before, register event
   if(arrival_times.size() == 1) {
@@ -209,7 +209,9 @@ void Worker::new_job() {
       cout << "Worker::new_job - parent is null!\n";
     }
   }
-  //If there is an active job, job_finished() will take care of 'registering' this new job with parent    
+
+  //If there is an active job, job_finished() will take care of 
+  //'registering' this new job with parent    
 
   //Signal the worker thread
   sem_post(&wrapper_sem);

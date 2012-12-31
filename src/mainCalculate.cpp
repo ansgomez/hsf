@@ -138,7 +138,7 @@ int main(int argn, char **argv) {
 
 ///This function calls the execution_times script to produce "$prefix_execution_times.csv"
 void calculateExecutionTimes() {
-  cout << "Calculating Execution Times...\n";
+  cout << "  Calculating Execution Times...\n";
 
   string cmd = "octave --no-window-system -q --eval \"execution_time('" + prefix + "')\"";
 
@@ -147,7 +147,7 @@ void calculateExecutionTimes() {
 
 ///This function calls the ResourceAllocationCost script to produce "$prefix_alloc_cost_us.csv"
 void  calculateResourceAllocationCost(){
-  cout << "Calculating Resource Allocation Cost...\n";
+  cout << "  Calculating Resource Allocation Cost...\n";
 
   string cmd = "octave --no-window-system -q --eval \"resourceAllocationCost('" + prefix + "')\"";
 
@@ -156,7 +156,7 @@ void  calculateResourceAllocationCost(){
 
 ///This function calls the response_times script to produce "$prefix_response_times.csv"
 void calculateResponseTimes() {
-  cout << "Calculating Response Times...\n";
+  cout << "  Calculating Response Times...\n";
 
   string cmd = "octave --no-window-system -q --eval \"response_time('" + prefix + "')\"";
   
@@ -164,7 +164,7 @@ void calculateResponseTimes() {
 }
 ///This function calls the SystemCost script to show "$prefix_System Cost"
 void  calculateSystemCost(){
-  cout << "Calculating System Cost...\n";
+  cout << "  Calculating System Cost...\n";
   string cmd = "octave --no-window-system -q --eval \"systemCost('" + prefix + "')\"";
 
   system(cmd.c_str());
@@ -172,7 +172,7 @@ void  calculateSystemCost(){
 
 ///This function calls the throughput script to produce "$prefix_Throughput"
 void calculateThroughput(){
-cout << "Calculating Throughput...\n";
+cout << "  Calculating Throughput...\n";
   string cmd = "octave --no-window-system -q --eval \"throughput('" + prefix + "')\"";
 
   system(cmd.c_str());
@@ -180,7 +180,7 @@ cout << "Calculating Throughput...\n";
 }
 ///This function calls the Utilization script to produce "$prefix_Utilization.csv"
 void calculateUtilization(){
-  cout << "Calculating Utilization...\n";
+  cout << "  Calculating Utilization...\n";
 
   string cmd = "octave --no-window-system -q --eval \"utilization('" + prefix + "')\"";
 
@@ -189,7 +189,7 @@ void calculateUtilization(){
 
 ////This function calls the WorkerCost script to show "$prefix_Worker Cost"
 void calculateWorkerCost(){
-  cout << "Calculating Worker Cost...\n";
+  cout << "  Calculating Worker Cost...\n";
   string cmd = "octave --no-window-system -q --eval \"workerCost('" + prefix + "')\"";
 
   system(cmd.c_str());
