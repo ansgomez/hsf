@@ -2,8 +2,9 @@
 bin/
 obj/
 
-##### MJpeg files ######
+##### Library files ######
 lib/mjpeg/
+lib/xml
 
 ##### Trace files ######
 *.csv
