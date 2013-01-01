@@ -127,19 +127,15 @@ void EDF::job_finished(unsigned int runnable_id) {
   #endif
 
   sem_wait(&schedule_sem);
-
-    #if _DEBUG==1
-    cout << "EDF::job_finished() is now processing\n";
-    #endif
-
     sem_wait(&jobfinished_sem);
-      //Add id to jobfinishedQueue
-      jobFinishedQueue.push_back(runnable_id);
+      #if _DEBUG==1
+      cout << "EDF::job_finished() is processing job_finished\n";
+      #endif
+      jobFinishedQueue.push_back(runnable_id); //Add id to jobfinishedQueue
 
       if(jobFinishedQueue.size()>1 || newJobQueue.size()>0) {
         sem_post(&newjob_sem); 
         sem_post(&schedule_sem);
-        //cout << "job_finished is done!\n";
         return;
       }
     sem_post(&jobfinished_sem);
@@ -169,7 +165,7 @@ void EDF::job_finished(unsigned int runnable_id) {
 }
 
 ///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution. This is executed by the worker thread itself (always of a lower priority than its scheduler)
-void EDF::new_job(Runnable* obj) {
+void EDF::new_job(Runnable* r) {
 
   #if _DEBUG==1
   cout << "EDF::new_job() is waiting for schedule_sem\n";
@@ -180,7 +176,7 @@ void EDF::new_job(Runnable* obj) {
       #if _DEBUG==1
       cout << "EDF::new_job() is processing new_job\n";
       #endif
-      newJobQueue.push_back(obj);//Add new arrival
+      newJobQueue.push_back(r);//Add new arrival
 
       if(newJobQueue.size()>1 || jobFinishedQueue.size()>0) {
         sem_post(&newjob_sem); 
@@ -189,22 +185,22 @@ void EDF::new_job(Runnable* obj) {
       }
     sem_post(&newjob_sem); 
 
-  //Verify if current head (if any) has earlier deadline
-  if(activeQueue->getSize() > 0) {
-    //If current head's deadline is earlier, no need to 
-    //register event with scheduler (possibly it "wake-up")
-    if (activeQueue->peek_front()->getCriteria()->getDeadline() > obj->getCriteria()->getDeadline()) {
-      sem_post(&schedule_sem);
-      return;
+    //Verify if current head (if any) has earlier deadline
+    if(activeQueue->getSize() > 0) {
+      //If current head's deadline is earlier, no need to 
+      //register event with scheduler (possibly it "wake-up")
+      if (activeQueue->peek_front()->getCriteria()->getDeadline() > r->getCriteria()->getDeadline()) {
+	sem_post(&schedule_sem);
+	return;
+      }
     }
-  }
 
   #if _DEBUG==1
   cout << "EDF::new_job() will register new_job and event!\n";
   #endif
 
   //Set the scheduler's criteria equal to its load's criteria
-  criteria = obj->getCriteria();
+  criteria = r->getCriteria();
  
   //Notify parent of new head
   if(parent!=NULL) {
@@ -218,7 +214,7 @@ void EDF::new_job(Runnable* obj) {
   sem_post(&event_sem); //->posting to event_sem must be protected by sched_sem!
 
   #if _DEBUG==1
-  cout << "new_job is done!\n";
+  cout << "EDF::new_job() is done!\n";
   #endif
 
   sem_post(&schedule_sem);
@@ -226,7 +222,21 @@ void EDF::new_job(Runnable* obj) {
 
 ///This function handles a job that had been queued by the worker. The worker object is thus already in the scheduler's queue, but now has a different schedulable criteria (and thus requires a change in the scheduling queue).
 void EDF::renew_job(Runnable* r) {
-  //todo
+  #if _DEBUG==1
+  cout << "EDF::renew_job() is waiting for schedule_sem\n";
+  #endif
+
+  sem_wait(&schedule_sem);
+
+    //add to renewQueue
+    sem_wait(&renew_sem);
+      renewQueue.push_back(r);
+    sem_post(&renew_sem); 
+ 
+    //Register event with this scheduler
+    sem_post(&event_sem);
+
+  sem_post(&schedule_sem);
 }
 
 /**** FROM SCHEDULER  ****/
@@ -253,6 +263,17 @@ void EDF::schedule() {
       if(currentRunnable != NULL) {
         currentRunnable->deactivate();
       }
+
+      /***** handle any finished jobs *****/
+      sem_wait(&jobfinished_sem);
+        while(jobFinishedQueue.size() > 0) {
+          #if _DEBUG==1
+          cout << "EDF::schedule is handling a finished job!\n";
+          #endif
+          activeQueue->deleteRunnable(jobFinishedQueue.front());//erase from RunnableQueue
+          jobFinishedQueue.pop_front();//erase from jobFinishedQueue
+        }
+      sem_post(&jobfinished_sem);
       
       /***** handle any new jobs *****/
       sem_wait(&newjob_sem);
@@ -264,17 +285,6 @@ void EDF::schedule() {
         newJobQueue.pop_front();//erase head of newJobQueue
       }
       sem_post(&newjob_sem);
-      
-      /***** handle any finihed jobs *****/
-      sem_wait(&jobfinished_sem);
-        while(jobFinishedQueue.size() > 0) {
-          #if _DEBUG==1
-          cout << "EDF::schedule is handling a finished job!\n";
-          #endif
-          activeQueue->deleteRunnable(jobFinishedQueue.front());//erase from RunnableQueue
-          jobFinishedQueue.pop_front();//erase from jobFinishedQueue
-        }
-      sem_post(&jobfinished_sem);
     
       //If activeQueue has a job, activate it
       if(activeQueue->getSize() > 0) {
