@@ -37,7 +37,7 @@ void PeriodicJitter::dispatch() {
     Statistics::addTrace(dispatcher, worker->getId(), task_arrival);
 
     if(worker != NULL) {
-      worker->new_job();
+      worker->newJob();
     }
     else {
       cout << "Dispatcher error: worker is null!\n";
@@ -54,7 +54,7 @@ void PeriodicJitter::dispatch() {
 
   //Free worker from blocking. This runs only when the simulation has ended
   if(worker != NULL) {
-    worker->new_job();
+    worker->newJob();
   }
   else {
     cout << "Dispatcher::dispatch - Worker NULL problem\n";

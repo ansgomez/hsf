@@ -46,9 +46,9 @@ void Server::deactivate() {
 /**** FROM INTERMEDIARY ****/
 
 ///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution.
-void Server::new_job(Runnable *r) {
+void Server::newJob(Runnable *r) {
   //empty
-  cout << "Server::new_job - This should not print!\n";
+  cout << "Server::newJob - This should not print!\n";
 }
 
 ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
@@ -58,9 +58,9 @@ void Server::job_finished(unsigned int id) {
 }
 
 ///This function handles a job that had been queued by the worker. The worker object is thus already in the scheduler's queue, but now has a different schedulable criteria (and thus requires a change in the scheduling queue).
-void Server::renew_job(Runnable* r) {
+void Server::renewJob(Runnable* r) {
   //empty
-  cout << "Server::renew_job - This should not print!\n";
+  cout << "Server::renewJob - This should not print!\n";
 }
 
 /********************* MEMBER FUNCTIONS *********************/

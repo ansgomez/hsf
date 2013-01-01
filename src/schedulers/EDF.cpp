@@ -165,16 +165,16 @@ void EDF::job_finished(unsigned int runnable_id) {
 }
 
 ///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution. This is executed by the worker thread itself (always of a lower priority than its scheduler)
-void EDF::new_job(Runnable* r) {
+void EDF::newJob(Runnable* r) {
 
   #if _DEBUG==1
-  cout << "EDF::new_job() is waiting for schedule_sem\n";
+  cout << "EDF::newJob() is waiting for schedule_sem\n";
   #endif
 
   sem_wait(&schedule_sem);
     sem_wait(&newjob_sem);
       #if _DEBUG==1
-      cout << "EDF::new_job() is processing new_job\n";
+      cout << "EDF::newJob() is processing newJob\n";
       #endif
       newJobQueue.push_back(r);//Add new arrival
 
@@ -196,7 +196,7 @@ void EDF::new_job(Runnable* r) {
     }
 
   #if _DEBUG==1
-  cout << "EDF::new_job() will register new_job and event!\n";
+  cout << "EDF::newJob() will register newJob and event!\n";
   #endif
 
   //Set the scheduler's criteria equal to its load's criteria
@@ -204,26 +204,27 @@ void EDF::new_job(Runnable* r) {
  
   //Notify parent of new head
   if(parent!=NULL) {
-    parent->new_job(this);
+    parent->newJob(this);
   }
   else if (level != 0) {
-    cout << "EDF::new_job() - non-top level entity has null parent!\n";
+    cout << "EDF::newJob() - non-top level entity has null parent!\n";
   }
 
   //Alert scheduler of event 
   sem_post(&event_sem); //->posting to event_sem must be protected by sched_sem!
 
   #if _DEBUG==1
-  cout << "EDF::new_job() is done!\n";
+  cout << "EDF::newJob() is done!\n";
   #endif
 
   sem_post(&schedule_sem);
 }
 
 ///This function handles a job that had been queued by the worker. The worker object is thus already in the scheduler's queue, but now has a different schedulable criteria (and thus requires a change in the scheduling queue).
-void EDF::renew_job(Runnable* r) {
+void EDF::renewJob(Runnable* r) {
+  /*
   #if _DEBUG==1
-  cout << "EDF::renew_job() is waiting for schedule_sem\n";
+  cout << "EDF::renewJob() is waiting for schedule_sem\n";
   #endif
 
   sem_wait(&schedule_sem);
@@ -237,6 +238,7 @@ void EDF::renew_job(Runnable* r) {
     sem_post(&event_sem);
 
   sem_post(&schedule_sem);
+  */
 }
 
 /**** FROM SCHEDULER  ****/

@@ -37,7 +37,7 @@ void Periodic::dispatch() {
 #if _INFO==1
       cout << "Disp : " << id << " is registering a new job\n";// @t=" << TimeUtil::getTimeUSec() << "\n";
 #endif
-      worker->new_job();
+      worker->newJob();
     }
     else {
       cout << "Dispatcher error: worker is null!\n";
@@ -53,7 +53,7 @@ void Periodic::dispatch() {
 
   //Free worker from blocking. This runs only when the simulation has ended
   if(worker != NULL) {
-    worker->new_job();
+    worker->newJob();
   }
   else {
     cout << "Dispatcher::dispatch - Worker NULL problem\n";

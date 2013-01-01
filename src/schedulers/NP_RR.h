@@ -46,10 +46,10 @@ class NP_RR : public Scheduler {
   /**** FROM INTERMEDIARY  ****/
   
   ///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution.
-  void new_job(Runnable *ojb);
+  void newJob(Runnable *ojb);
 
   ///This function handles a job that had been queued by the worker. The worker object is thus already in the scheduler's queue, but now has a different schedulable criteria (and thus requires a change in the scheduling queue).
-  void renew_job(Runnable* r);
+  void renewJob(Runnable* r);
 
   ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
   void job_finished(unsigned int runnable_id);

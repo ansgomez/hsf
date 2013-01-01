@@ -53,13 +53,13 @@ class Scheduler : public ResourceAllocator {
   /**** FROM INTERMEDIARY ****/
 
   ///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution.
-  virtual void new_job(Runnable *obj);
+  virtual void newJob(Runnable *obj);
 
   ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
   virtual void job_finished(unsigned int runnable_id);
 
   ///This function handles a job that had been queued by the worker. The worker object is thus already in the scheduler's queue, but now has a different schedulable criteria (and thus requires a change in the scheduling queue).
-  virtual void renew_job(Runnable* r);
+  virtual void renewJob(Runnable* r);
 
   /*********** MEMBER FUNCTIONS ***********/
 

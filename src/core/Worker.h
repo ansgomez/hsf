@@ -74,7 +74,7 @@ class Worker : public Runnable {
   void job_finished();
 
   ///This function will be called by the dispatcher thread, and will post to the wrapper_sem
-  void new_job();
+  void newJob();
 
   /*********** GETTER AND SETTER FUNCTIONS ***********/
   ///This function gets the relative deadline

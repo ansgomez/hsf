@@ -36,7 +36,7 @@ void Aperiodic::dispatch() {
   Statistics::addTrace(dispatcher, worker->getId(), task_arrival);
   
   if(worker != NULL) {
-    worker->new_job();
+    worker->newJob();
   }
   else {
     cout << "Dispatcher error: worker is null!\n";
@@ -50,7 +50,7 @@ void Aperiodic::dispatch() {
   
   //Free worker from blocking (doesn't affect workers while they have inactive priority -> only when the simulation has ended
   if(worker != NULL) {
-    worker->new_job();
+    worker->newJob();
   }
 }
 

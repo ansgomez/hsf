@@ -22,12 +22,12 @@ void SchedulerCBS::deactivate() {
 
 /**** FROM INTERMEDIARY  ****/
 ///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution.
-void SchedulerCBS::new_job(Runnable *ojb) {
+void SchedulerCBS::newJob(Runnable *ojb) {
 
 }
 
 ///This function handles a job that had been queued by the worker. The worker object is thus already in the scheduler's queue, but now has a different schedulable criteria (and thus requires a change in the scheduling queue).
-void SchedulerCBS::renew_job(Runnable* r) {
+void SchedulerCBS::renewJob(Runnable* r) {
 
 }
 

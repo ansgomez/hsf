@@ -91,7 +91,7 @@ void Worker::wrapper() {
 
     Statistics::addTrace(worker, id, task_end);
 
-    //Handle the end of the current job (might regise job_finished or renew_job with parent)
+    //Handle the end of the current job (might regise job_finished or renewJob with parent)
     job_finished();
   }
 }
@@ -146,7 +146,7 @@ void Worker::job_finished() {
     
     //Notify parent of new arrival
     if (parent != NULL ) {
-      parent->renew_job(this);
+      parent->renewJob(this);
     }
     else {
       cout << "Worker::job_finished - parent is null!\n";
@@ -173,7 +173,7 @@ void Worker::job_finished() {
 }
 
 ///This function will be called by the dispatcher thread, and will post to the wrapper_sem
-void Worker::new_job() {
+void Worker::newJob() {
   //add arrival time before critical section
   struct timespec aux = TimeUtil::getTime();
 
@@ -198,15 +198,15 @@ void Worker::new_job() {
       criteria->setDeadline(arrival_times.front() + relativeDeadline);
     }
     else {
-      cout << "Worker::new_job - criteria is null!\n";
+      cout << "Worker::newJob - criteria is null!\n";
     }
       
     //Notify parent of new arrival
     if (parent != NULL ) {
-      parent->new_job(this);
+      parent->newJob(this);
     }
     else {
-      cout << "Worker::new_job - parent is null!\n";
+      cout << "Worker::newJob - parent is null!\n";
     }
   }
 

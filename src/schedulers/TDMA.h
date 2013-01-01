@@ -56,7 +56,7 @@ class TDMA : public Scheduler {
   /**** FROM INTERMEDIARY ****/
   
   ///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution.
-  void new_job(Runnable *obj);
+  void newJob(Runnable *obj);
 
   ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
   void job_finished(unsigned int worker_id);
