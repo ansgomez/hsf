@@ -133,6 +133,10 @@ void Worker::finishedJob() {
     return;
   }
 
+  #if _DEBUG==1
+  cout << "Worker::finishedJob() - registering with parent\n";
+  #endif
+
   //If there are any jobs left on queue, register new head
   if(arrival_times.size() > 1) {
     //Update object's schedulable criteria
