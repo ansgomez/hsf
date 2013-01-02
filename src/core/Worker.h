@@ -71,7 +71,7 @@ class Worker : public Runnable {
   /*********** MEMBER FUNCTIONS ***********/
 
   ///This function erases the head of the active_queue, and updates any pending events
-  void job_finished();
+  void finishedJob();
 
   ///This function will be called by the dispatcher thread, and will post to the wrapper_sem
   void newJob();

@@ -91,8 +91,8 @@ void Worker::wrapper() {
 
     Statistics::addTrace(worker, id, task_end);
 
-    //Handle the end of the current job (might regise job_finished or renewJob with parent)
-    job_finished();
+    //Handle the end of the current job (might regise finishedJob or updateRunnable with parent)
+    finishedJob();
   }
 }
 
@@ -127,7 +127,7 @@ void Worker::deactivate() {
 /*********** MEMBER FUNCTIONS ***********/
 
 ///This function erases the head of the active_queue, and updates any pending events
-void Worker::job_finished() {
+void Worker::finishedJob() {
 
   if( !Simulation::isSimulating() ) {
     return;
@@ -141,15 +141,15 @@ void Worker::job_finished() {
       criteria->setDeadline(arrival_times[1]+relativeDeadline);
     }
     else {
-      cout << "Worker::job_finished - criteria is null!\n";
+      cout << "Worker::finishedJob - criteria is null!\n";
     }
     
     //Notify parent of new arrival
     if (parent != NULL ) {
-      parent->renewJob(this);
+      parent->updateRunnable(this);
     }
     else {
-      cout << "Worker::job_finished - parent is null!\n";
+      cout << "Worker::finishedJob - parent is null!\n";
     }
   }
   //If no jobs are pending, remove from parent
@@ -164,10 +164,10 @@ void Worker::job_finished() {
         arrival_times.pop_front(); //Erase old arrival time
       sem_post(&arrival_sem);
 
-      parent->job_finished(id); //Register event with the parent
+      parent->finishedJob(id); //Register event with the parent
     }
     else {
-      cout << "Worker::job_finished - parent is null!\n";
+      cout << "Worker::finishedJob - parent is null!\n";
     }
   }
 }
@@ -210,7 +210,7 @@ void Worker::newJob() {
     }
   }
 
-  //If there is an active job, job_finished() will take care of 
+  //If there is an active job, finishedJob() will take care of 
   //'registering' this new job with parent    
 
   //Signal the worker thread

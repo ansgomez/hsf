@@ -27,12 +27,12 @@ void SchedulerCBS::newJob(Runnable *ojb) {
 }
 
 ///This function handles a job that had been queued by the worker. The worker object is thus already in the scheduler's queue, but now has a different schedulable criteria (and thus requires a change in the scheduling queue).
-void SchedulerCBS::renewJob(Runnable* r) {
+void SchedulerCBS::updateRunnable(Runnable* r) {
 
 }
 
 ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
-void SchedulerCBS::job_finished(unsigned int runnable_id) {
+void SchedulerCBS::finishedJob(unsigned int runnable_id) {
 
 }
 

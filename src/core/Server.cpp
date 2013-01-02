@@ -52,15 +52,15 @@ void Server::newJob(Runnable *r) {
 }
 
 ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
-void Server::job_finished(unsigned int id) {
+void Server::finishedJob(unsigned int id) {
   //empty
-  cout << "Server::job_finished - This should not print!\n";
+  cout << "Server::finishedJob - This should not print!\n";
 }
 
 ///This function handles a job that had been queued by the worker. The worker object is thus already in the scheduler's queue, but now has a different schedulable criteria (and thus requires a change in the scheduling queue).
-void Server::renewJob(Runnable* r) {
+void Server::updateRunnable(Runnable* r) {
   //empty
-  cout << "Server::renewJob - This should not print!\n";
+  cout << "Server::updateRunnable - This should not print!\n";
 }
 
 /********************* MEMBER FUNCTIONS *********************/

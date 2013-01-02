@@ -64,22 +64,22 @@ void Scheduler::deactivate() {
 
 /**** FROM INTERMEDIARY ****/
 
+///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
+void Scheduler::finishedJob(unsigned int id) {
+  //empty
+  cout << "Scheduler::finishedJob - This should not print!\n";
+}
+
 ///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution.
 void Scheduler::newJob(Runnable *r) {
   //empty
   cout << "Scheduler::newJob - This should not print!\n";
 }
 
-///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
-void Scheduler::job_finished(unsigned int id) {
-  //empty
-  cout << "Scheduler::job_finished - This should not print!\n";
-}
-
 ///This function handles a job that had been queued by the worker. The worker object is thus already in the scheduler's queue, but now has a different schedulable criteria (and thus requires a change in the scheduling queue).
-void Scheduler::renewJob(Runnable* r) {
+void Scheduler::updateRunnable(Runnable* r) {
   //empty
-  cout << "Scheduler::renewJob - This should not print!\n";
+  cout << "Scheduler::updateRunnable - This should not print!\n";
 }
 
 /*********** MEMBER FUNCTIONS ***********/

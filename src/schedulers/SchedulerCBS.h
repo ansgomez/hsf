@@ -23,10 +23,10 @@ class SchedulerCBS : public Scheduler {
   RunnableQueue* newJobQueue;
   
   ///This queue holds the ids of runnables in the active queue who already finished
-  vector<unsigned int> jobFinishedQueue;
+  vector<unsigned int> finishedJobQueue;
 
   ///Semaphores to ensure proper execution
-  sem_t schedule_sem, preempt_sem, event_sem, newjob_sem, jobfinished_sem, activation_sem;
+  sem_t schedule_sem, preempt_sem, event_sem, newjob_sem, finishedjob_sem, activation_sem;
 
  public:
 
@@ -51,10 +51,10 @@ class SchedulerCBS : public Scheduler {
   void newJob(Runnable *ojb);
 
   ///This function handles a job that had been queued by the worker. The worker object is thus already in the scheduler's queue, but now has a different schedulable criteria (and thus requires a change in the scheduling queue).
-  void renewJob(Runnable* r);
+  void updateRunnable(Runnable* r);
 
   ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
-  void job_finished(unsigned int runnable_id);
+  void finishedJob(unsigned int runnable_id);
 
   /**** FROM SCHEDULER  ****/
   

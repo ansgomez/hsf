@@ -42,18 +42,18 @@ void ResourceAllocator::deactivate() {
 }
 
 /*********** MEMBER FUNCTIONS ***********/
-  
+
+///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
+void ResourceAllocator::finishedJob(unsigned int id) {
+  cout << "ResourceAllocator::finished - This should not print!\n";
+}  
+
 ///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution.
 void ResourceAllocator::newJob(Runnable *r) {
   cout << "ResourceAllocator::newJob - This should not print!\n";
 }
 
 ///This function handles a job that had been queued by the worker. The worker object is thus already in the scheduler's queue, but now has a different schedulable criteria (and thus requires a change in the scheduling queue).
-void ResourceAllocator::renewJob(Runnable* r) {
-  cout << "ResourceAllocator::renewJob - This should not print!\n";
-}
-
-///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
-void ResourceAllocator::job_finished(unsigned int id) {
-  cout << "ResourceAllocator::finished - This should not print!\n";
+void ResourceAllocator::updateRunnable(Runnable* r) {
+  cout << "ResourceAllocator::updateRunnable - This should not print!\n";
 }

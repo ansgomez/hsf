@@ -103,10 +103,10 @@ void TDMA::deactivate() {
 /**** FROM INTERMEDIARY ****/
 
 ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
-void TDMA::job_finished(unsigned int worker_id){
+void TDMA::finishedJob(unsigned int worker_id){
   //cout << " Sched handled Worker " << worker << "'s finished job!\n";
   if (parent != NULL) {
-    parent->job_finished(worker);
+    parent->finishedJob(worker);
   }
 }
 

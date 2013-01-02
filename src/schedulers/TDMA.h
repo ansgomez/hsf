@@ -59,7 +59,7 @@ class TDMA : public Scheduler {
   void newJob(Runnable *obj);
 
   ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
-  void job_finished(unsigned int worker_id);
+  void finishedJob(unsigned int worker_id);
 
   /**** FROM SCHEDULER ****/
 
