@@ -22,13 +22,12 @@ num_threads = length(thread_ids);
 
 %for each thread
 for i1=1:num_threads;
-	
     c=1;
-    
     t_id = find(traces(:,2)==thread_ids(i1));
     
     aux_count = 0;
     aux_began=0;
+    aux_start=0;
     %foreach trace
     for i2=1:length(t_id)
         if traces(t_id(i2), 3) == SCHED_START
@@ -55,19 +54,7 @@ for i1=1:num_threads;
                    aux_count =   aux_count  + (traces(t_id(i2), 1)-aux_start)/1000;
              end
         end
-    end
-    
-    N = count(exec_ms(:,i1));
- 
-    if N == 0
-    	continue;
-    end
-
-    min_i = minimum(exec_ms(:,i1));
-    avg = average(exec_ms(:,i1));
-    max_i  =  max(exec_ms(:,i1)) ;
-    total =  sum(exec_ms(:,i1));
-    
+    end   
 end
 
 name_exec = strcat(name,'_exec_ms.csv');

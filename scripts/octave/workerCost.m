@@ -30,13 +30,12 @@ num_threads = length(thread_ids);
 
 %for each thread
 for i1=1:num_threads;
-	
     c=1;
-    
     t_id = find(traces(:,2)==thread_ids(i1));
     
     aux_count = 0;
     aux_began=0;
+    aux_start=0;
     %foreach trace
     for i2=1:length(t_id)
         if traces(t_id(i2), 3) == SCHED_START
@@ -63,9 +62,10 @@ for i1=1:num_threads;
                    aux_count =   aux_count  + (traces(t_id(i2), 1)-aux_start)/1000;
              end
         end
-    end
-
+    end   
 end
+
+
 [num_job , num_worker] = size(exec_ms);
 
 %calculates the matrix of workers execution time from the trace file
