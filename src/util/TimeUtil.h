@@ -28,7 +28,10 @@ class TimeUtil {
   static struct timespec getTime(enum _time_type type);
 
   ///This function returns an unsigned long int with the current time in microseconds
-  unsigned long int getTimeUSec();
+  static unsigned long int getTimeUSec();
+
+  ///This function converts a timestamp from absolute time to relative simulation time
+  static struct timespec relative(struct timespec absolute);
 
   //Sets the relative-time offset to current time
   static void setOffset();

@@ -21,7 +21,7 @@ class BusyWait : public Task {
   /*********** CONSTRUCTOR ***********/
 
   ///The constructor requires a pointer to the simulation, its own dispatcher, and the WCET
-  BusyWait(Dispatcher *disp, struct timespec wcet);
+  BusyWait(struct timespec wcet);
 
   /*********** INHERITED FUNCTIONS ***********/
   

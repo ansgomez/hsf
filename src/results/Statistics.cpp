@@ -45,7 +45,7 @@ void Statistics::addMissedDeadline(unsigned int t_id, struct timespec arrival_ti
     aux = TimeUtil::getTime(relative);
 
     sem_wait(&deadline_sem);
-    md.setMissedDeadline(t_id, arrival_time, deadline,  aux);
+      md.setMissedDeadline(t_id, arrival_time, deadline,  aux);
       missedDeadlines.push_back(md);
     sem_post(&deadline_sem);
   }

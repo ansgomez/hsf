@@ -5,8 +5,6 @@
 
 #include <time.h>
 
-class Dispatcher;
-
 /***************************************
  *        CLASS DECLARATION            * 
  ***************************************/
@@ -20,15 +18,12 @@ class Task {
   ///Varible describing the task's type of load (video, busy_wait)
   _task_load task_load;
 
-  ///Pointer to the task's dispatcher
-  Dispatcher *dispatcher;
-
  public:
  
   /*********** CONSTRUCTOR ***********/
   
   ///Constructor needs pointer to simulation, dispatcher, and its load type
-  Task(Dispatcher *disp, _task_load load);
+  Task(_task_load load);
 
   /*********** MEMBER FUNCTIONS ***********/
 

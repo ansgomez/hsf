@@ -16,7 +16,7 @@ using namespace std;
 /*********** CONSTRUCTOR ***********/
 
 ///The constructor requires a pointer to the simulation, its own dispatcher, and the WCET
-BusyWait::BusyWait(Dispatcher *disp, struct timespec wcet) : Task(disp, busy_wait) {
+BusyWait::BusyWait(struct timespec wcet) : Task(busy_wait) {
   WCET = wcet;
 }
 
@@ -25,10 +25,6 @@ BusyWait::BusyWait(Dispatcher *disp, struct timespec wcet) : Task(disp, busy_wai
 /**** FROM TASK ****/
 
 void BusyWait::fire() {
-#if _DEBUG == 1
-  cout << "+Worker " << dispatcher->worker->getId() << " began execution @t="<< TimeUtil::convert_us(TimeUtil::getTime(), relative) << endl;
-#endif
-
   unsigned int start, end, count=0, wcet_us = TimeUtil::convert_us(WCET);
   
   start = TimeUtil::convert_us(TimeUtil::getTime());

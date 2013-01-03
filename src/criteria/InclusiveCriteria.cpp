@@ -1,5 +1,7 @@
 #include "criteria/InclusiveCriteria.h"
 
+#include "util/TimeUtil.h"
+
 /***************************************
  *        CLASS DEFINITION             * 
  ***************************************/
@@ -7,7 +9,10 @@
 /*********** CONSTRUCTOR ***********/
 
 InclusiveCriteria::InclusiveCriteria() : Criteria() {
-  //empty
+  arrivalTime = TimeUtil::Millis(0);
+  deadline = TimeUtil::Millis(0);
+  period = TimeUtil::Millis(0);
+  priority = 0;
 }
 
 /*********** INHERITED FUNCTIONS ***********/

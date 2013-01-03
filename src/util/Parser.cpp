@@ -68,9 +68,9 @@ Dispatcher* Parser::parseDispatcher(xml_node disp_node, unsigned int *id) {
   string periodicity = disp_node.attribute("periodicity").as_string();
   Dispatcher *disp = NULL;
 
-#if _INFO==1
+  #if _INFO==1
   cout << "Creating Dispatcher " << *id << endl;
-#endif
+  #endif
 
   if(periodicity == "periodic") {
     Periodic *p = new Periodic(*id);
@@ -99,9 +99,9 @@ Dispatcher* Parser::parseDispatcher(xml_node disp_node, unsigned int *id) {
 EDF* Parser::parseEDF(xml_node edf_node, unsigned int *id, int level) {
   EDF* edf = new EDF(*id, level);
 
-#if _INFO==1
-    cout << "Creating EDF " << *id << endl;
-#endif
+  #if _INFO==1
+  cout << "Creating EDF " << *id << endl;
+  #endif
 
   //iterate through all of the children nodes
   for (xml_node load = edf_node.first_child(); load; load = load.next_sibling()) {
@@ -219,10 +219,10 @@ Worker* Parser::parseWorker(ResourceAllocator* parent, xml_node worker_node, uns
   if(load == "busy_wait") {
     Dispatcher *d = parseDispatcher(worker_node, id);
     *id = *id + 1;  
-#if _INFO==1
+    #if _INFO==1
     cout << "Creating Worker " << *id << endl;
-#endif
-    BusyWait *bw = new BusyWait(d, parseTime(worker_node.child("wcet")));
+    #endif
+    BusyWait *bw = new BusyWait(parseTime(worker_node.child("wcet")));
 
     worker = new Worker(parent, *id, busy_wait);
     worker->setTask(bw);
@@ -232,12 +232,12 @@ Worker* Parser::parseWorker(ResourceAllocator* parent, xml_node worker_node, uns
     Dispatcher *d = parseDispatcher(worker_node, id);
     *id = *id + 1;  
 
-#if _INFO==1
+    #if _INFO==1
     cout << "Creating Worker " << *id << endl;
-#endif
+    #endif
 
-    Video *vid = new Video(d);
-    worker = new Worker( parent, *id, video);
+    Video *vid = new Video();
+    worker = new Worker(parent, *id, video);
     worker->setTask(vid);
     d->setWorker(worker);
   }

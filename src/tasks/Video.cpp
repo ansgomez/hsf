@@ -1,8 +1,5 @@
 #include "tasks/Video.h"
 
-#include "core/Dispatcher.h"
-
-
 #include <iostream>
 
 using namespace std;
@@ -14,7 +11,7 @@ using namespace std;
 /*********** CONSTRUCTOR ***********/
 
 ///The constructor requires a pointer to the simulation, its own dispatcher, and the WCET
-Video::Video(Dispatcher *disp) : Task(disp, video) {
+Video::Video() : Task(video) {
   state = mjpeg_init();
 }
 

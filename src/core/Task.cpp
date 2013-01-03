@@ -1,8 +1,5 @@
 #include "core/Task.h"
 
-#include "core/Dispatcher.h"
-#include "util/TimeUtil.h"
-
 #include <iostream>
 
 using namespace std;
@@ -13,8 +10,7 @@ using namespace std;
 
 /*********** CONSTRUCTOR ***********/
 
-Task::Task(Dispatcher *disp, _task_load load) {
-  dispatcher = disp;
+Task::Task(_task_load load) {
   task_load = load;
 }
 

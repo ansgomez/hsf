@@ -29,9 +29,9 @@ struct timespec TimeUtil::getTime(enum _time_type type)
   struct timespec aux;
   clock_gettime(CLOCK_REALTIME, &aux);
   
-  if(type == relative) {
+  //if(type == relative) {
     aux = aux - offset;
-  }
+    //}
 
   return aux;
 }
@@ -45,6 +45,11 @@ unsigned long int TimeUtil::getTimeUSec()
   aux = aux - offset;
 
   return convert_us(aux);
+}
+
+///This function converts a timestamp from absolute time to relative simulation time
+struct timespec TimeUtil::relative(struct timespec absolute) {
+  return absolute - offset;
 }
 
 ///Sets the relative-time offset to current time

@@ -35,7 +35,7 @@ Worker::Worker(ResourceAllocator *p, unsigned int _id, _task_load tl) : Runnable
   //arrival_times.reserve(100);
 
   //Default value for relativeDeadline
-  relativeDeadline = TimeUtil::Millis(20);
+  relativeDeadline = TimeUtil::Millis(15);
 
   //Semaphore initialization
   sem_init(&activation_sem, 0, 1); //mutex semaphore
@@ -87,8 +87,12 @@ void Worker::wrapper() {
       }
     }
 
-    //TODO if(now() > deadline()) -> add to missed_deadlines
+    //If deadline was missed, add it to statistics
+    if(TimeUtil::getTime() > criteria->getDeadline() ) {
+      Statistics::addMissedDeadline(id, criteria->getArrivalTime(), criteria->getDeadline());
+    }
 
+    //Add task end to statistics
     Statistics::addTrace(worker, id, task_end);
 
     //Handle the end of the current job (might regise finishedJob or updateRunnable with parent)
@@ -179,14 +183,14 @@ void Worker::finishedJob() {
 ///This function will be called by the dispatcher thread, and will post to the wrapper_sem
 void Worker::newJob() {
   //add arrival time before critical section
-  struct timespec aux = TimeUtil::getTime();
+  struct timespec now = TimeUtil::getTime(), deadline;
 
   #if _DEBUG==1
   cout << "Worker::newjob() is waiting\n";
   #endif
 
   sem_wait(&arrival_sem);
-    arrival_times.push_back(aux);
+    arrival_times.push_back(now);
   sem_post(&arrival_sem);
 
   #if _DEBUG==1
@@ -214,8 +218,13 @@ void Worker::newJob() {
     }
   }
 
+  now = TimeUtil::getTime();
+  deadline = criteria->getDeadline();
   //If there is an active job, finishedJob() will take care of 
   //'registering' this new job with parent    
+  if(now > deadline) {
+    Statistics::addMissedDeadline(id, TimeUtil::relative(now), TimeUtil::relative(deadline));
+  }
 
   //Signal the worker thread
   sem_post(&wrapper_sem);

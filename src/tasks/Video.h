@@ -21,10 +21,10 @@ class Video : public Task {
   /*********** CONSTRUCTOR ***********/
 
   ///The constructor requires a pointer to the simulation, its own dispatcher, and the WCET
-  Video(Dispatcher *disp);
+  Video();
 
   ///The destructor sinply call mjpeg_finish
-  ~Video() {   mjpeg_finish(state); }
+  ~Video();
 
   /*********** INHERITED FUNCTIONS ***********/
   
