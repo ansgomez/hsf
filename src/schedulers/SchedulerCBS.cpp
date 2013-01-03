@@ -1,5 +1,10 @@
 #include "SchedulerCBS.h"
 
+/***************************************
+ *        CLASS DEFINITION             * 
+ ***************************************/
+
+/*********** CONSTRUCTOR ***********/
 
 ///Constructor needs pointer to simulation, id, and its level
 SchedulerCBS::SchedulerCBS(unsigned int id, int level) : Scheduler(id, level) {
@@ -20,7 +25,8 @@ void SchedulerCBS::deactivate() {
 
 }
 
-/**** FROM INTERMEDIARY  ****/
+/**** FROM RESOURCEALLOCATOR  ****/
+
 ///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution.
 void SchedulerCBS::newJob(Runnable *ojb) {
 

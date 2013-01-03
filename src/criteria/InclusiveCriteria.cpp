@@ -3,6 +3,10 @@
 #include "util/Operators.h"
 #include "util/TimeUtil.h"
 
+#include <iostream>
+
+using namespace std;
+
 /***************************************
  *        CLASS DEFINITION             * 
  ***************************************/
@@ -11,7 +15,7 @@
 
 InclusiveCriteria::InclusiveCriteria() : Criteria() {
   //empty
-  relativeDeadline = TimeUtil::Millis(20);
+  relativeDeadline = TimeUtil::Millis(0);
 }
 
 /*********** INHERITED FUNCTIONS ***********/
@@ -38,6 +42,11 @@ int InclusiveCriteria::getPriority() {
   return priority;
 }
 
+///This function returns the object's relative deadline
+struct timespec InclusiveCriteria::getRelativeDeadline() {
+  return relativeDeadline;
+}
+
 ///This function sets a new arrivalTime
 void InclusiveCriteria::setArrivalTime(struct timespec at) {
   arrivalTime = at;
@@ -60,5 +69,6 @@ void InclusiveCriteria::setPriority(int pr) {
 
 ///This function sets a new relative deadline
 void InclusiveCriteria::setRelativeDeadline(struct timespec rel) {
+  cout << "relDed: " << rel.tv_nsec << endl;
   relativeDeadline = rel;
 }

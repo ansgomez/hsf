@@ -40,6 +40,7 @@ Worker::Worker(ResourceAllocator *p, unsigned int _id, _task_load tl) : Runnable
   //Semaphore initialization
   sem_init(&activation_sem, 0, 1); //mutex semaphore
   sem_init(&arrival_sem, 0, 1); //mutex semaphore
+  sem_init(&worker_sem, 0, 1); //mutex semaphore
   sem_init(&wrapper_sem, 0, 0); //signal semaphore
 }
 
@@ -49,14 +50,19 @@ Worker::Worker(ResourceAllocator *p, unsigned int _id, _task_load tl) : Runnable
 
 ///This join function takes into account the worker's unblocking mechanism
 void Worker::join() {
-  if(parent!=NULL) {
-    parent->join();
-  }
 
   //Post to sem in case worker is blocked
   sem_post(&wrapper_sem);
+  sem_post(&worker_sem);
+  sem_post(&worker_sem);
   sem_post(&activation_sem);
   sem_post(&arrival_sem);
+  sem_post(&activation_sem);
+  sem_post(&arrival_sem);
+
+  if(parent!=NULL) {
+    parent->join();
+  }
 
   join2();
 }
@@ -68,14 +74,14 @@ void Worker::wrapper() {
   //Wait until the simulation is initialized
   while( !Simulation::isInitialized() );
 
-  #if _INFO == 1
-  cout << "Worker: " << id << " begining execution\n";
-  #endif
-
   while( Simulation::isSimulating() ) {
 
     //Wait for new job
     sem_wait(&wrapper_sem);
+
+    #if _INFO == 0
+    cout << "Worker: " << id << " began executing a new job\n";
+    #endif
 
     Statistics::addTrace(worker, id, task_start);
 
@@ -106,7 +112,7 @@ void Worker::wrapper() {
 
 /**** FROM RUNNABLE ****/
 
-///This function set the current runnable to active, meaning that it has control of the CPU and should 'run'
+///This function gives the worker thread the ACTIVE_PR priority
 void Worker::activate() {
   if(state == activated) {
     cout << "Worker::activate error - already active!\n";
@@ -119,7 +125,7 @@ void Worker::activate() {
   sem_post(&activation_sem);
 }
 
-///This function set the current runnable to inactive, meaning that it has lost control of the CPU and has to stop running
+///This function give the worker thread the INACTIVE_PR priority
 void Worker::deactivate() {
   if(state == deactivated ) {
     cout << "Worker::deactivate error - already deactivated!\n";
@@ -141,7 +147,7 @@ void Worker::finishedJob() {
     return;
   }
 
-  #if _DEBUG==1
+  #if _DEBUG==0
   cout << "Worker::finishedJob() - registering with parent\n";
   #endif
 
@@ -153,15 +159,20 @@ void Worker::finishedJob() {
       criteria->setDeadline(arrival_times[1]+relativeDeadline);
     }
     else {
-      cout << "Worker::finishedJob - criteria is null!\n";
+      cout << "Worker::finishedJob() - criteria is null! (1)\n";
     }
     
+    sem_wait(&arrival_sem);
+      arrival_times.pop_front(); //Erase old arrival time
+    sem_post(&arrival_sem);
+
     //Notify parent of new arrival
     if (parent != NULL ) {
+      cout << "Worker::finishedJob() - calling parent's finishedJob() ...\n";
       parent->updateRunnable(this);
     }
     else {
-      cout << "Worker::finishedJob - parent is null!\n";
+      cout << "Worker::finishedJob() - parent is null!\n";
     }
   }
   //If no jobs are pending, remove from parent
@@ -169,19 +180,26 @@ void Worker::finishedJob() {
     //Remove job from parents' queue
     if(parent != NULL) {
       //Clear schedulable criteria
-      criteria->setArrivalTime(TimeUtil::Millis(0));
-      criteria->setDeadline(TimeUtil::Millis(0));
+      if(criteria != NULL) {
+	criteria->setArrivalTime(TimeUtil::Millis(0));
+	criteria->setDeadline(TimeUtil::Millis(0));
+      }
+      else {
+	cout << "Worker::finishedJob() - criteria is null! (1)\n";
+      }
 
       sem_wait(&arrival_sem);
         arrival_times.pop_front(); //Erase old arrival time
       sem_post(&arrival_sem);
 
+      cout << "Worker::finishedJob() - calling parent's finishedJob() ...\n";
       parent->finishedJob(id); //Register event with the parent
     }
     else {
-      cout << "Worker::finishedJob - parent is null!\n";
+      cout << "Worker::finishedJob() - parent is null!\n";
     }
   }
+  cout << "Worker::finishedJob() is exiting...\n";
 }
 
 ///This function will be called by the dispatcher thread, and will post to the wrapper_sem
@@ -210,16 +228,21 @@ void Worker::newJob() {
       criteria->setDeadline(arrival_times.front());//Derived function adds its own relative deadline
     }
     else {
-      cout << "Worker::newJob - criteria is null!\n";
+      cout << "Worker::newJob() - criteria is null!\n";
     }
       
     //Notify parent of new arrival
     if (parent != NULL ) {
+      cout << "Worker::newJob() - going to parent...\n";
       parent->newJob(this);
+      cout << "Worker::newJob() - returning from parent..\n";
     }
     else {
-      cout << "Worker::newJob - parent is null!\n";
+      cout << "Worker::newJob() - parent is null!\n";
     }
+  }
+  else {
+    //cout << "Worker::newJob() - worker was not idle...\n";
   }
 
   //If there is an active job, finishedJob() will take care of 
@@ -235,7 +258,7 @@ struct timespec Worker::getRelativeDeadline() {
   return relativeDeadline;
 }
 
-//This function sets the Criteria object
+//This function sets the Criteria object (deleting the previous one..)
 void Worker::setCriteria(Criteria* c) {
   if(criteria!=NULL) {
     delete(criteria);

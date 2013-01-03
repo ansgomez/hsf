@@ -62,7 +62,7 @@ void Scheduler::deactivate() {
   cout << "Scheduler::deactivate() - This should not print!\n";
 }
 
-/**** FROM INTERMEDIARY ****/
+/**** FROM RESOURCEALLOCATOR ****/
 
 ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
 void Scheduler::finishedJob(unsigned int id) {

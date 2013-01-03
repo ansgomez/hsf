@@ -100,7 +100,7 @@ void TDMA::deactivate() {
   sem_post(&activation_sem);
 }
 
-/**** FROM INTERMEDIARY ****/
+/**** FROM RESOURCEALLOCATOR ****/
 
 ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
 void TDMA::finishedJob(unsigned int worker_id){

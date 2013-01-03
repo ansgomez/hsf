@@ -32,6 +32,9 @@ class InclusiveCriteria : public Criteria {
   ///This function returns the object's priority (according to its criteria policy)
   int getPriority();
 
+  ///This function returns the object's relative deadline
+  struct timespec getRelativeDeadline();
+
   ///This function sets a new arrivalTime
   void setArrivalTime(struct timespec at);
 

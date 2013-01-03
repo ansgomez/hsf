@@ -74,12 +74,16 @@ Criteria* Parser::parseCriteria(xml_node criteria_node) {
 
   if(type == "inclusive" || type=="inclusive_criteria") {
     c = (Criteria*) new InclusiveCriteria();
-    //xml_node period = criteria_node.child("period");
-    xml_node relativeDeadline = criteria_node.child("relative_deadline");
-    if( !relativeDeadline.empty()) {
-      c->setRelativeDeadline(parseTime(relativeDeadline));
-      cout << "Set a relative deadline!\n";
-    }
+  }
+  else {
+    cout << "Parser::parseCriteria() error! Criteria type not recognized!\n";
+    c = (Criteria*) new InclusiveCriteria();
+  }
+
+  //xml_node period = criteria_node.child("period");
+  xml_node relativeDeadline = criteria_node.child("relative_deadline");
+  if( !relativeDeadline.empty()) {
+    c->setRelativeDeadline(parseTime(relativeDeadline));
   }
 
   return c;
@@ -249,7 +253,8 @@ struct timespec Parser::parseTime(xml_node n) {
 ///This function receives a Worker node, its parent, and it returns the initialized worker object
 Worker* Parser::parseWorker(ResourceAllocator* parent, xml_node worker_node, unsigned int *id) {
   string task = worker_node.attribute("task").as_string();
-  Worker *worker = NULL;
+  Worker* worker = NULL;
+  Criteria* c = NULL;
 
   /**** SETTING THE TASK ****/
   if(task == "busy_wait") {
@@ -284,13 +289,29 @@ Worker* Parser::parseWorker(ResourceAllocator* parent, xml_node worker_node, uns
   /**** SETTING THE CRITERIA ****/
   xml_node criteria = worker_node.child("criteria");
   if(criteria!=NULL) {
-    worker->setCriteria(parseCriteria(criteria));
+    c = parseCriteria(criteria);
+    worker->setCriteria(c);
+  }
+  else {
+    c = (Criteria*) new InclusiveCriteria();
+    worker->setCriteria(c);    
   }
 
   /**** SETTING THE RELATIVE DEADLINE ****/
   xml_node relativeDeadline = worker_node.child("relative_deadline");
   if( !relativeDeadline.empty() ) {
-    worker->setRelativeDeadline(parseTime(relativeDeadline));
+    struct timespec aux = parseTime(relativeDeadline);
+    worker->setRelativeDeadline(aux);
+    if(c->getRelativeDeadline() == TimeUtil::Millis(0) ) {
+      c->setRelativeDeadline(aux);
+    }
+  }
+  else {
+    //By default, if no relative deadline is specified, they are assigned 100ms
+    worker->setRelativeDeadline(TimeUtil::Millis(100));
+    if(c->getRelativeDeadline() == TimeUtil::Millis(0) ) {
+      c->setRelativeDeadline(TimeUtil::Millis(100));
+    }
   }
 
   //Register thread with simulation object

@@ -30,7 +30,7 @@ class Server : public ResourceAllocator {
   ///This function rewrites the deactivate method both the scheduler as well as its load
   void deactivate();
 
-  /**** FROM INTERMEDIARY ****/
+  /**** FROM RESOURCEALLOCATOR ****/
 
   ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
   virtual void finishedJob(unsigned int runnable_id);

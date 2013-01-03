@@ -43,6 +43,8 @@ class Worker : public Runnable {
   sem_t activation_sem;
   ///Semaphore to control access to the arrivalTime vector
   sem_t arrival_sem;
+  ///Semaphore to control threads accessing object
+  sem_t worker_sem;
   ///Semaphore to control the call to the fire() function
   sem_t wrapper_sem;
 
@@ -62,7 +64,7 @@ class Worker : public Runnable {
   
   /**** FROM RUNNABLE ****/
 
-  ///This function give the worker thread the ACTIVE_PR priority
+  ///This function gives the worker thread the ACTIVE_PR priority
   void activate();
 
   ///This function give the worker thread the INACTIVE_PR priority

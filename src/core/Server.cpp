@@ -43,7 +43,7 @@ void Server::deactivate() {
   cout << "Server::deactivate() - This should not print!\n";
 }
 
-/**** FROM INTERMEDIARY ****/
+/**** FROM RESOURCEALLOCATOR ****/
 
 ///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution.
 void Server::newJob(Runnable *r) {

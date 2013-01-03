@@ -45,7 +45,7 @@ class SchedulerCBS : public Scheduler {
   ///This function rewrites the deactivate method both the scheduler (through its semaphores) as well as its load
   void deactivate();
 
-  /**** FROM INTERMEDIARY  ****/
+  /**** FROM RESOURCEALLOCATOR  ****/
   
   ///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution.
   void newJob(Runnable *ojb);

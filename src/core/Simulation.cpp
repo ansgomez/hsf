@@ -110,6 +110,7 @@ void Simulation::initialize() {
 
   //Idle should be the first thread to be created
   idle = new Idle();
+  threads.push_back((Thread*)idle);
 
   Parser *parser = new Parser(this);
 
@@ -118,7 +119,7 @@ void Simulation::initialize() {
   free(parser);
 }
 
-///This function waits for all other thread to join
+///This function waits for all other threads to join
 void Simulation::join_all() {
   Thread* t;
 
@@ -166,7 +167,8 @@ void Simulation::simulate() {
   nanosleep(&simTime, &rem);
 
   cout << "***   Done\t\t\t***\n";
-  //Deactivate threads
+
+  //Set flags
   simulating=false;
   Statistics::disable();
 

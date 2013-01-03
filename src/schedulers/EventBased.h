@@ -1,8 +1,8 @@
 #ifndef _EVENT_BASED_H
 #define _EVENT_BASED_H
 
-#include "core/Simulation.h"
 #include "core/Scheduler.h"
+#include "core/Simulation.h"
 #include "pthread/Priorities.h"
 
 #include <deque>
@@ -57,7 +57,7 @@ class EventBased : public Scheduler {
   ///This function rewrites the deactivate method both the scheduler (through its semaphores) as well as its load
   void deactivate();
 
-  /**** FROM INTERMEDIARY  ****/
+  /**** FROM RESOURCEALLOCATOR  ****/
   
   ///This function handles the end of a Runnable's job by erasing the Runnable from the activeQueue
   void finishedJob(unsigned int runnable_id);

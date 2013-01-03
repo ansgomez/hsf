@@ -49,6 +49,9 @@ class Criteria {
   ///This function returns the object's priority (according to its criteria policy)
   virtual int getPriority();
 
+  ///This function returns the object's relative deadline
+  virtual struct timespec getRelativeDeadline();
+
   ///This function sets a new arrivalTime
   virtual void setArrivalTime(struct timespec at);
 
