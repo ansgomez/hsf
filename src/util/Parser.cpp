@@ -1,11 +1,14 @@
 #include "util/Parser.h"
 
+#include "core/Criteria.h"
 #include "core/Dispatcher.h"
 #include "core/ResourceAllocator.h"
 #include "core/Runnable.h"
 #include "core/Scheduler.h"
 #include "core/Simulation.h"
 #include "core/Worker.h"
+#include "criteria/InclusiveCriteria.h"
+#include "dispatchers/Aperiodic.h"
 #include "dispatchers/Periodic.h"
 #include "dispatchers/PeriodicJitter.h"
 #include "schedulers/EDF.h"
@@ -63,8 +66,28 @@ void Parser::parseFile(string filePath) {
 
 /*********** PRIVATE MEMBER FUNCTIONS ***********/
 
-//This function extract information from an XML "worker" and returns its corresponding disp.
+///This function parses a Criteria node, and it returns an initialized Criteria object
+Criteria* Parser::parseCriteria(xml_node criteria_node) {
+  Criteria* c;
+
+  string type = criteria_node.attribute("type").as_string();
+
+  if(type == "inclusive" || type=="inclusive_criteria") {
+    c = (Criteria*) new InclusiveCriteria();
+    //xml_node period = criteria_node.child("period");
+    xml_node relativeDeadline = criteria_node.child("relative_deadline");
+    if( !relativeDeadline.empty()) {
+      c->setRelativeDeadline(parseTime(relativeDeadline));
+      cout << "Set a relative deadline!\n";
+    }
+  }
+
+  return c;
+}
+
+//This function extracts information from an XML "worker" and returns its corresponding disp.
 Dispatcher* Parser::parseDispatcher(xml_node disp_node, unsigned int *id) {
+
   string periodicity = disp_node.attribute("periodicity").as_string();
   Dispatcher *disp = NULL;
 
@@ -72,19 +95,31 @@ Dispatcher* Parser::parseDispatcher(xml_node disp_node, unsigned int *id) {
   cout << "Creating Dispatcher " << *id << endl;
   #endif
 
+  /**** CREATE DISPATCHER ****/
   if(periodicity == "periodic") {
-    Periodic *p = new Periodic(*id);
+    Periodic* p = new Periodic(*id);
     p->setPeriod(parseTime(disp_node.child("period")));
     disp = (Dispatcher*) p;
   }
   else if(periodicity == "periodic_jitter") {
-    PeriodicJitter *p = new PeriodicJitter(*id);
+    PeriodicJitter* p = new PeriodicJitter(*id);
     p->setPeriod(parseTime(disp_node.child("period")));
     p->setJitter(parseTime(disp_node.child("jitter")));
     disp = (Dispatcher*) p;
   }
+  else if(periodicity == "aperiodic") {
+    Aperiodic* a = new Aperiodic(*id);
+    a->setReleaseTime(parseTime(disp_node.child("release_time")));
+    disp = (Dispatcher*) a;
+  }
   else {
     cout << "Parser Error: Runnable " << *id << "'s periodicity was not recognized\n";
+  }
+
+  /**** SET OFFSET ****/
+  xml_node offset = disp_node.child("offset");
+  if( !offset.empty() ) {
+    disp->setOffset(parseTime(offset));
   }
 
   if(disp!=NULL) {
@@ -213,10 +248,11 @@ struct timespec Parser::parseTime(xml_node n) {
 
 ///This function receives a Worker node, its parent, and it returns the initialized worker object
 Worker* Parser::parseWorker(ResourceAllocator* parent, xml_node worker_node, unsigned int *id) {
-  string load = worker_node.attribute("load").as_string();
+  string task = worker_node.attribute("task").as_string();
   Worker *worker = NULL;
 
-  if(load == "busy_wait") {
+  /**** SETTING THE TASK ****/
+  if(task == "busy_wait") {
     Dispatcher *d = parseDispatcher(worker_node, id);
     *id = *id + 1;  
     #if _INFO==1
@@ -228,7 +264,7 @@ Worker* Parser::parseWorker(ResourceAllocator* parent, xml_node worker_node, uns
     worker->setTask(bw);
     d->setWorker(worker);
   }
-  else if(load == "video") {
+  else if(task == "video") {
     Dispatcher *d = parseDispatcher(worker_node, id);
     *id = *id + 1;  
 
@@ -242,13 +278,23 @@ Worker* Parser::parseWorker(ResourceAllocator* parent, xml_node worker_node, uns
     d->setWorker(worker);
   }
   else {
-    cout << "Parser error: Worker " << *id << "'s load was not recognized\n";
+    cout << "Parser error: Worker " << *id << "'s task was not recognized\n";
   }
 
-  if(worker!=NULL) {
-    //Register thread with simulation object
-    sim->addThread((Thread*)worker);
+  /**** SETTING THE CRITERIA ****/
+  xml_node criteria = worker_node.child("criteria");
+  if(criteria!=NULL) {
+    worker->setCriteria(parseCriteria(criteria));
   }
+
+  /**** SETTING THE RELATIVE DEADLINE ****/
+  xml_node relativeDeadline = worker_node.child("relative_deadline");
+  if( !relativeDeadline.empty() ) {
+    worker->setRelativeDeadline(parseTime(relativeDeadline));
+  }
+
+  //Register thread with simulation object
+  sim->addThread((Thread*)worker);
 
   return worker;
 }

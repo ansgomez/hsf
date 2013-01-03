@@ -24,7 +24,7 @@ void MissedDeadline::setMissedDeadline(unsigned int ti, struct timespec at, stru
 string MissedDeadline::toString() {
   stringstream out;
 
-  out << thread_id <<  "," << TimeUtil::convert_us(arrivalTime) << "," << TimeUtil::convert_us(deadline) << "," << TimeUtil::convert_us(finishTime) << endl;
+  out << thread_id <<  "," << TimeUtil::convert_us(arrivalTime) << "," << TimeUtil::convert_us(deadline) << "," << TimeUtil::convert_us(finishTime);
 
   return out.str();
 }

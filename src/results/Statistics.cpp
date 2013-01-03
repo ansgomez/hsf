@@ -116,7 +116,7 @@ void Statistics::toFile(string filePrefix) {
   file.open((filePrefix+"_missedDeadlines.csv").data());
   for(unsigned int c=0;c<missedDeadlines.size();c++) {
     aux_m = missedDeadlines[c];
-    file << aux_m.toString() << "\n"; 
+    file << aux_m.toString() << endl; 
   }
   file.close();
   system(("chown hsf:hsf " + filePrefix + "_missedDeadlines.csv").data() );
@@ -130,7 +130,7 @@ void Statistics::toFile(string filePrefix) {
   file.open((filePrefix+"_runtimes.csv").data());
   for(unsigned int c=0;c<runtimes.size();c++) {
     aux_r = runtimes[c];
-    file << aux_r.toString() << "\n"; 
+    file << aux_r.toString() << endl; 
   }
   file.close();
   system(("chown hsf:hsf " + filePrefix + "_runtimes.csv").data() );

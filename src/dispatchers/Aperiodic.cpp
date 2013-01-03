@@ -16,7 +16,7 @@
 
 ///Constructor needs a pointer to simulation and id
 Aperiodic::Aperiodic(unsigned int id) : Dispatcher(id) {
-  release_time = TimeUtil::Millis(5); //default release time is 5 ms
+  releaseTime = TimeUtil::Millis(5); //default release time is 5 ms
 }
 
 /*********** INHERITED FUNCTIONS ***********/
@@ -27,11 +27,11 @@ Aperiodic::Aperiodic(unsigned int id) : Dispatcher(id) {
 void Aperiodic::dispatch() {
   struct timespec rem;
 
-  nanosleep(&release_time, &rem);
+  nanosleep(&releaseTime, &rem);
 
-#if _INFO == 1
+  #if _INFO == 1
   cout << "+Worker " << worker->getId() << " has new job!\n";
-#endif  
+  #endif  
 
   Statistics::addTrace(dispatcher, worker->getId(), task_arrival);
   
@@ -44,8 +44,8 @@ void Aperiodic::dispatch() {
   
   //wait until simulation is done to free worker
   do {
-    struct timespec aux = Simulation::getSimTime() - release_time;
-      nanosleep(&aux, &rem);
+    struct timespec aux = Simulation::getSimTime() - releaseTime - offset;
+    nanosleep(&aux, &rem);
   } while(Simulation::isSimulating());
   
   //Free worker from blocking (doesn't affect workers while they have inactive priority -> only when the simulation has ended
@@ -57,11 +57,11 @@ void Aperiodic::dispatch() {
 /*********** GETTER AND SETTER FUNCTIONS ***********/
 
 ///This function returns the release time
-struct timespec Aperiodic::getRelease() {
-  return release_time;
+struct timespec Aperiodic::getReleaseTime() {
+  return releaseTime;
 }
 
 ///This function sets the release time for the aperiodic dispatcher
-void Aperiodic::setRelease(struct timespec r) {
-  release_time = r;
+void Aperiodic::setReleaseTime(struct timespec r) {
+  releaseTime = r;
 }

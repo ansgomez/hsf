@@ -1,5 +1,6 @@
 #include "criteria/InclusiveCriteria.h"
 
+#include "util/Operators.h"
 #include "util/TimeUtil.h"
 
 /***************************************
@@ -9,10 +10,7 @@
 /*********** CONSTRUCTOR ***********/
 
 InclusiveCriteria::InclusiveCriteria() : Criteria() {
-  arrivalTime = TimeUtil::Millis(0);
-  deadline = TimeUtil::Millis(0);
-  period = TimeUtil::Millis(0);
-  priority = 0;
+  //empty
 }
 
 /*********** INHERITED FUNCTIONS ***********/
@@ -26,7 +24,7 @@ struct timespec InclusiveCriteria::getArrivalTime() {
 
 ///This function returns the object's deadline (according to its criteria policy)
 struct timespec InclusiveCriteria::getDeadline() {
-  return deadline;
+  return absoluteDeadline;
 }
   
 ///This function returns the current job's period (according to its criteria policy)
@@ -44,9 +42,9 @@ void InclusiveCriteria::setArrivalTime(struct timespec at) {
   arrivalTime = at;
 }
 
-///This function sets a new deadline
-void InclusiveCriteria::setDeadline(struct timespec dln) {
-  deadline = dln;
+///This function sets the absoluteDeadline equal to arrivalTime+Criteria::relativeDeadline
+void InclusiveCriteria::setDeadline(struct timespec arrivalTime) {
+  absoluteDeadline = arrivalTime + relativeDeadline;
 }
   
 ///This function sets a new period
@@ -57,4 +55,9 @@ void InclusiveCriteria::setPeriod(struct timespec p) {
 ///This function sets the new priority
 void InclusiveCriteria::setPriority(int pr) {
   priority = pr;
+}
+
+///This function sets a new relative deadline
+void InclusiveCriteria::setRelativeDeadline(struct timespec rel) {
+  relativeDeadline = rel;
 }

@@ -13,9 +13,10 @@ using namespace std;
 /*********** CONSTRUCTOR ***********/
 Criteria::Criteria() {
   arrivalTime = TimeUtil::Millis(0);
-  deadline = TimeUtil::Millis(0);
+  absoluteDeadline = TimeUtil::Millis(0);
   period = TimeUtil::Millis(0);
   priority = -1;
+  relativeDeadline = TimeUtil::Millis(0);
 }
 
 /*********** GETTERS AND SETTERS ***********/
@@ -29,7 +30,7 @@ struct timespec Criteria::getArrivalTime() {
 ///This function returns the object's deadline (according to its criteria policy)
 struct timespec Criteria::getDeadline() {
   cout << "Criteria::getDeadline() - this should not print!\n";
-  return deadline;
+  return absoluteDeadline;
 }
 
 ///This function returns the current job's period (according to its criteria policy)
@@ -62,4 +63,9 @@ void Criteria::setPeriod(struct timespec p) {
 ///This function sets the new priority
 void Criteria::setPriority(int pr) {
   cout << "Criteria::setPriority() - this should not print!\n";
+}
+
+///This function sets a new relative deadline
+void Criteria::setRelativeDeadline(struct timespec rel) {
+  cout << "Criteria::setRelativeDeadline() - this should not print!\n";
 }

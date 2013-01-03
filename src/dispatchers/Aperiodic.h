@@ -14,7 +14,7 @@ class Aperiodic : public Dispatcher {
   /*********** VARIABLES ***********/
 
   ///This parameter specifies the release time of the aperiodic dispatcher
-  struct timespec release_time;
+  struct timespec releaseTime;
 
  public:
 
@@ -33,8 +33,8 @@ class Aperiodic : public Dispatcher {
   /*********** GETTER AND SETTER FUNCTIONS ***********/
 
   ///This function returns the release time
-  struct timespec getRelease();  
+  struct timespec getReleaseTime();  
   ///This function sets the release time for the aperiodic dispatcher
-  void setRelease(struct timespec r);
+  void setReleaseTime(struct timespec r);
 };
 #endif

@@ -79,9 +79,11 @@ class Worker : public Runnable {
   /*********** GETTER AND SETTER FUNCTIONS ***********/
   ///This function gets the relative deadline
   struct timespec getRelativeDeadline();
-  ///This function sets the worker's task
-  void setTask(Task *t);
+  //This function sets the Criteria object (deleting the previous one)
+  void setCriteria(Criteria* c);
   ///This function sets the relative deadline
   void setRelativeDeadline(struct timespec aux);
+  ///This function sets the worker's task
+  void setTask(Task *t);
 };
 #endif

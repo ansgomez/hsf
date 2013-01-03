@@ -35,14 +35,17 @@ class InclusiveCriteria : public Criteria {
   ///This function sets a new arrivalTime
   void setArrivalTime(struct timespec at);
 
-  ///This function sets a new deadline
-  void setDeadline(struct timespec dln);
+  ///This function sets the absoluteDeadline equal to arrivalTime+Criteria::relativeDeadline
+  void setDeadline(struct timespec arrivalTime);
 
   ///This function sets a new period
   void setPeriod(struct timespec p);
 
   ///This function sets the new priority
   void setPriority(int pr);
+
+  ///This function sets a new relative deadline
+  void setRelativeDeadline(struct timespec rel);
 };
 
 #endif

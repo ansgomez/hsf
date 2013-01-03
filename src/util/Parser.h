@@ -6,6 +6,7 @@
 #include <string>
 #include <time.h>
 
+class Criteria;
 class Dispatcher;
 class ResourceAllocator;
 class Scheduler;
@@ -47,7 +48,10 @@ class Parser {
 
   /*********** MEMBER FUNCTIONS ***********/
 
-  ///This function extract information from an XML "worker" and returns its corresponding disp.
+  ///This function parses a Criteria node, and it returns an initialized Criteria object
+  Criteria* parseCriteria(xml_node criteria_node);
+
+  ///This function extracts information from an XML "worker" and returns its corresponding disp.
   Dispatcher* parseDispatcher(xml_node disp, unsigned int* id);
 
   ///This function receives an EDF node and it parses the entire node to return the full object
