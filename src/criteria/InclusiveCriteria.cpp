@@ -11,6 +11,7 @@
 
 InclusiveCriteria::InclusiveCriteria() : Criteria() {
   //empty
+  relativeDeadline = TimeUtil::Millis(20);
 }
 
 /*********** INHERITED FUNCTIONS ***********/

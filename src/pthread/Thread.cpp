@@ -49,9 +49,9 @@ void Thread::join() {
   if(joined) {
     return;
   }
-  //cout << "Thread " << id << " is being joined\n";
+  cout << "Thread " << id << " is being joined\n";
   pthread_join(thread, NULL);
-  //cout << "Thread " << id << " has been joined\n";
+  cout << "Thread " << id << " has been joined\n";
   joined = true;
 }
 
@@ -60,9 +60,9 @@ void Thread::join2() {
   if(joined) {
     return;
   }
-  //cout << "Thread " << id << " is being joined\n";
+  cout << "Thread " << id << " is being joined\n";
   pthread_join(thread, NULL);
-  //cout << "Thread " << id << " has been joined\n";
+  cout << "Thread " << id << " has been joined\n";
   joined = true;
 }
 

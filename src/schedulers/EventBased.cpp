@@ -48,15 +48,27 @@ void EventBased::join() {
   cout << "Attempting to join EventBased\n";
   #endif
 
-  sem_post(&event_sem);
-  sem_post(&schedule_sem);
-  sem_post(&activation_sem);
-  sem_post(&newjob_sem);
-  sem_post(&finishedjob_sem);
-  sem_post(&update_sem);
+  if(parent!=NULL) {
+    parent->join();
+  }
+  /*
+  while(activeQueue->getSize() > 0) {
+    activeQueue->pop_front();
+    }*/
+
+  for(int i=0;i<1+activeQueue->getSize();i++) {
+    sem_post(&event_sem);
+    sem_post(&schedule_sem);
+    sem_post(&activation_sem);
+    sem_post(&newjob_sem);
+    sem_post(&finishedjob_sem);
+    sem_post(&update_sem);
+  }
 
   //after posting to all blocking sems, 
   join2();
+
+  //cout << "EventBased has been joined!\n";
 }
 
 /**** FROM RUNNABLE  ****/
