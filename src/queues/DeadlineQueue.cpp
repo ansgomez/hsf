@@ -39,8 +39,13 @@ void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
     return;
   }
 
+  struct timespec currentDeadline = head->r->getCriteria()->getDeadline();
+  struct timespec newDeadline = newRunnable->getCriteria()->getDeadline();
+
+  //cout << "Comparing: " << currentDeadline.tv_sec << ":" << currentDeadline.tv_nsec << " vs " << newDeadline.tv_sec << ":" << newDeadline.tv_nsec << endl;
+
   //If in a non-empty queue, newRunnable has a deadline earlier than the head, it becomes the new head
-  if(head->r->getCriteria()->getDeadline() > newRunnable->getCriteria()->getDeadline() ) {
+  if(currentDeadline > newDeadline ) {
     //create new node
     Node* newNode = (Node*) malloc(sizeof(Node));
     newNode->r = newRunnable;
@@ -52,8 +57,12 @@ void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
     return;
   }
 
+  currentDeadline = tail->r->getCriteria()->getDeadline();
+
+  //cout << "Comparing: " << currentDeadline.tv_sec << ":" << currentDeadline.tv_nsec << " vs " << newDeadline.tv_sec << ":" << newDeadline.tv_nsec << endl;
+
   //In a non-empty queue, the new runnable has the latest deadline (later than the tail)
-  if(tail->r->getCriteria()->getDeadline() < newRunnable->getCriteria()->getDeadline() ) {
+  if( currentDeadline < newDeadline ) {
     //create new node
     Node* newNode = (Node*) malloc(sizeof(Node));
     newNode->r = newRunnable;
@@ -67,20 +76,26 @@ void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
     return;
   }
 
-  Node* aux = head;
+  Node* aux = head->next, *prev=head;
 
   //This loop will insert the Runnable in any position except first or last
   while(aux != NULL) {
-    if(aux->r->getCriteria()->getDeadline() > newRunnable->getCriteria()->getDeadline()) {
+    currentDeadline = aux->r->getCriteria()->getDeadline();
+
+    //cout << "Comparing: " << currentDeadline.tv_sec << ":" << currentDeadline.tv_nsec << " vs " << newDeadline.tv_sec << ":" << newDeadline.tv_nsec << endl;
+
+    if( currentDeadline > newDeadline) {
       Node *newNode = (Node*) malloc(sizeof(Node));
       newNode->r = newRunnable;
       //insert new node in the middle
-      newNode->next = aux->next;
-      aux->next = newNode;
+      newNode->next = aux;
+      prev->next = newNode;
+
       //cout << "New node!" << newRunnable->getId() << endl;
       return;
     }
-
+    
+    prev=aux;
     aux = aux->next;
   }
 
