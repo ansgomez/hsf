@@ -34,20 +34,21 @@ void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
     head = (Node*) malloc(sizeof(Node));
     head->r = newRunnable;
     tail = head;
+    tail->next = NULL;
+    //cout << "New Head1: " << newRunnable->getId() << endl;
     return;
   }
 
-  //In a non-empty queue, the new runnable has earliest deadline (earlier than the head)
+  //If in a non-empty queue, newRunnable has a deadline earlier than the head, it becomes the new head
   if(head->r->getCriteria()->getDeadline() > newRunnable->getCriteria()->getDeadline() ) {
     //create new node
     Node* newNode = (Node*) malloc(sizeof(Node));
     newNode->r = newRunnable;
-
     //link new node to old head
     newNode->next = head;
     //move the head 
     head = newNode;
-
+    //cout << "New Head2: " << newRunnable->getId() << endl;
     return;
   }
 
@@ -62,23 +63,28 @@ void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
     tail->next = newNode;
     //move the tail
     tail = newNode;
-
+    //cout << "New tail: " << newRunnable->getId() << endl;
     return;
   }
 
   Node* aux = head;
 
   //This loop will insert the Runnable in any position except first or last
-  while(aux->next != NULL) {
+  while(aux != NULL) {
     if(aux->r->getCriteria()->getDeadline() > newRunnable->getCriteria()->getDeadline()) {
       Node *newNode = (Node*) malloc(sizeof(Node));
       newNode->r = newRunnable;
       //insert new node in the middle
       newNode->next = aux->next;
       aux->next = newNode;
+      //cout << "New node!" << newRunnable->getId() << endl;
       return;
     }
+
+    aux = aux->next;
   }
+
+  //cout << "DeadlineQueue::insertRunnable() error! newRunnable was not inserted...\n";
 }
 
 

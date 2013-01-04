@@ -79,7 +79,7 @@ void Worker::wrapper() {
     //Wait for new job
     sem_wait(&wrapper_sem);
 
-    #if _INFO == 0
+    #if _INFO == 1
     cout << "Worker: " << id << " began executing a new job\n";
     #endif
 
@@ -147,7 +147,7 @@ void Worker::finishedJob() {
     return;
   }
 
-  #if _DEBUG==0
+  #if _DEBUG==1
   cout << "Worker::finishedJob() - registering with parent\n";
   #endif
 
@@ -168,7 +168,7 @@ void Worker::finishedJob() {
 
     //Notify parent of new arrival
     if (parent != NULL ) {
-      cout << "Worker::finishedJob() - calling parent's finishedJob() ...\n";
+    //cout << "Worker::finishedJob() - calling parent's finishedJob() ...\n";
       parent->updateRunnable(this);
     }
     else {
@@ -192,14 +192,14 @@ void Worker::finishedJob() {
         arrival_times.pop_front(); //Erase old arrival time
       sem_post(&arrival_sem);
 
-      cout << "Worker::finishedJob() - calling parent's finishedJob() ...\n";
+      //cout << "Worker::finishedJob() - calling parent's finishedJob() ...\n";
       parent->finishedJob(id); //Register event with the parent
     }
     else {
       cout << "Worker::finishedJob() - parent is null!\n";
     }
   }
-  cout << "Worker::finishedJob() is exiting...\n";
+  //cout << "Worker::finishedJob() is exiting...\n";
 }
 
 ///This function will be called by the dispatcher thread, and will post to the wrapper_sem
@@ -233,9 +233,9 @@ void Worker::newJob() {
       
     //Notify parent of new arrival
     if (parent != NULL ) {
-      cout << "Worker::newJob() - going to parent...\n";
+    //cout << "Worker::newJob() - going to parent...\n";
       parent->newJob(this);
-      cout << "Worker::newJob() - returning from parent..\n";
+      //cout << "Worker::newJob() - returning from parent..\n";
     }
     else {
       cout << "Worker::newJob() - parent is null!\n";

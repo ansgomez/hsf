@@ -69,6 +69,6 @@ void InclusiveCriteria::setPriority(int pr) {
 
 ///This function sets a new relative deadline
 void InclusiveCriteria::setRelativeDeadline(struct timespec rel) {
-  cout << "relDed: " << rel.tv_nsec << endl;
+  //cout << "relDed: " << rel.tv_nsec << endl;
   relativeDeadline = rel;
 }

@@ -162,7 +162,7 @@ void EventBased::finishedJob(unsigned int runnable_id) {
     //per post in the scheduler, otherwise, multiple jobs could be handled from just one post
     sem_post(&event_sem);//Register event with this scheduler
 
-    #if _DEBUG==0
+    #if _DEBUG==1
     cout << "finishedJob is done!\n";
     #endif
   sem_post(&schedule_sem);
@@ -171,7 +171,7 @@ void EventBased::finishedJob(unsigned int runnable_id) {
 ///This function handles a new job in its load. Depending on the scheduling, this could change the order of execution. This is executed by the worker thread itself (always of a lower priority than its scheduler)
 void EventBased::newJob(Runnable* r) {
 
-  #if _DEBUG==0
+  #if _DEBUG==1
   cout << "EventBased::newJob() is waiting for schedule_sem\n";
   #endif
 
@@ -232,7 +232,7 @@ void EventBased::schedule() {
     //Wait for an event to ocurr
     sem_wait(&event_sem);
 
-    #if _DEBUG==0
+    #if _DEBUG==1
     cout << "EventBased::schedule() is handling an event!\n";
     #endif
 
@@ -275,7 +275,7 @@ void EventBased::schedule() {
       }
       /***** handle new jobs *****/
       else if(newJobQueue.size()>0) {
-        #if _DEBUG==0
+        #if _DEBUG==1
         cout << "EventBased::schedule() is handling a new job!\n";
         #endif
         activeQueue->insertRunnable(newJobQueue.front());//insert head of newJobQueue
@@ -292,7 +292,7 @@ void EventBased::schedule() {
 
       //activate the (possibly new) head of activeQueue
       if(activeQueue->getSize()>0) {
-	cout << "EventBased::schedule() - activating: " << activeQueue->peek_front()->getId() << endl;
+	//cout << "EventBased::schedule() - activating: " << activeQueue->peek_front()->getId() << endl;
 	activeQueue->peek_front()->activate();
       }
 
