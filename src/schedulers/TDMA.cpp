@@ -1,7 +1,6 @@
 #include "schedulers/TDMA.h"
 
 #include "core/Runnable.h"
-#include "schedulers/Scheduler.h"
 #include "pthread/Priorities.h"
 #include "results/Trace.h"
 #include "util/Enumerations.h"
@@ -125,6 +124,14 @@ void TDMA::newJob(Runnable *obj) {
     cout << "TDMA::newJob - parent was null!\n";
   }
   //else -> it is the top level entity
+}
+
+///This function handles a change in the criteria of an active Runnable. This might lead to the calling Runnable to be moved from the head of the activeQueue to another position and thus cause a change in the order of execution.
+void TDMA::updateRunnable(Runnable* r) {
+  if(parent!=NULL) {
+    criteria = r->getCriteria();
+    parent->updateRunnable(this);
+  }
 }
 
 /**** FROM SCHEDULER ****/

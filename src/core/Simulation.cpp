@@ -1,7 +1,6 @@
 #include "core/Simulation.h"
 
 #include "core/Dispatcher.h"
-#include "schedulers/Scheduler.h"
 #include "core/Task.h"
 #include "core/Worker.h"
 #include "dispatchers/Aperiodic.h"
@@ -11,6 +10,7 @@
 #include "pthread/Thread.h"
 #include "results/Statistics.h"
 #include "results/Trace.h"
+#include "schedulers/Scheduler.h"
 #include "util/Operators.h"
 #include "util/Parser.h"
 #include "util/TimeUtil.h"
@@ -220,6 +220,6 @@ void Simulation::setName(string s) {
 }
 
 ///This function sets the top schedulerxs
-void Simulation::setTopScheduler(Scheduler *sched) {
+void Simulation::setTopScheduler(Scheduler* sched) {
   top_sched = sched;
 }

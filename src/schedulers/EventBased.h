@@ -1,9 +1,9 @@
 #ifndef _EVENT_BASED_H
 #define _EVENT_BASED_H
 
-#include "schedulers/Scheduler.h"
 #include "core/Simulation.h"
 #include "pthread/Priorities.h"
+#include "schedulers/Scheduler.h"
 
 #include <deque>
 
@@ -23,17 +23,17 @@ class EventBased : public Scheduler {
   ///This queue holds all active Runnables underneath this scheduler.
   RunnableQueue* activeQueue;
 
-  ///This queue holds the ids of runnables in the active queue who already finished
-  deque<unsigned int> finishedJobQueue;
+  ///This deque holds the ids of runnables in the active queue who already finished
+  deque<unsigned int> finishedJobDeque;
 
-  ///This queue holds the Runnables who are registering new jobs
-  deque<Runnable*> newJobQueue;
+  ///This deque holds the Runnables who are registering new jobs
+  deque<Runnable*> newJobDeque;
 
   ///This queue holds the Runnables who need to be updated in the activeQueue
-  deque<Runnable*> updateQueue;
+  deque<Runnable*> updateDeque;
 
   ///Semaphores to ensure proper execution
-  sem_t activation_sem, event_sem, finishedjob_sem, newjob_sem, schedule_sem, update_sem;
+  sem_t activation_sem, event_sem, schedule_sem;
 
  public: 
 

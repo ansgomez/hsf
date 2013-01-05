@@ -1,8 +1,8 @@
 #ifndef _TDMA_H
 #define _TDMA_H
 
-#include "schedulers/Scheduler.h"
 #include "core/Simulation.h"
+#include "schedulers/Scheduler.h"
 
 #include <errno.h>
 #include <semaphore.h>
@@ -60,6 +60,9 @@ class TDMA : public Scheduler {
 
   ///This function handles the end of a job in its load. Depending on the scheduling, this could change the order of execution.
   void finishedJob(unsigned int worker_id);
+
+  ///This function handles a change in the criteria of an active Runnable. This might lead to the calling Runnable to be moved from the head of the activeQueue to another position and thus cause a change in the order of execution.
+  void updateRunnable(Runnable* r);
 
   /**** FROM SCHEDULER ****/
 

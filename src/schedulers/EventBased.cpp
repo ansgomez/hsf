@@ -29,9 +29,6 @@ EventBased::EventBased(unsigned int _id, int level) : Scheduler(_id, level) {
   //Initialize semaphores
   sem_init(&activation_sem, 0, 1);  //mutex semaphore
   sem_init(&event_sem, 0, 0);       //sem used as signal
-  sem_init(&finishedjob_sem, 0, 1); //mutex semaphore
-  sem_init(&newjob_sem, 0, 1);      //mutex semaphore
-  sem_init(&update_sem, 0, 1);      //mutex semaphore
   sem_init(&schedule_sem, 0, 1);    //mutex semaphore
 }
 
@@ -51,9 +48,6 @@ void EventBased::join() {
   sem_post(&event_sem);
   sem_post(&schedule_sem);
   sem_post(&activation_sem);
-  sem_post(&newjob_sem);
-  sem_post(&finishedjob_sem);
-  sem_post(&update_sem);
 
   if(parent!=NULL) {
     parent->join();
@@ -79,23 +73,19 @@ void EventBased::activate() {
 
   sem_wait(&activation_sem);
     sem_wait(&schedule_sem);
-
       setPriority(Priorities::get_sched_pr(level));
       state = activated;
 
       //Activate current head of active_queue (if any) only when there are 
       //no new jobs (since the current job might have to be preempted)
-      //sem_wait(&newjob_sem);
-
-        //If there are no new jobs pending
-        if(newJobQueue.size() == 0) {
-          //activate current head of queue
-          if(activeQueue->peek_front() != NULL) {
-            activeQueue->peek_front()->activate();
-          }
+      //If there are no new jobs pending
+      if(newJobDeque.size() == 0) {
+        //activate current head of queue
+        if(activeQueue->peek_front() != NULL) {
+          activeQueue->peek_front()->activate();
         }
-        //if there are new jobs, wait for scheduler to process the new jobs himself
-	//sem_post(&newjob_sem);
+      }
+      //if there are new jobs, wait for scheduler to process the new jobs himself
     sem_post(&schedule_sem); 
   sem_post(&activation_sem);
 
@@ -137,15 +127,11 @@ void EventBased::finishedJob(unsigned int runnable_id) {
   #endif
 
   sem_wait(&schedule_sem);
-  //sem_wait(&finishedjob_sem);
-      #if _DEBUG==1
-      cout << "EventBased::finishedJob() is processing finishedJob\n";
-      #endif
-      finishedJobQueue.push_back(runnable_id); //Add id to finishedJobQueue
-      //sem_post(&finishedjob_sem);
+    #if _DEBUG==1
+    cout << "EventBased::finishedJob() is processing finishedJob\n";
+    #endif
+    finishedJobDeque.push_back(runnable_id); //Add id to finishedJobDeque
 
-    //This will only be reached when all queues were empty
-    //This meands that scheduler needs to be signaled!
     #if _DEBUG==1
     cout << "EventBased::finishedJob() - Registering finishedJob & event...\n";
     #endif
@@ -176,16 +162,13 @@ void EventBased::newJob(Runnable* r) {
   #endif
 
   sem_wait(&schedule_sem);
-  //sem_wait(&newjob_sem);
-      newJobQueue.push_back(r);//Add new arrival
-      //sem_post(&newjob_sem); 
+    newJobDeque.push_back(r);//Add new arrival
 
     #if _DEBUG==1
     cout << "EventBased::newJob() registered newJob and event!\n";
     #endif
 
     //Set the scheduler's criteria equal to its load's criteria
-    //TODO: enforce some bounds on the load's criteria before assignment
     criteria = r->getCriteria();
  
     //Notify parent of new head
@@ -207,17 +190,13 @@ void EventBased::newJob(Runnable* r) {
 
 ///This function handles a job that had been queued by the worker. The worker object is thus already in the scheduler's queue, but now has a different schedulable criteria (and thus requires a change in the scheduling queue).
 void EventBased::updateRunnable(Runnable* r) {
-  #if _DEBUG==1
+  #if _DEBUG==0
   cout << "EventBased::updateRunnable() is waiting for schedule_sem\n";
   #endif
 
   sem_wait(&schedule_sem);
-    //add to updateQueue
-    //sem_wait(&update_sem);
-      updateQueue.push_back(r);
-      //sem_post(&update_sem); 
-    //register event
-    sem_post(&event_sem);
+    updateDeque.push_back(r);
+    sem_post(&event_sem); //register event
   sem_post(&schedule_sem);
 }
 
@@ -243,7 +222,7 @@ void EventBased::schedule() {
 
       #if _DEBUG==1
       cout << "EventBased::schedule() is processing an event: ";
-      cout << newJobQueue.size() << ":" << finishedJobQueue.size() << ":" << updateQueue.size() << "\n";
+      cout << newJobDeque.size() << ":" << finishedJobDeque.size() << ":" << updateDeque.size() << "\n";
       #endif
 
       //Deactivate currently active job (if any) in order to process new/finished jobs
@@ -252,19 +231,15 @@ void EventBased::schedule() {
         currentRunnable->deactivate();
       }
 
-      //sem_wait(&update_sem);
-      //sem_wait(&newjob_sem);
-      //sem_wait(&finishedjob_sem);
-
       /***** handle updates *****/
-      if(updateQueue.size() > 0) {
+      if(updateDeque.size() > 0) {
         #if _DEBUG==1
 	cout << "EventBased::schedule() is handling a runnable update!\n";
         #endif
-	Runnable* r = updateQueue.front();
+	Runnable* r = updateDeque.front();
 	activeQueue->deleteRunnable(r->getId());//erase from activeQueue
 	activeQueue->insertRunnable(r);//insert into activeQueue with updated criteria
-	updateQueue.pop_front();//erase from updateQueue
+	updateDeque.pop_front();//erase from updateDeque
 	
 	if(parent!=NULL) {
 	  parent->updateRunnable(this);
@@ -274,32 +249,29 @@ void EventBased::schedule() {
 	}
       }
       /***** handle new jobs *****/
-      else if(newJobQueue.size()>0) {
+      else if(newJobDeque.size()>0) {
         #if _DEBUG==1
         cout << "EventBased::schedule() is handling a new job!\n";
         #endif
-        activeQueue->insertRunnable(newJobQueue.front());//insert head of newJobQueue
-        newJobQueue.pop_front();//erase head of newJobQueue
+        activeQueue->insertRunnable(newJobDeque.front());//insert head of newJobDeque
+        newJobDeque.pop_front();//erase head of newJobDeque
       }
       /***** handle finished jobs *****/
-      else if(finishedJobQueue.size() > 0) {
+      else if(finishedJobDeque.size() > 0) {
         #if _DEBUG==1
         cout << "EventBased::schedule() is handling a finished job!\n";
         #endif
-        activeQueue->deleteRunnable(finishedJobQueue.front());//erase from activeQueue
-        finishedJobQueue.pop_front();//erase from finishedJobQueue
+        activeQueue->deleteRunnable(finishedJobDeque.front());//erase from activeQueue
+        finishedJobDeque.pop_front();//erase from finishedJobDeque
       }
 
       //activate the (possibly new) head of activeQueue
       if(activeQueue->getSize()>0) {
-	//cout << "EventBased::schedule() - activating: " << activeQueue->peek_front()->getId() << endl;
+	#if _DEBUG==1
+	cout << "EventBased::schedule() - activating: " << activeQueue->peek_front()->getId() << endl;
+	#endif
 	activeQueue->peek_front()->activate();
       }
-
-      //release all sems
-      //sem_post(&update_sem);
-      //sem_post(&newjob_sem);
-      //sem_post(&finishedjob_sem);
 
       #if _DEBUG==1
       cout << "EventBased::schedule() is releasing sem...\n";
