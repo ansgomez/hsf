@@ -4,7 +4,7 @@
 #include "core/Dispatcher.h"
 #include "core/ResourceAllocator.h"
 #include "core/Runnable.h"
-#include "core/Scheduler.h"
+#include "schedulers/Scheduler.h"
 #include "core/Simulation.h"
 #include "core/Worker.h"
 #include "criteria/InclusiveCriteria.h"

@@ -1,7 +1,7 @@
 #include "schedulers/TDMA.h"
 
 #include "core/Runnable.h"
-#include "core/Scheduler.h"
+#include "schedulers/Scheduler.h"
 #include "pthread/Priorities.h"
 #include "results/Trace.h"
 #include "util/Enumerations.h"

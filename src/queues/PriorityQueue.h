@@ -1,7 +1,7 @@
 #ifndef _PRIORITYQUEUE_H
 #define _PRIORITYQUEUE_H
 
-#include "core/RunnableQueue.h"
+#include "queues/RunnableQueue.h"
 
 /***************************************
  *        CLASS DECLARATION            * 

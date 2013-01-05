@@ -1,7 +1,7 @@
 #include "schedulers/EventBased.h"
 
 #include "core/Criteria.h"
-#include "core/RunnableQueue.h"
+#include "queues/RunnableQueue.h"
 
 #include <iostream>
 #include <time.h>

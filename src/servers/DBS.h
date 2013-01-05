@@ -1,8 +1,8 @@
 #ifndef _DBS_H
 #define _DBS_H
 
-#include "core/RunnableQueue.h"
-#include "core/Server.h"
+#include "queues/RunnableQueue.h"
+#include "servers/Server.h"
 
 /***************************************
  *        CLASS DECLARATION            * 

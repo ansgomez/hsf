@@ -3,8 +3,9 @@ bin/
 obj/
 
 ##### Library files ######
-lib/mjpeg/
+lib/mjpeg
 lib/xml
+lib/tasks
 
 ##### Trace files ######
 *.csv
@@ -13,10 +14,6 @@ lib/xml
 *.png
 *.svg
 *.eps
-
-##### Text files ######
-*.xml
-*.txt
 
 ##### Temp files ######
 *~

@@ -1,7 +1,7 @@
 #include "core/Simulation.h"
 
 #include "core/Dispatcher.h"
-#include "core/Scheduler.h"
+#include "schedulers/Scheduler.h"
 #include "core/Task.h"
 #include "core/Worker.h"
 #include "dispatchers/Aperiodic.h"

@@ -1,7 +1,7 @@
 #ifndef _CBS_H
 #define _CBS_H
 
-#include "core/Server.h"
+#include "servers/Server.h"
 #include "queues/QueueCBS.h"
 
 /***************************************

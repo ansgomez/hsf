@@ -1,7 +1,7 @@
 #ifndef _TDMA_H
 #define _TDMA_H
 
-#include "core/Scheduler.h"
+#include "schedulers/Scheduler.h"
 #include "core/Simulation.h"
 
 #include <errno.h>

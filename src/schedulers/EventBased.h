@@ -1,7 +1,7 @@
 #ifndef _EVENT_BASED_H
 #define _EVENT_BASED_H
 
-#include "core/Scheduler.h"
+#include "schedulers/Scheduler.h"
 #include "core/Simulation.h"
 #include "pthread/Priorities.h"
 

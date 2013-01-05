@@ -1,7 +1,7 @@
 #ifndef _FIFOQUEUE_H
 #define _FIFOQUEUE_H
 
-#include "core/RunnableQueue.h"
+#include "queues/RunnableQueue.h"
 
 /***************************************
  *        CLASS DECLARATION            * 
