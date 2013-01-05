@@ -125,8 +125,8 @@ void Statistics::toFile(string filePrefix) {
   /************ SAVING RUNTIMES *********/
   Runtime aux_r;
 
-  //sort runtime vector
-  //sort(runtimes.begin(), runtimes.end(), Statistics::compareId());
+  //First sort the vector, then save to file
+  sort(runtimes.begin(), runtimes.end(), compareId());
   file.open((filePrefix+"_runtimes.csv").data());
   for(unsigned int c=0;c<runtimes.size();c++) {
     aux_r = runtimes[c];

@@ -19,6 +19,18 @@
  *        CLASS DECLARATION            * 
  ***************************************/
 
+///This structure/function helps sort the runtime vector by ID
+struct compareId {
+  bool operator()(Runtime a, Runtime b) {
+    if (a.getId() < b.getId() ) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+};
+
 class Statistics {
 
  private:
@@ -73,19 +85,7 @@ class Statistics {
   ///This function saves all results to a custom csv file
   static void toFile(string filePrefix);
   
-  /*
- ///This function helps sort the runtime vector by ID
-  struct compareId {
-    bool operator()(Runtime* a, Runtime* b) {
-      if (a->getId() < b->getId() ) {
-	return true;
-      }
-      else {
-	return false;
-      }
-    }
-  };
-  */
+
 };
   
 #endif
