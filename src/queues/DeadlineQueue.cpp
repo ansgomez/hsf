@@ -26,8 +26,10 @@ DeadlineQueue::DeadlineQueue() : RunnableQueue() {
 void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
   //increase the size counter
   size++;
-
-//cout << "DeadlineQueue::insertRunnable - size is now: " << size << endl;
+  
+  #if _INFO==0
+  cout << "DeadlineQueue::insertRunnable - size is now: " << size << endl;
+  #endif
 
   //Base case, the list was empty. The Runnable is now head and tail of queue
   if (head == NULL) {

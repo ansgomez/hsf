@@ -126,6 +126,9 @@ class SimulationFigure {
   //Set the x domain of the current plot and the corresponding ranges of the figure
   void setTimeRange(double t); 
 
+  //This function sorts the worker_id vector
+  void sort_worker_id();
+
   // This function produces a vector of worked IDs 
   void workerID_vector(unsigned int id);
 };

@@ -30,8 +30,34 @@ using namespace std;
 ///This variable holds the prefix for the input files (_traces, _runtimes, _missedDeadlines).
 string prefix="simulation";
 vector <string> inputMetric, inputPrefix;
-const char *metricsVector[] = {"execution_times","exec","response_times","resp","utilization","util","resource_allocation_cost","alloc", "system_cost","sys","worker_cost","worker", "all","exe", "throughput"};
-vector <string> metrics(metricsVector, (metricsVector)+sizeof(metricsVector)/sizeof(metricsVector[0]));
+//const char *metricsVector[] = {"execution_times","exec","response_times","resp","utilization","util","resource_allocation_cost","alloc", "system_cost","sys","worker_cost","worker", "all","exe", "throughput", "missed_deadline", "missed", "deadline"};
+//vector <string> metrics(metricsVector, (metricsVector)+sizeof(metricsVector)/sizeof(metricsVector[0]));
+const char *execVector[] = {"execution_times","exec","exe"};
+vector <string> exec(execVector, (execVector)+sizeof(execVector)/sizeof(execVector[0]));
+
+const char *respVector[] = {"response_times","resp"};
+vector <string> resp(respVector, (respVector)+sizeof(respVector)/sizeof(respVector[0]));
+
+const char *utilVector[] = {"utilization","util"};
+vector <string> util(utilVector, (utilVector)+sizeof(utilVector)/sizeof(utilVector[0]));
+
+const char *allocVector[] = {"resource_allocation_cost","alloc"};
+vector <string> alloc(allocVector, (allocVector)+sizeof(allocVector)/sizeof(allocVector[0]));
+
+const char *sysVector[] = {"system_cost","sys"};
+vector <string> sys(sysVector, (sysVector)+sizeof(sysVector)/sizeof(sysVector[0]));
+
+const char *workerVector[] = {"worker_cost","worker"};
+vector <string> worker(workerVector, (workerVector)+sizeof(workerVector)/sizeof(workerVector[0]));
+
+const char *allVector[] = {"all"};
+vector <string> all(allVector, (allVector)+sizeof(allVector)/sizeof(allVector[0]));
+
+const char *throughputVector[] = {"throughput"};
+vector <string> throughput(throughputVector, (throughputVector)+sizeof(throughputVector)/sizeof(throughputVector[0]));
+
+const char *missedVector[] = {"missed_deadline", "missed","deadline"};
+vector <string> missed(missedVector, (missedVector)+sizeof(missedVector)/sizeof(missedVector[0]));
 
 /*********** FUNCTIONS ***********/
 
@@ -43,6 +69,9 @@ bool isAll(string str);
 
 ///checks if the input string calls for execution function
 bool isExecution(string str);
+
+///checks if the input string calls for missedDeadlinesn function
+bool isMissedDeadlines(string str);
 
 ////checks if the input string calls for resource allocation function
 bool isResourceAllocationCost(string str);
@@ -62,16 +91,19 @@ bool isUtilization(string str);
 ///checks if the input string calls for worker cost functio
 bool isWorkerCost(string str);
 
-///This function process all the input metrices with all prefixes
+///This function process all the imput metrices with all prefixes
 void process();
 
 ///This function calls the show_execution_times script to produce "$prefix_execution_times.csv"
 void showExecutionTimes();
 
-///This function calls the Resource Allocation Cost script to produce "$prefix_alloc_cost_us.csv"
+///This function calls the showMissed deadllines script to produce "$prefix_missed_deadlines.csv"
+void showMissedDeadlines();
+
+///This function calls the showResource Allocation Cost script to produce "$prefix_alloc_cost_us.csv"
 void showResourceAllocationCost();
 
-///This function calls the show_response_times script to produce "$prefix_response_times.csv"
+///This function calls the showResponse_times script to produce "$prefix_response_times.csv"
 void showResponseTimes();
 
 ///This function calls the showSystemCost script to show "$prefix_System Cost"
@@ -124,6 +156,7 @@ int main(int argn, char **argv) {
     showResourceAllocationCost();
     showSystemCost();
     showWorkerCost();
+    showMissedDeadlines();
   }
 
 #if _INFO==1
@@ -141,6 +174,12 @@ void showExecutionTimes() {
   system(cmd.c_str());
 }
 
+///This function calls the show_missed_deadllines script to produce "$prefix_missed_deadlines.csv"
+void showMissedDeadlines(){
+  string cmd = "octave --no-window-system -q --eval \"show_missed_deadlines('" + prefix + "')\"";
+
+  system(cmd.c_str());
+}
 ///This function calls the showResourceAllocationCost script to show "$prefix_Resource Allocation Cost"
 void  showResourceAllocationCost(){
  
@@ -192,20 +231,108 @@ void  showWorkerCost(){
 void interpret(string str) {
 
   transform(str.begin(),str.end(),str.begin(),::tolower);
-  if (find (metrics.begin(), metrics.end(), str)!=metrics.end())
+  if (isExecution( str)) 
+    inputMetric.push_back(str);
+  else if(isResponseTimes( str))
+    inputMetric.push_back(str);
+  else if(isUtilization( str))
+    inputMetric.push_back(str);
+  else if(isResourceAllocationCost( str))
+    inputMetric.push_back(str);
+  else if(isSystemCost( str))
+    inputMetric.push_back(str);
+  else if(isWorkerCost( str))
+    inputMetric.push_back(str);
+  else if(isAll( str))
+    inputMetric.push_back(str);
+  else if(isThroughput( str))
+    inputMetric.push_back(str);
+  else if(isMissedDeadlines(str))
     inputMetric.push_back(str);
   else
     inputPrefix.push_back(str);
 }
+///checks if the input string calls for all functions
+bool isAll(string str){
+   if (find (all.begin(), all.end(), str)!=all.end())
+      return true;
+  else
+      return false;
+}
 
-///This function process all the input metrices with all prefixes
+///checks if the input string calls for execution function
+bool isExecution(string str){
+  if (find (exec.begin(), exec.end(), str)!=exec.end())
+      return true;
+  else
+      return false;
+}
+
+///checks if the input string calls for missedDeadlinesn function
+bool isMissedDeadlines(string str){
+  if (find (missed.begin(), missed.end(), str)!=missed.end())
+      return true;
+  else
+      return false;
+}
+
+///checks if the input string calls for resource allocation function
+bool isResourceAllocationCost(string str){
+  if (find (alloc.begin(), alloc.end(), str)!=alloc.end())
+      return true;
+  else
+      return false;
+}
+
+///checks if the input string calls for ResponseTimes function
+bool isResponseTimes(string str){
+  //cout << "RESPONSE \n";
+  if (find (resp.begin(), resp.end(), str)!=resp.end())
+      return true;
+  else
+      return false;
+}
+
+///checks if the input string calls for system cost function
+bool isSystemCost(string str){
+   if (find (sys.begin(), sys.end(), str)!=sys.end())
+      return true;
+  else
+      return false;
+}
+
+///checks if the input string calls for throughput function
+bool isThroughput(string str){
+   if (find (throughput.begin(), throughput.end(), str)!=throughput.end())
+      return true;
+  else
+      return false;
+}
+
+///checks if the input string calls for utilization function
+bool isUtilization(string str){
+  if (find (util.begin(), util.end(), str)!=util.end())
+      return true;
+  else
+      return false;
+}
+
+///checks if the input string calls for worker cost function
+bool isWorkerCost(string str){
+   if (find (worker.begin(), worker.end(), str)!=worker.end())
+      return true;
+  else
+      return false;
+}
+
+///This function process 
 void process (){
   unsigned int i,j;
  
    for (i=0; i< inputPrefix.size(); i++){
      prefix = inputPrefix[i];
-     cout << "***  Simulation: " << prefix << "  ***\n\n";
      for (j=0; j< inputMetric.size() ; j++){
+
        if( isExecution(inputMetric[j]) )
 	 showExecutionTimes();
        if ( isResponseTimes(inputMetric[j]) )
@@ -220,8 +347,10 @@ void process (){
 	 showWorkerCost();
        if ( isThroughput(inputMetric[j]) )
 	 showThroughput();
+       if ( isMissedDeadlines(inputMetric[j]) )
+	 showMissedDeadlines();
        if ( isAll(inputMetric[j]) ){
-	 cout << "  +++   Showing all metrics!\t+++\n\n";
+	 cout << "***   Showing all metrics!\t***\n\n";
 	 showExecutionTimes();
 	 showResponseTimes();
 	 showThroughput();
@@ -229,72 +358,9 @@ void process (){
 	 showResourceAllocationCost();
 	 showSystemCost();
 	 showWorkerCost();
+	 showMissedDeadlines();
 	 
        }
      }
    }
-}
-
-///checks if the input string calls for execution function
-bool isExecution(string str){
-  if ((str.compare(metricsVector[0])==0)||(str.compare(metricsVector[1])==0)||(str.compare(metricsVector[13])==0))
-      return true;
-  else
-      return false;
-}
-
-///checks if the input string calls for ResponseTimes function
-bool isResponseTimes(string str){
-  if ((str.compare(metricsVector[2])==0)||(str.compare(metricsVector[3])==0))
-      return true;
-  else
-      return false;
-}
-
-///checks if the input string calls for utilization function
-bool isUtilization(string str){
-  if ((str.compare(metricsVector[4])==0)||(str.compare(metricsVector[5])==0))
-      return true;
-  else
-      return false;
-}
-
-///checks if the input string calls for resource allocation function
-bool isResourceAllocationCost(string str){
-  if ((str.compare(metricsVector[6])==0)||(str.compare(metricsVector[7])==0))
-      return true;
-  else
-      return false;
-}
-
-///checks if the input string calls for system cost function
-bool isSystemCost(string str){
-  if ((str.compare(metricsVector[8])==0)||(str.compare(metricsVector[9])==0))
-      return true;
-  else
-      return false;
-}
-
-///checks if the input string calls for worker cost function
-bool isWorkerCost(string str){
-  if ((str.compare(metricsVector[10])==0)||(str.compare(metricsVector[11])==0))
-      return true;
-  else
-      return false;
-}
-
-///checks if the input string calls for all functions
-bool isAll(string str){
-  if ((str.compare(metricsVector[12])==0)||(str.compare("all")==0))
-      return true;
-  else
-      return false;
-}
-
-///checks if the input string calls for Throughput function
-bool isThroughput(string str){
-  if ((str.compare(metricsVector[14])==0))
-      return true;
-  else
-      return false;
 }

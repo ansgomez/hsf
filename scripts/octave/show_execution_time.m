@@ -20,7 +20,6 @@ for i=1:num_worker;
   min_i = minimum(exec_ms(:,i));
   avg = average(exec_ms(:,i));
   max_i  =  max(exec_ms(:,i));
-  num_job = count(exec_ms(:,i));
 
   %output
   fprintf('\t%2d    %3d      %7.3f    %7.3f    %7.3f    %7.3f \n', i, num_job,  min_i , avg, max_i, total);

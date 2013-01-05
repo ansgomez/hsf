@@ -9,6 +9,7 @@
 #include <string.h>
 #include <vector>
 
+
 using namespace std;
 
 /********************************************************************************
@@ -228,6 +229,8 @@ void SimulationFigure::importCSV() {
   while(getline(infile,line)) {
     parseLine(line);
   }
+  //sort worker_id vector
+  sort_worker_id();
 }
 
 //Initialize a plot with y-label and default settings (ticks, ranges, etc)
@@ -342,6 +345,12 @@ void SimulationFigure::setSize(int x, int y) {
 void SimulationFigure::setTimeRange(double t) {
   this->x2 = t;
   setSize((int)ceil(t)*UNIT_WIDTH, PLOT_HEIGHT);
+}
+
+//This function sorts the worker_id vector
+void SimulationFigure::sort_worker_id(){
+	sort (worker_id.begin(), worker_id.end());
+
 }
 
 // This function produces a vector of worked IDs
