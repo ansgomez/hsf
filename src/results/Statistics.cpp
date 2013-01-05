@@ -113,14 +113,14 @@ void Statistics::toFile(string filePrefix) {
 
   /************ SAVING MISSED DEADLINES *********/
   MissedDeadline aux_m;
-  file.open((filePrefix+"_missedDeadlines.csv").data());
+  file.open((filePrefix+"_missed_deadlines.csv").data());
   for(unsigned int c=0;c<missedDeadlines.size();c++) {
     aux_m = missedDeadlines[c];
     file << aux_m.toString() << endl; 
   }
   file.close();
-  system(("chown hsf:hsf " + filePrefix + "_missedDeadlines.csv").data() );
-  system(("chmod 666 " + filePrefix + "_missedDeadlines.csv").data() );
+  system(("chown hsf:hsf " + filePrefix + "_missed_deadlines.csv").data() );
+  system(("chmod 666 " + filePrefix + "_missed_deadlines.csv").data() );
 
   /************ SAVING RUNTIMES *********/
   Runtime aux_r;

@@ -8,7 +8,7 @@ end
 
 traces = csvread(name_traces);
 
-name_missed = strcat(name,'_missedDeadlines.csv');
+name_missed = strcat(name,'_missed_deadlines.csv');
 
 if exist(name_missed, "file") == 0
   fprintf("\n   File: '%s' was not found!\n", name_missed);
@@ -70,7 +70,7 @@ matrix = [worker_id ; missed_percentage ; lateness];
 deadlines_matrix =transpose(matrix);
 
 
-name_missed_deadlines = strcat(name,'_deadlines_matrix.csv');
+name_missed_deadlines = strcat(name,'_deadline_metrics.csv');
 csvwrite(name_missed_deadlines,deadlines_matrix);
 
 clear all;

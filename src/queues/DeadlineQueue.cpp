@@ -27,7 +27,7 @@ void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
   //increase the size counter
   size++;
   
-  #if _INFO==0
+  #if _INFO==1
   cout << "DeadlineQueue::insertRunnable - size is now: " << size << endl;
   #endif
 

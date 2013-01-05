@@ -12,6 +12,7 @@
  * system_implementation_cost   (sys)
  * worker_cost                  (worker)
  * throughput                   (throughput)
+ * missed_deadlines             (missed)
  * -----------------------------------
  * All of the above             (all)
  *
@@ -27,11 +28,11 @@ using namespace std;
 
 /*********** VARIABLES ***********/
 
-///This variable holds the prefix for the input files (_traces, _runtimes, _missedDeadlines).
+///This variable holds the prefix for the input files (_traces, _runtimes, _missed_deadlines).
 string prefix="simulation";
+
 vector <string> inputMetric, inputPrefix;
-//const char *metricsVector[] = {"execution_times","exec","response_times","resp","utilization","util","resource_allocation_cost","alloc", "system_cost","sys","worker_cost","worker", "all","exe", "throughput", "missed_deadline", "missed", "deadline"};
-//vector <string> metrics(metricsVector, (metricsVector)+sizeof(metricsVector)/sizeof(metricsVector[0]));
+
 const char *execVector[] = {"execution_times","exec","exe"};
 vector <string> exec(execVector, (execVector)+sizeof(execVector)/sizeof(execVector[0]));
 
@@ -56,7 +57,7 @@ vector <string> all(allVector, (allVector)+sizeof(allVector)/sizeof(allVector[0]
 const char *throughputVector[] = {"throughput"};
 vector <string> throughput(throughputVector, (throughputVector)+sizeof(throughputVector)/sizeof(throughputVector[0]));
 
-const char *missedVector[] = {"missed_deadline", "missed","deadline"};
+const char *missedVector[] = {"missed_deadlines", "missed","deadline"};
 vector <string> missed(missedVector, (missedVector)+sizeof(missedVector)/sizeof(missedVector[0]));
 
 /*********** FUNCTIONS ***********/
