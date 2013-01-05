@@ -35,14 +35,18 @@ void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
     head->r = newRunnable;
     tail = head;
     tail->next = NULL;
-    //cout << "New Head1: " << newRunnable->getId() << endl;
+    #if _DEBUG==1
+    cout << "New Head1: " << newRunnable->getId() << endl;
+    #endif
     return;
   }
 
   struct timespec currentDeadline = head->r->getCriteria()->getDeadline();
   struct timespec newDeadline = newRunnable->getCriteria()->getDeadline();
 
-  //cout << "Comparing: " << currentDeadline.tv_sec << ":" << currentDeadline.tv_nsec << " vs " << newDeadline.tv_sec << ":" << newDeadline.tv_nsec << endl;
+  #if _DEBUG==1
+  cout << "Comparing: " << currentDeadline.tv_sec << ":" << currentDeadline.tv_nsec << " vs " << newDeadline.tv_sec << ":" << newDeadline.tv_nsec << endl;
+  #endif
 
   //If in a non-empty queue, newRunnable has a deadline earlier than the head, it becomes the new head
   if(currentDeadline > newDeadline ) {
@@ -53,13 +57,17 @@ void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
     newNode->next = head;
     //move the head 
     head = newNode;
-    //cout << "New Head2: " << newRunnable->getId() << endl;
+    #if _DEBUG==1
+    cout << "New Head2: " << newRunnable->getId() << endl;
+    #endif
     return;
   }
 
   currentDeadline = tail->r->getCriteria()->getDeadline();
 
-  //cout << "Comparing: " << currentDeadline.tv_sec << ":" << currentDeadline.tv_nsec << " vs " << newDeadline.tv_sec << ":" << newDeadline.tv_nsec << endl;
+  #if _DEBUG==1
+  cout << "Comparing: " << currentDeadline.tv_sec << ":" << currentDeadline.tv_nsec << " vs " << newDeadline.tv_sec << ":" << newDeadline.tv_nsec << endl;
+  #endif
 
   //In a non-empty queue, the new runnable has the latest deadline (later than the tail)
   if( currentDeadline < newDeadline ) {
@@ -72,7 +80,9 @@ void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
     tail->next = newNode;
     //move the tail
     tail = newNode;
-    //cout << "New tail: " << newRunnable->getId() << endl;
+    #if _DEBUG==1
+    cout << "New tail: " << newRunnable->getId() << endl;
+    #endif
     return;
   }
 
@@ -82,7 +92,9 @@ void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
   while(aux != NULL) {
     currentDeadline = aux->r->getCriteria()->getDeadline();
 
-    //cout << "Comparing: " << currentDeadline.tv_sec << ":" << currentDeadline.tv_nsec << " vs " << newDeadline.tv_sec << ":" << newDeadline.tv_nsec << endl;
+    #if _DEBUG==1
+    cout << "Comparing: " << currentDeadline.tv_sec << ":" << currentDeadline.tv_nsec << " vs " << newDeadline.tv_sec << ":" << newDeadline.tv_nsec << endl;
+    #endif
 
     if( currentDeadline > newDeadline) {
       Node *newNode = (Node*) malloc(sizeof(Node));
@@ -90,8 +102,9 @@ void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
       //insert new node in the middle
       newNode->next = aux;
       prev->next = newNode;
-
-      //cout << "New node!" << newRunnable->getId() << endl;
+      #if _DEBUG==1
+      cout << "New node!" << newRunnable->getId() << endl;
+      #endif
       return;
     }
     
@@ -99,7 +112,7 @@ void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
     aux = aux->next;
   }
 
-  //cout << "DeadlineQueue::insertRunnable() error! newRunnable was not inserted...\n";
+  cout << "DeadlineQueue::insertRunnable() error! newRunnable was not inserted...\n";
 }
 
 
