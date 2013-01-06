@@ -14,10 +14,9 @@ int main(int argn, char **argv) {
   string *prefix, file;
   struct stat buf;
 
+  //If any file prefix is passed as argument
   if(argn > 1) {
-
     for(int i=1;i<=argn;i++) {
-
       if(argv[i] == NULL)
 	continue;
 

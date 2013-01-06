@@ -77,7 +77,7 @@ void SimulationFigure::drawSched(int plot, double sched_start, double sched_end,
   if(gr!=NULL) {
     gr->ColumnPlot(n_plots, plot, plot_offset);
     gr->SetRanges(x1,x2,y1,y2);
-    gr->Line(mglPoint(sched_start,base+height*1.1), mglPoint(sched_end,base+height*1.1), "KK");
+    gr->Line(mglPoint(sched_start,base+height*1.1), mglPoint(sched_end,base+height*1.1), "II");
   }
 }
 
@@ -132,8 +132,10 @@ void SimulationFigure::genFig() {
   start_sched_us.reserve(n_workers);
   start_time.reserve(n_workers);
   
+  gr->SetArrowSize(1.5); //set default arrow size
 
-  struct timespec range = TimeUtil::Millis(200);
+
+  struct timespec range = TimeUtil::Millis(300);
   
   //Define values
   setNPlots(n_workers);
@@ -238,7 +240,8 @@ void SimulationFigure::initPlot(int plot, char *name) {
   if(gr!=NULL) {
     gr->ColumnPlot(n_plots, plot, plot_offset);
     gr->SetRanges(x1,x2,y1,y2);
-    gr->Label('y', name, 1); 
+    //gr->Label('y', name, 0); 
+    gr->Puts(mglPoint(-15,0.5),mglPoint(-10,0.5),name,"",8);
     gr->SetTicks('x', 5, 0);
     gr->Axis("xT");
   }
@@ -336,8 +339,8 @@ void SimulationFigure::setRanges(double x1, double x2, double y1, double y2) {
 //Sets the size of the figure, as well as the title and x label
 void SimulationFigure::setSize(int x, int y) {
   if (gr!=NULL) {
-    gr->SetSize(x,y);;
-    gr->Label('x',"Time [ms]",0, 0);
+    gr->SetSize(x,y);
+    gr->Label('x',"Time [ms]",0);
   }
 }
 

@@ -21,8 +21,8 @@
 using namespace std;
 
 #define MAX_PLOTS    10  //Max number of column plot in figure
-#define PLOT_HEIGHT  200 //Vert. Pixels per plot in picture
-#define UNIT_WIDTH   2 //Hor. Pixels per time unit in picture
+#define PLOT_HEIGHT  500 //Vert. Pixels per plot in picture
+#define UNIT_WIDTH   5 //Hor. Pixels per time unit in picture
 
 /***************************************
  *        CLASS DECLARATION            * 
