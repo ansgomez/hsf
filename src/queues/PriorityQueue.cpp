@@ -36,6 +36,7 @@ void PriorityQueue::insertRunnable(Runnable *newRunnable) {
     head->r = newRunnable;
     tail = head;
     tail->next = NULL;
+
     #if _DEBUG==1
     cout << "New Head1: " << newRunnable->getId() << endl;
     #endif
@@ -46,11 +47,11 @@ void PriorityQueue::insertRunnable(Runnable *newRunnable) {
   unsigned int newPriority = newRunnable->getCriteria()->getPriority();
 
   #if _DEBUG==1
-  cout << "Comparing: " << currentPriority.tv_sec << ":" << currentPriority.tv_nsec << " vs " << newPriority.tv_sec << ":" << newPriority.tv_nsec << endl;
+  cout << "Comparing: " << currentPriority << " vs " << newPriority << endl;
   #endif
 
-  //If in a non-empty queue, newRunnable has a deadline earlier than the head, it becomes the new head
-  if(currentPriority > newPriority ) {
+  //If in a non-empty queue, newRunnable has a priority higher than the head, it becomes the new head
+  if(currentPriority < newPriority ) {
     //create new node
     Node* newNode = (Node*) malloc(sizeof(Node));
     newNode->r = newRunnable;
@@ -58,6 +59,7 @@ void PriorityQueue::insertRunnable(Runnable *newRunnable) {
     newNode->next = head;
     //move the head 
     head = newNode;
+
     #if _DEBUG==1
     cout << "New Head2: " << newRunnable->getId() << endl;
     #endif
@@ -67,11 +69,11 @@ void PriorityQueue::insertRunnable(Runnable *newRunnable) {
   currentPriority = tail->r->getCriteria()->getPriority();
 
   #if _DEBUG==1
-  cout << "Comparing: " << currentPriority.tv_sec << ":" << currentPriority.tv_nsec << " vs " << newPriority.tv_sec << ":" << newPriority.tv_nsec << endl;
+  cout << "Comparing: " << currentPriority << " vs " << newPriority << endl;
   #endif
 
-  //In a non-empty queue, the new runnable has the latest deadline (later than the tail)
-  if( currentPriority < newPriority ) {
+  //If in a non-empty queue, the new runnable has a lower priority than the tail, it is the new tail
+  if( currentPriority > newPriority ) {
     //create new node
     Node* newNode = (Node*) malloc(sizeof(Node));
     newNode->r = newRunnable;
@@ -81,6 +83,7 @@ void PriorityQueue::insertRunnable(Runnable *newRunnable) {
     tail->next = newNode;
     //move the tail
     tail = newNode;
+
     #if _DEBUG==1
     cout << "New tail: " << newRunnable->getId() << endl;
     #endif
@@ -94,15 +97,16 @@ void PriorityQueue::insertRunnable(Runnable *newRunnable) {
     currentPriority = aux->r->getCriteria()->getPriority();
 
     #if _DEBUG==1
-    cout << "Comparing: " << currentPriority.tv_sec << ":" << currentPriority.tv_nsec << " vs " << newPriority.tv_sec << ":" << newPriority.tv_nsec << endl;
+    cout << "Comparing: " << currentPriority << " vs " << newPriority << endl;
     #endif
 
-    if( currentPriority > newPriority) {
+    if( currentPriority < newPriority) {
       Node *newNode = (Node*) malloc(sizeof(Node));
       newNode->r = newRunnable;
       //insert new node in the middle
       newNode->next = aux;
       prev->next = newNode;
+
       #if _DEBUG==1
       cout << "New node!" << newRunnable->getId() << endl;
       #endif

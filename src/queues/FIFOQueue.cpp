@@ -37,6 +37,7 @@ void FIFOQueue::insertRunnable(Runnable *newRunnable) {
     head->r = newRunnable;
     tail = head;
     tail->next = NULL;
+
     #if _DEBUG==1
     cout << "New Head1: " << newRunnable->getId() << endl;
     #endif
@@ -50,7 +51,7 @@ void FIFOQueue::insertRunnable(Runnable *newRunnable) {
   cout << "Comparing: " << currentArrivalTime.tv_sec << ":" << currentArrivalTime.tv_nsec << " vs " << newArrivalTime.tv_sec << ":" << newArrivalTime.tv_nsec << endl;
   #endif
 
-  //If in a non-empty queue, newRunnable has a deadline earlier than the head, it becomes the new head
+  //If in a non-empty queue, newRunnable has an arrivalTime earlier than the head, it becomes the new head
   if(currentArrivalTime > newArrivalTime ) {
     //create new node
     Node* newNode = (Node*) malloc(sizeof(Node));
@@ -59,6 +60,7 @@ void FIFOQueue::insertRunnable(Runnable *newRunnable) {
     newNode->next = head;
     //move the head 
     head = newNode;
+
     #if _DEBUG==1
     cout << "New Head2: " << newRunnable->getId() << endl;
     #endif
@@ -71,7 +73,7 @@ void FIFOQueue::insertRunnable(Runnable *newRunnable) {
   cout << "Comparing: " << currentArrivalTime.tv_sec << ":" << currentArrivalTime.tv_nsec << " vs " << newArrivalTime.tv_sec << ":" << newArrivalTime.tv_nsec << endl;
   #endif
 
-  //In a non-empty queue, the new runnable has the latest deadline (later than the tail)
+  //If in a non-empty queue, the new runnable has an arrival time later than the tail, it is the tail
   if( currentArrivalTime < newArrivalTime ) {
     //create new node
     Node* newNode = (Node*) malloc(sizeof(Node));
@@ -82,6 +84,7 @@ void FIFOQueue::insertRunnable(Runnable *newRunnable) {
     tail->next = newNode;
     //move the tail
     tail = newNode;
+
     #if _DEBUG==1
     cout << "New tail: " << newRunnable->getId() << endl;
     #endif
@@ -104,6 +107,7 @@ void FIFOQueue::insertRunnable(Runnable *newRunnable) {
       //insert new node in the middle
       newNode->next = aux;
       prev->next = newNode;
+
       #if _DEBUG==1
       cout << "New node!" << newRunnable->getId() << endl;
       #endif
