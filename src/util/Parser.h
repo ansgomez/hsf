@@ -12,7 +12,7 @@ class ResourceAllocator;
 class Scheduler;
 class Simulation;
 class TDMA;
-class EDF;
+class EventBased;
 class Worker;
 
 using namespace pugi;
@@ -47,6 +47,9 @@ class Parser {
  private:
 
   /*********** MEMBER FUNCTIONS ***********/
+  
+  ///This function indicates whether the string parameter is an EventBased algorithm
+  bool isEventBased(string alg);
 
   ///This function parses a Criteria node, and it returns an initialized Criteria object
   Criteria* parseCriteria(xml_node criteria_node);
@@ -55,7 +58,7 @@ class Parser {
   Dispatcher* parseDispatcher(xml_node disp, unsigned int* id);
 
   ///This function receives an EDF node and it parses the entire node to return the full object
-  EDF* parseEDF(xml_node edf_node, unsigned int *id, int level);
+  EventBased* parseEventBased(xml_node eb_node, unsigned int *id, int level);
 
   ///This function receives a Scheduler and it call on the appropiate parsing function to return the full object
   Scheduler* parseScheduler(ResourceAllocator* parent, xml_node sched_node, unsigned int *id, int level);

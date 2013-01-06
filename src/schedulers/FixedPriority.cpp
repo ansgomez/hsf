@@ -18,7 +18,7 @@ using namespace std;
 /*********** CONSTRUCTOR ***********/
 
 ///Constructor needs pointer to simulation
-FixedPriorty::FixedPriorty(unsigned int _id, int level) : EventBased(_id, level) {
+FixedPriority::FixedPriority(unsigned int _id, int level) : EventBased(_id, level) {
   #if _INFO==1
   cout << "Creating FixedPriority with ID: " << id << endl;
   #endif
@@ -32,7 +32,7 @@ FixedPriorty::FixedPriorty(unsigned int _id, int level) : EventBased(_id, level)
 /**** FROM EVENTBASED ****/
 
 ///This function compares a Criteria object with the current head of the active queue to determine whether the new Criteria is "greater" -> this could mean a higher priority, or earlier deadline, as defined by each subclass of the EventBased class.
-bool FixedPriorty::greaterCriteria(Criteria* newCriteria) {
+bool FixedPriority::greaterCriteria(Criteria* newCriteria) {
   //if there is a head, determine wheter the new criteria has an earlier deadline
   if(activeQueue->getSize() > 0) {
     

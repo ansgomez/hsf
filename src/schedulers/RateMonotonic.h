@@ -19,7 +19,7 @@ class RateMonotonic : public EventBased {
   /*********** INHERITED FUNCTIONS ***********/
 
   ///This function compares a Criteria object with the current head of the active queue to determine whether the new Criteria is "greater" -> this could mean a higher priority, or earlier deadline, as defined by each subclass of the EventBased class.
-  bool greaterCriteria(Criteria*newCriteria);
+  bool greaterCriteria(Criteria* newCriteria);
 
 };
 

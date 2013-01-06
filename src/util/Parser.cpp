@@ -11,6 +11,10 @@
 #include "dispatchers/Periodic.h"
 #include "dispatchers/PeriodicJitter.h"
 #include "schedulers/EDF.h"
+#include "schedulers/EventBased.h"
+#include "schedulers/FIFO.h"
+#include "schedulers/FixedPriority.h"
+#include "schedulers/RateMonotonic.h"
 #include "schedulers/Scheduler.h"
 #include "schedulers/TDMA.h"
 #include "tasks/BusyWait.h"
@@ -36,6 +40,24 @@ Parser::Parser(Simulation *_sim) {
 }
 
 /*********** PUBLIC MEMBER FUNCTIONS ***********/
+
+///This function indicates whether the string parameter is an EventBased algorithm
+bool Parser::isEventBased(string alg) {
+  if(alg == "EDF") {
+    return true;
+  }
+  if(alg == "FixedPriority") {
+    return true;
+  }
+  if(alg == "RateMonotonic") {
+    return true;
+  }
+  if(alg == "FIFO") {
+    return true;
+  }
+
+  return false;
+}
 
 ///This function receives the filepath and initiates the entire simulation
 void Parser::parseFile(string filePath) {
@@ -80,10 +102,29 @@ Criteria* Parser::parseCriteria(xml_node criteria_node) {
     c = (Criteria*) new InclusiveCriteria();
   }
 
-  //xml_node period = criteria_node.child("period");
   xml_node relativeDeadline = criteria_node.child("relative_deadline");
-  if( !relativeDeadline.empty()) {
+  if( !relativeDeadline.empty() ) {
     c->setRelativeDeadline(parseTime(relativeDeadline));
+  }
+  else {
+    c->setRelativeDeadline(TimeUtil::Millis(100));
+  }
+
+  xml_node period = criteria_node.child("period");
+  if( !period.empty() ) {
+    c->setPeriod(parseTime(period));
+  }
+  else {
+    c->setPeriod(TimeUtil::Millis(100));
+  }
+
+  xml_node priority = criteria_node.child("priority");
+  if( !priority.empty() ) {
+    string aux = priority.attribute("value").as_string();
+    c->setPriority((unsigned int) atoi(aux.c_str()) );
+  }
+  else {
+    c->setPriority(100);
   }
 
   return c;
@@ -135,30 +176,53 @@ Dispatcher* Parser::parseDispatcher(xml_node disp_node, unsigned int *id) {
 }
 
 ///This function receives an EDF node and it parses the entire node to return the full object
-EDF* Parser::parseEDF(xml_node edf_node, unsigned int *id, int level) {
-  EDF* edf = new EDF(*id, level);
+EventBased* Parser::parseEventBased(xml_node eb_node, unsigned int *id, int level) {
+  string alg = eb_node.attribute("algorithm").as_string();
+
+  EventBased* eb;
+
+  if(alg == "EDF") {
+    eb = (EventBased*) new EDF(*id, level);
+  }
+  else if(alg == "FixedPriority") {
+    eb = (EventBased*) new FixedPriority(*id, level);
+  }
+  else if(alg == "RateMonotonic") {
+    eb = (EventBased*) new RateMonotonic(*id, level);
+  }
+  else if(alg == "FIFO") {
+    eb = (EventBased*) new FIFO(*id, level);
+  }
+  else {
+    cout << "Parser::parseEventBased() error - algorithm not identified!\n";
+    exit(0);
+  }
 
   #if _INFO==1
-  cout << "Creating EDF " << *id << endl;
+  cout << "Creating EventBased " << *id << endl;
   #endif
 
   //iterate through all of the children nodes
-  for (xml_node load = edf_node.first_child(); load; load = load.next_sibling()) {
+  for (xml_node load = eb_node.first_child(); load; load = load.next_sibling()) {
     string type = load.attribute("type").as_string();
 
     *id = *id + 1;
 
     //If child is worker, parse a worker
     if( type == "worker" ) {
-      parseWorker((ResourceAllocator*)edf, load, id);
+      parseWorker((ResourceAllocator*)eb, load, id);
     }
     //If child is scheduler, parse the correct scheduler
     else if( type == "scheduler" ) {
-      parseScheduler((ResourceAllocator*)edf, load, id, level+1);
+      parseScheduler((ResourceAllocator*)eb, load, id, level+1);
     }//end of scheduler
+    else {
+      cout << "Parser::parseEventBased() error - subrunnable type not identified!\n";
+      exit(0);
+    }
   }  
 
-  return edf;
+  return eb;
 }
 
 ///This function receives a Scheduler and it call on the appropiate parsing function to return the full object
@@ -171,8 +235,8 @@ Scheduler* Parser::parseScheduler(ResourceAllocator* parent, xml_node sched_node
   if(alg == "TDMA") {
     sched = (Scheduler*) parseTDMA(sched_node, id, level);
   }
-  else if(alg == "EDF") {
-    sched = (Scheduler*) parseEDF(sched_node, id, level);
+  else if(isEventBased(alg)) {
+    sched = (Scheduler*) parseEventBased(sched_node, id, level);
   }
   else {
     cout << "Parser error: '" << alg << "' algorithm was not recognized\n";
@@ -186,7 +250,6 @@ Scheduler* Parser::parseScheduler(ResourceAllocator* parent, xml_node sched_node
 
   return sched; 
 }
-
 
 ///This function receives and TDMA node, and parses its load
 TDMA* Parser::parseTDMA(xml_node tdma_node, unsigned int *id, int level) {
@@ -294,6 +357,9 @@ Worker* Parser::parseWorker(ResourceAllocator* parent, xml_node worker_node, uns
   }
   else {
     c = (Criteria*) new InclusiveCriteria();
+    c->setRelativeDeadline(TimeUtil::Millis(100));
+    c->setPeriod(TimeUtil::Millis(100));
+    c->setPriority(100);
     worker->setCriteria(c);    
   }
 
@@ -302,16 +368,10 @@ Worker* Parser::parseWorker(ResourceAllocator* parent, xml_node worker_node, uns
   if( !relativeDeadline.empty() ) {
     struct timespec aux = parseTime(relativeDeadline);
     worker->setRelativeDeadline(aux);
-    if(c->getRelativeDeadline() == TimeUtil::Millis(0) ) {
-      c->setRelativeDeadline(aux);
-    }
   }
   else {
-    //By default, if no relative deadline is specified, they are assigned 100ms
+    //By default, if no relative deadline is specified, default is 100ms
     worker->setRelativeDeadline(TimeUtil::Millis(100));
-    if(c->getRelativeDeadline() == TimeUtil::Millis(0) ) {
-      c->setRelativeDeadline(TimeUtil::Millis(100));
-    }
   }
 
   //Register thread with simulation object
