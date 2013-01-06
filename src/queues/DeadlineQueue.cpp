@@ -116,5 +116,3 @@ void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
 
   cout << "DeadlineQueue::insertRunnable() error! newRunnable was not inserted...\n";
 }
-
-

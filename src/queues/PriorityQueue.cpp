@@ -4,6 +4,9 @@
 #include "core/Runnable.h"
 
 #include <stdlib.h>
+#include <iostream>
+
+using namespace std;
 
 /***************************************
  *        CLASS DEFINITION             * 
@@ -20,32 +23,57 @@ PriorityQueue::PriorityQueue() : RunnableQueue() {
 
 ///This function inserts the new runnable in the queue depending on the Runnable's priority
 void PriorityQueue::insertRunnable(Runnable *newRunnable) {
+  //increase the size counter
+  size++;
+  
+  #if _INFO==1
+  cout << "PriorityQueue::insertRunnable - size is now: " << size << endl;
+  #endif
+
   //Base case, the list was empty. The Runnable is now head and tail of queue
   if (head == NULL) {
     head = (Node*) malloc(sizeof(Node));
     head->r = newRunnable;
     tail = head;
+    tail->next = NULL;
+    #if _DEBUG==1
+    cout << "New Head1: " << newRunnable->getId() << endl;
+    #endif
     return;
   }
 
-  //In a non-empty queue, the new runnable has highest priority (higher than the head)
-  if(head->r->getCriteria()->getPriority() < newRunnable->getCriteria()->getPriority() ) {
-    //create new node
-    Node *newNode = (Node*) malloc(sizeof(Node));
-    newNode->r = newRunnable;
+  unsigned int currentPriority = head->r->getCriteria()->getPriority();
+  unsigned int newPriority = newRunnable->getCriteria()->getPriority();
 
+  #if _DEBUG==1
+  cout << "Comparing: " << currentPriority.tv_sec << ":" << currentPriority.tv_nsec << " vs " << newPriority.tv_sec << ":" << newPriority.tv_nsec << endl;
+  #endif
+
+  //If in a non-empty queue, newRunnable has a deadline earlier than the head, it becomes the new head
+  if(currentPriority > newPriority ) {
+    //create new node
+    Node* newNode = (Node*) malloc(sizeof(Node));
+    newNode->r = newRunnable;
     //link new node to old head
     newNode->next = head;
     //move the head 
     head = newNode;
-
+    #if _DEBUG==1
+    cout << "New Head2: " << newRunnable->getId() << endl;
+    #endif
     return;
   }
 
-  //In a non-empty queue, the new runnable has the lowest priority (lower than the tail)
-  if(tail->r->getCriteria()->getPriority() > newRunnable->getCriteria()->getPriority() ) {
+  currentPriority = tail->r->getCriteria()->getPriority();
+
+  #if _DEBUG==1
+  cout << "Comparing: " << currentPriority.tv_sec << ":" << currentPriority.tv_nsec << " vs " << newPriority.tv_sec << ":" << newPriority.tv_nsec << endl;
+  #endif
+
+  //In a non-empty queue, the new runnable has the latest deadline (later than the tail)
+  if( currentPriority < newPriority ) {
     //create new node
-    Node *newNode = (Node*) malloc(sizeof(Node));
+    Node* newNode = (Node*) malloc(sizeof(Node));
     newNode->r = newRunnable;
     newNode->next = NULL;
     
@@ -53,21 +81,37 @@ void PriorityQueue::insertRunnable(Runnable *newRunnable) {
     tail->next = newNode;
     //move the tail
     tail = newNode;
-
+    #if _DEBUG==1
+    cout << "New tail: " << newRunnable->getId() << endl;
+    #endif
     return;
   }
 
-  Node* aux = head;
+  Node* aux = head->next, *prev=head;
 
   //This loop will insert the Runnable in any position except first or last
-  while(aux->next != NULL) {
-    if(aux->r->getCriteria()->getPriority() < newRunnable->getCriteria()->getPriority()) {
+  while(aux != NULL) {
+    currentPriority = aux->r->getCriteria()->getPriority();
+
+    #if _DEBUG==1
+    cout << "Comparing: " << currentPriority.tv_sec << ":" << currentPriority.tv_nsec << " vs " << newPriority.tv_sec << ":" << newPriority.tv_nsec << endl;
+    #endif
+
+    if( currentPriority > newPriority) {
       Node *newNode = (Node*) malloc(sizeof(Node));
       newNode->r = newRunnable;
       //insert new node in the middle
-      newNode->next = aux->next;
-      aux->next = newNode;
+      newNode->next = aux;
+      prev->next = newNode;
+      #if _DEBUG==1
+      cout << "New node!" << newRunnable->getId() << endl;
+      #endif
       return;
     }
+    
+    prev=aux;
+    aux = aux->next;
   }
+
+  cout << "PriorityQueue::insertRunnable() error! newRunnable was not inserted...\n";
 }

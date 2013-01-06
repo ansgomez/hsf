@@ -190,7 +190,7 @@ void EventBased::newJob(Runnable* r) {
 
 ///This function handles a job that had been queued by the worker. The worker object is thus already in the scheduler's queue, but now has a different schedulable criteria (and thus requires a change in the scheduling queue).
 void EventBased::updateRunnable(Runnable* r) {
-  #if _DEBUG==0
+  #if _DEBUG==1
   cout << "EventBased::updateRunnable() is waiting for schedule_sem\n";
   #endif
 
