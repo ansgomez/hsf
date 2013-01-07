@@ -27,9 +27,10 @@ bool RunnableQueue::deleteRunnable(unsigned int id) {
   if(head!=NULL) {
     //If runnable is the head, delete the head
     if(head->r->getId()==id) {
-      delete(head);
-      head = NULL;
-      tail = NULL;
+      Node *aux = head;
+      head = head->next;
+      delete(aux);
+
       size--;
       return true;
     }
@@ -49,6 +50,8 @@ bool RunnableQueue::deleteRunnable(unsigned int id) {
       size--;
       return true ;
     }
+    prev = aux;
+    aux = aux->next;
   }
 
   return false;

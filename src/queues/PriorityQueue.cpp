@@ -29,14 +29,13 @@ bool PriorityQueue::insertRunnable(Runnable *newRunnable) {
   
   //increase the size counter only when current runnable was not already in the queue
   size++;
-  
 
   if(newRunnable->getCriteria() == NULL) {
     cout << "PriorityQueue::insertRunnable() error - newRunnable's criteria is null!\n";
     return false;
   }
 
-  cout << "NewRunnable's criteria:\n" << newRunnable->getCriteria()->toString() << endl;
+  //cout << "NewRunnable's criteria:\n" << newRunnable->getCriteria()->toString() << endl;
 
   #if _INFO==1
   cout << "PriorityQueue::insertRunnable() - size is now: " << size << endl;

@@ -243,12 +243,21 @@ void EventBased::schedule() {
         #if _DEBUG==1
         cout << "EventBased::schedule() is handling a finished job!\n";
         #endif
-        activeQueue->deleteRunnable(finishedJobDeque.front());//erase from activeQueue
+	//erase from activeQueue
+        if(!activeQueue->deleteRunnable(finishedJobDeque.front())) {
+	cout << "EventBased::schedule() error - finished runnable was not found!\n";
+	}
         finishedJobDeque.pop_front();//erase from finishedJobDeque
 
 	//If there are any pending jobs, update to new head's criteria and update with parent (if any)
 	if(activeQueue->getSize() > 0) {
-	  criteria = activeQueue->peek_front()->getCriteria();
+	  Runnable *aux = activeQueue->peek_front();
+	  if(aux != NULL) {
+	    criteria = aux->getCriteria();
+	  }
+	  else {
+	    cout << "BOO!!\n";
+	  }
 	  currentRunnable = activeQueue->peek_front();
 	  //Register event with parent
 	  if(parent!=NULL) {
