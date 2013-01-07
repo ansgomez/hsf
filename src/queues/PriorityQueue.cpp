@@ -21,13 +21,25 @@ PriorityQueue::PriorityQueue() : RunnableQueue() {
 
 /*********** MEMBER FUNCTIONS ***********/
 
-///This function inserts the new runnable in the queue depending on the Runnable's priority
-void PriorityQueue::insertRunnable(Runnable *newRunnable) {
-  //increase the size counter
+///This function inserts the new runnable in the queue depending on the Runnable's priority, returns true if the new runnable is the new head of the queue (used as condition for registering jobs with parent).
+bool PriorityQueue::insertRunnable(Runnable *newRunnable) {
+
+  //Clear the queue of any nodes with this runnable id
+  deleteRunnable(newRunnable->getId());
+  
+  //increase the size counter only when current runnable was not already in the queue
   size++;
   
+
+  if(newRunnable->getCriteria() == NULL) {
+    cout << "PriorityQueue::insertRunnable() error - newRunnable's criteria is null!\n";
+    return false;
+  }
+
+  cout << "NewRunnable's criteria:\n" << newRunnable->getCriteria()->toString() << endl;
+
   #if _INFO==1
-  cout << "PriorityQueue::insertRunnable - size is now: " << size << endl;
+  cout << "PriorityQueue::insertRunnable() - size is now: " << size << endl;
   #endif
 
   //Base case, the list was empty. The Runnable is now head and tail of queue
@@ -40,7 +52,7 @@ void PriorityQueue::insertRunnable(Runnable *newRunnable) {
     #if _DEBUG==1
     cout << "New Head1: " << newRunnable->getId() << endl;
     #endif
-    return;
+    return true;
   }
 
   unsigned int currentPriority = head->r->getCriteria()->getPriority();
@@ -63,7 +75,7 @@ void PriorityQueue::insertRunnable(Runnable *newRunnable) {
     #if _DEBUG==1
     cout << "New Head2: " << newRunnable->getId() << endl;
     #endif
-    return;
+    return true;
   }
 
   currentPriority = tail->r->getCriteria()->getPriority();
@@ -72,8 +84,8 @@ void PriorityQueue::insertRunnable(Runnable *newRunnable) {
   cout << "Comparing: " << currentPriority << " vs " << newPriority << endl;
   #endif
 
-  //If in a non-empty queue, the new runnable has a lower priority than the tail, it is the new tail
-  if( currentPriority > newPriority ) {
+  //If in a non-empty queue, the new runnable has an equal or lower priority than the tail, it is the new tail
+  if( currentPriority >= newPriority ) {
     //create new node
     Node* newNode = (Node*) malloc(sizeof(Node));
     newNode->r = newRunnable;
@@ -87,14 +99,19 @@ void PriorityQueue::insertRunnable(Runnable *newRunnable) {
     #if _DEBUG==1
     cout << "New tail: " << newRunnable->getId() << endl;
     #endif
-    return;
+    return false;
   }
 
   Node* aux = head->next, *prev=head;
 
   //This loop will insert the Runnable in any position except first or last
   while(aux != NULL) {
-    currentPriority = aux->r->getCriteria()->getPriority();
+    if (aux->r->getCriteria() != NULL) {
+      currentPriority = aux->r->getCriteria()->getPriority();
+    }
+    else {
+      cout << "PriorityQueue::insertRunnable() error - runnable criteria is null!\n";
+    }
 
     #if _DEBUG==1
     cout << "Comparing: " << currentPriority << " vs " << newPriority << endl;
@@ -110,12 +127,13 @@ void PriorityQueue::insertRunnable(Runnable *newRunnable) {
       #if _DEBUG==1
       cout << "New node!" << newRunnable->getId() << endl;
       #endif
-      return;
+      return false;
     }
-    
+
     prev=aux;
     aux = aux->next;
   }
 
   cout << "PriorityQueue::insertRunnable() error! newRunnable was not inserted...\n";
+  return false;
 }

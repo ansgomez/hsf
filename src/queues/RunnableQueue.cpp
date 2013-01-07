@@ -23,28 +23,41 @@ RunnableQueue::RunnableQueue() {
 /*********** MEMBER FUNCTIONS ***********/
 
 ///This function deletes the queue's pointer to the Runnable with the specified ifndef
-void RunnableQueue::deleteRunnable(unsigned int id) {
-  if(head==NULL) {
-    cout << "RunnableQueue::deleteRunnable - head is null!\n";
-    return;
+bool RunnableQueue::deleteRunnable(unsigned int id) {
+  if(head!=NULL) {
+    //If runnable is the head, delete the head
+    if(head->r->getId()==id) {
+      delete(head);
+      head = NULL;
+      tail = NULL;
+      size--;
+      return true;
+    }
+  }
+  //if head is NULL, there is nothing to do
+  else {
+    return false;
   }
 
-  if(head->r->getId() != id) {
-    cout << "RunnableQueue::deleteRunnable - tried to delete non-active runnable\n";
+  Node *aux = head->next, *prev=head;
+
+  //iterate to find runnable and delete it
+  while(aux!=NULL) {
+    if(aux->r->getId() == id) {
+      prev->next = aux->next;
+      delete(aux);
+      size--;
+      return true ;
+    }
   }
-  else {
-    Node *old = head;
-    //move the head to the next node
-    head = head->next;
-    //free the old head
-    free(old);
-    size--;
-  }
+
+  return false;
 }
 
-///This function will be implemented by the derived classes
-void RunnableQueue::insertRunnable(Runnable *r) {
+///This function will be implemented by the derived classes. It inserts a runnable into the queue, and returns true if the new runnable is the new head of the queue (used as condition for registering jobs with parent).
+bool RunnableQueue::insertRunnable(Runnable *r) {
   cout << "RunnableQueue::insert - this should not print!\n";
+  return false;
 }
 
 ///This function reads the head of the queue (destructive read), and returns the pointer to the Runnable

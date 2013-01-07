@@ -107,7 +107,7 @@ Criteria* Parser::parseCriteria(xml_node criteria_node) {
     c->setRelativeDeadline(parseTime(relativeDeadline));
   }
   else {
-    c->setRelativeDeadline(TimeUtil::Millis(100));
+    c->setRelativeDeadline(TimeUtil::Millis(0));
   }
 
   xml_node period = criteria_node.child("period");
@@ -319,13 +319,16 @@ Worker* Parser::parseWorker(ResourceAllocator* parent, xml_node worker_node, uns
   Worker* worker = NULL;
   Criteria* c = NULL;
 
+  #if _INFO==1
+  cout << "Creating Worker " << *id << endl;
+  #endif
+
+  /**** SETTING THE DISPATCHER  ****/
+  Dispatcher *d = parseDispatcher(worker_node, id);
+  *id = *id + 1;  
+
   /**** SETTING THE TASK ****/
   if(task == "busy_wait") {
-    Dispatcher *d = parseDispatcher(worker_node, id);
-    *id = *id + 1;  
-    #if _INFO==1
-    cout << "Creating Worker " << *id << endl;
-    #endif
     BusyWait *bw = new BusyWait(parseTime(worker_node.child("wcet")));
 
     worker = new Worker(parent, *id, busy_wait);
@@ -333,13 +336,6 @@ Worker* Parser::parseWorker(ResourceAllocator* parent, xml_node worker_node, uns
     d->setWorker(worker);
   }
   else if(task == "video") {
-    Dispatcher *d = parseDispatcher(worker_node, id);
-    *id = *id + 1;  
-
-    #if _INFO==1
-    cout << "Creating Worker " << *id << endl;
-    #endif
-
     Video *vid = new Video();
     worker = new Worker(parent, *id, video);
     worker->setTask(vid);
@@ -357,7 +353,7 @@ Worker* Parser::parseWorker(ResourceAllocator* parent, xml_node worker_node, uns
   }
   else {
     c = (Criteria*) new InclusiveCriteria();
-    c->setRelativeDeadline(TimeUtil::Millis(100));
+    c->setRelativeDeadline(TimeUtil::Millis(0));
     c->setPeriod(TimeUtil::Millis(100));
     c->setPriority(100);
     worker->setCriteria(c);    
@@ -368,10 +364,17 @@ Worker* Parser::parseWorker(ResourceAllocator* parent, xml_node worker_node, uns
   if( !relativeDeadline.empty() ) {
     struct timespec aux = parseTime(relativeDeadline);
     worker->setRelativeDeadline(aux);
+    //If runnable has relDel but criteria has none, set that as the default
+    if(c->getRelativeDeadline() == TimeUtil::Millis(0) ) {
+      c->setRelativeDeadline(aux);
+    }
   }
   else {
     //By default, if no relative deadline is specified, default is 100ms
     worker->setRelativeDeadline(TimeUtil::Millis(100));
+    if(c->getRelativeDeadline() == TimeUtil::Millis(0) ) {
+      c->setRelativeDeadline(TimeUtil::Millis(100));
+    }    
   }
 
   //Register thread with simulation object

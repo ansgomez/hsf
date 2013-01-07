@@ -23,6 +23,9 @@ class EventBased : public Scheduler {
   ///This queue holds all active Runnables underneath this scheduler.
   RunnableQueue* activeQueue;
 
+  ///This points to the runnable previously activated by the scheduler
+  Runnable* currentRunnable;
+
   ///This deque holds the ids of runnables in the active queue who already finished
   deque<unsigned int> finishedJobDeque;
 

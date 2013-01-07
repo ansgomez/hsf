@@ -37,11 +37,11 @@ class RunnableQueue {
 
   /*********** MEMBER FUNCTIONS ***********/
   
-  ///This function deletes the queue's pointer to the Runnable with the specified ifndef
-  void deleteRunnable(unsigned int id);
+  ///This function deletes the queue's pointer to the Runnable with the specified id. returns true if the id was found, false otherwise
+  bool deleteRunnable(unsigned int id);
 
   ///This function inserts the new runnable in the queue depending on the derived class' criteria
-  virtual void insertRunnable(Runnable* newRunnable);
+  virtual bool insertRunnable(Runnable* newRunnable);
 
   ///This function reads the head of the queue and returns a pointer to the runnable
   Runnable* peek_front();

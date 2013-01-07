@@ -1,6 +1,7 @@
 #ifndef _CRITERIA_H
 #define _CRITERIA_H
 
+#include <string>
 #include <time.h>
 
 /***************************************
@@ -66,6 +67,9 @@ class Criteria {
 
   ///This function sets a new relative deadline
   virtual void setRelativeDeadline(struct timespec rel);
+
+  ///This auxiliaty function return all criteria variables in a string
+  std::string toString();
 };
 
 #endif

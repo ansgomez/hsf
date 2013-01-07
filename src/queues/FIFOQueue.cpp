@@ -22,8 +22,8 @@ FIFOQueue::FIFOQueue() : RunnableQueue() {
 
 /*********** MEMBER FUNCTIONS ***********/
 
-///This function inserts the new runnable at the end of the queue.
-void FIFOQueue::insertRunnable(Runnable *newRunnable) {
+///This function inserts the new runnable at the end of the queue, returns true if the new runnable is the new head of the queue (used as condition for registering jobs with parent).
+bool FIFOQueue::insertRunnable(Runnable *newRunnable) {
   //increase the size counter
   size++;
   
@@ -41,7 +41,7 @@ void FIFOQueue::insertRunnable(Runnable *newRunnable) {
     #if _DEBUG==1
     cout << "New Head1: " << newRunnable->getId() << endl;
     #endif
-    return;
+    return true;
   }
 
   struct timespec currentArrivalTime = head->r->getCriteria()->getArrivalTime();
@@ -64,7 +64,7 @@ void FIFOQueue::insertRunnable(Runnable *newRunnable) {
     #if _DEBUG==1
     cout << "New Head2: " << newRunnable->getId() << endl;
     #endif
-    return;
+    return true;
   }
 
   currentArrivalTime = tail->r->getCriteria()->getArrivalTime();
@@ -73,8 +73,8 @@ void FIFOQueue::insertRunnable(Runnable *newRunnable) {
   cout << "Comparing: " << currentArrivalTime.tv_sec << ":" << currentArrivalTime.tv_nsec << " vs " << newArrivalTime.tv_sec << ":" << newArrivalTime.tv_nsec << endl;
   #endif
 
-  //If in a non-empty queue, the new runnable has an arrival time later than the tail, it is the tail
-  if( currentArrivalTime < newArrivalTime ) {
+  //If in a non-empty queue, the new runnable has an arrival time equal to or later than the tail, it is the tail
+  if( currentArrivalTime <= newArrivalTime ) {
     //create new node
     Node* newNode = (Node*) malloc(sizeof(Node));
     newNode->r = newRunnable;
@@ -88,7 +88,7 @@ void FIFOQueue::insertRunnable(Runnable *newRunnable) {
     #if _DEBUG==1
     cout << "New tail: " << newRunnable->getId() << endl;
     #endif
-    return;
+    return false;
   }
 
   Node* aux = head->next, *prev=head;
@@ -111,7 +111,7 @@ void FIFOQueue::insertRunnable(Runnable *newRunnable) {
       #if _DEBUG==1
       cout << "New node!" << newRunnable->getId() << endl;
       #endif
-      return;
+      return false;
     }
     
     prev=aux;
@@ -119,4 +119,5 @@ void FIFOQueue::insertRunnable(Runnable *newRunnable) {
   }
 
   cout << "FIFOQueue::insertRunnable() error! newRunnable was not inserted...\n";
+  return false;
 }

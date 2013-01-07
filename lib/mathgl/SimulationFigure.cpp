@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
-#include <string.h>
+#include <string>
 #include <vector>
 
 
@@ -46,7 +46,7 @@ SimulationFigure::SimulationFigure(string _prefix) {
 }
 
 //This function draws an arrival arrow at time t, with an option label
-void SimulationFigure::drawArrival(int plot, double time, char *label, int color) {
+void SimulationFigure::drawArrival(int plot, double time, int color) {
   if(gr!=NULL) {
     gr->ColumnPlot(n_plots, plot, plot_offset);
     gr->SetRanges(x1,x2,y1,y2);
@@ -55,8 +55,8 @@ void SimulationFigure::drawArrival(int plot, double time, char *label, int color
     gr->Line(mglPoint(time,base), mglPoint(time,base+height*arrow_length), "A1");
           
     //Draw Label
-    float xpt[] = {time,NaN}; float ypt[] = {height*arrow_length+0.05, NaN};
-    gr->Label(mglData(2, xpt), mglData(2, ypt), label);
+    //float xpt[] = {time,NaN}; float ypt[] = {height*arrow_length+0.05, NaN};
+    //gr->Label(mglData(2, xpt), mglData(2, ypt), label);
   }
 }
 //This function draws a rectangle of a defined color starting at time t and a relative width
@@ -86,6 +86,7 @@ void SimulationFigure::exportEPS() {
   string path = prefix + "_figure.eps";
   if(gr!=NULL) {
     gr->WriteEPS(path.data(),"");
+    //gr->WriteTEX("blah.tex","");
     printf("***   Saved EPS Figure\t\t***\n");
   }
   else {
@@ -119,7 +120,6 @@ void SimulationFigure::exportSVG() {
 
 ///This function generates a figure from the trace vector
 void SimulationFigure::genFig() {
-  char label[30]; 
   char title[20];
   unsigned int c;
  
@@ -160,10 +160,7 @@ void SimulationFigure::genFig() {
 
     switch(traces[c].getAction()) {
     case task_arrival:
-      //TODO add label to aperiodic tasks with the computation time...
-
-      strcpy(label, "Job\0");
-      drawArrival(id, TimeUtil::convert_ms(traces[c].getTimestamp()), label);
+      drawArrival(id, TimeUtil::convert_ms(traces[c].getTimestamp()));
       break;   
 
     case task_start:

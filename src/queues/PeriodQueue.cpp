@@ -22,8 +22,8 @@ PeriodQueue::PeriodQueue() : RunnableQueue() {
 
 /*********** MEMBER FUNCTIONS ***********/
 
-///This function inserts the new runnable in the queue depending on the Runnable's period
-void PeriodQueue::insertRunnable(Runnable *newRunnable) {
+///This function inserts the new runnable in the queue depending on the Runnable's period, returns true if the new runnable is the new head of the queue (used as condition for registering jobs with parent).
+bool PeriodQueue::insertRunnable(Runnable *newRunnable) {
   //increase the size counter
   size++;
   
@@ -41,7 +41,7 @@ void PeriodQueue::insertRunnable(Runnable *newRunnable) {
     #if _DEBUG==1
     cout << "New Head1: " << newRunnable->getId() << endl;
     #endif
-    return;
+    return true;
   }
 
   struct timespec currentPeriod = head->r->getCriteria()->getPeriod();
@@ -64,7 +64,7 @@ void PeriodQueue::insertRunnable(Runnable *newRunnable) {
     #if _DEBUG==1
     cout << "New Head2: " << newRunnable->getId() << endl;
     #endif
-    return;
+    return true;
   }
 
   currentPeriod = tail->r->getCriteria()->getPeriod();
@@ -73,8 +73,8 @@ void PeriodQueue::insertRunnable(Runnable *newRunnable) {
   cout << "Comparing: " << currentPeriod.tv_sec << ":" << currentPeriod.tv_nsec << " vs " << newPeriod.tv_sec << ":" << newPeriod.tv_nsec << endl;
   #endif
 
-  //If in a non-empty queue, the new runnable has a period larger than the tail, it is the new tail
-  if( currentPeriod < newPeriod ) {
+  //If in a non-empty queue, the new runnable has a period larger than or equal to the tail, it is the new tail
+  if( currentPeriod <= newPeriod ) {
     //create new node
     Node* newNode = (Node*) malloc(sizeof(Node));
     newNode->r = newRunnable;
@@ -88,7 +88,7 @@ void PeriodQueue::insertRunnable(Runnable *newRunnable) {
     #if _DEBUG==1
     cout << "New tail: " << newRunnable->getId() << endl;
     #endif
-    return;
+    return false;
   }
 
   Node* aux = head->next, *prev=head;
@@ -111,7 +111,7 @@ void PeriodQueue::insertRunnable(Runnable *newRunnable) {
       #if _DEBUG==1
       cout << "New node!" << newRunnable->getId() << endl;
       #endif
-      return;
+      return false;
     }
     
     prev=aux;
@@ -119,4 +119,5 @@ void PeriodQueue::insertRunnable(Runnable *newRunnable) {
   }
 
   cout << "PeriodQueue::insertRunnable() error! newRunnable was not inserted...\n";
+  return false;
 }

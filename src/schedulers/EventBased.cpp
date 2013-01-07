@@ -23,6 +23,8 @@ EventBased::EventBased(unsigned int _id, int level) : Scheduler(_id, level) {
   cout << "Creating EventBased with ID: " << id << endl;
   #endif
 
+  currentRunnable = NULL;
+
   //Subclasses should initialize the activeQueue
   //variable depending on their schedulable criteria
 
@@ -76,15 +78,10 @@ void EventBased::activate() {
       setPriority(Priorities::get_sched_pr(level));
       state = activated;
 
-      //Activate current head of active_queue (if any) only when there are 
-      //no new jobs (since the current job might have to be preempted)
-      //If there are no new jobs pending
-      if(newJobDeque.size() == 0) {
-        //activate current head of queue
-        if(activeQueue->peek_front() != NULL) {
-          activeQueue->peek_front()->activate();
-        }
+      if(currentRunnable != NULL) {
+	currentRunnable->activate();
       }
+
       //if there are new jobs, wait for scheduler to process the new jobs himself
     sem_post(&schedule_sem); 
   sem_post(&activation_sem);
@@ -103,8 +100,8 @@ void EventBased::deactivate() {
   sem_wait(&activation_sem);
     sem_wait(&schedule_sem);
       //Deactivate currently active job (if any)
-      if(activeQueue->peek_front() != NULL) {
-        activeQueue->peek_front()->deactivate();
+      if(currentRunnable != NULL) {
+	currentRunnable->deactivate();
       }
       //Decrease the priority
       setPriority(Priorities::get_inactive_pr());
@@ -136,14 +133,6 @@ void EventBased::finishedJob(unsigned int runnable_id) {
     cout << "EventBased::finishedJob() - Registering finishedJob & event...\n";
     #endif
 
-    //Register event with parent
-    if(parent!=NULL) {
-      parent->finishedJob(id);
-    }
-    else if (level != 0) {
-      cout << "EventBased::finishedJob() - non-top level entity has null parent!\n";
-    }
-    
     //Protecting posts to event_sem with sched_sem assures one event handled 
     //per post in the scheduler, otherwise, multiple jobs could be handled from just one post
     sem_post(&event_sem);//Register event with this scheduler
@@ -162,29 +151,27 @@ void EventBased::newJob(Runnable* r) {
   #endif
 
   sem_wait(&schedule_sem);
-    newJobDeque.push_back(r);//Add new arrival
 
     #if _DEBUG==1
     cout << "EventBased::newJob() registered newJob and event!\n";
     #endif
 
-    //Set the scheduler's criteria equal to its load's criteria
-    criteria = r->getCriteria();
- 
-    //Notify parent of new head
-    if(parent!=NULL) {
-      parent->newJob(this);
-    }
-    else if (level != 0) {
-      cout << "EventBased::newJob() - non-top level entity has null parent!\n";
+    //Notify parent of new head only when there was a change of head in the queue
+    if(activeQueue->insertRunnable(r)) {
+      if(parent!=NULL) {
+	criteria = activeQueue->peek_front()->getCriteria();
+	parent->newJob(this);
+      }
+      else if (level != 0) {
+	cout << "EventBased::newJob() - non-top level entity has null parent!\n";
+      }
     }
 
     #if _DEBUG==1
     cout << "EventBased::newJob() is done!\n";
     #endif
 
-    //Alert scheduler of event 
-    sem_post(&event_sem); //->posting to event_sem must be protected by sched_sem!
+    sem_post(&event_sem); //register event
   sem_post(&schedule_sem);
 }
 
@@ -204,7 +191,6 @@ void EventBased::updateRunnable(Runnable* r) {
 
 ///This function performs the actual scheduling (figuring out the order of execution for its load)
 void EventBased::schedule() {
-  Runnable* currentRunnable;
 
   while(Simulation::isSimulating()) {
 
@@ -226,7 +212,6 @@ void EventBased::schedule() {
       #endif
 
       //Deactivate currently active job (if any) in order to process new/finished jobs
-      currentRunnable = activeQueue->peek_front();
       if(currentRunnable != NULL) {
         currentRunnable->deactivate();
       }
@@ -237,24 +222,21 @@ void EventBased::schedule() {
 	cout << "EventBased::schedule() is handling a runnable update!\n";
         #endif
 	Runnable* r = updateDeque.front();
+	
 	activeQueue->deleteRunnable(r->getId());//erase from activeQueue
 	activeQueue->insertRunnable(r);//insert into activeQueue with updated criteria
 	updateDeque.pop_front();//erase from updateDeque
 	
+	//Update this runnable's critera
+	criteria = activeQueue->peek_front()->getCriteria();
+
+	//Register it with the parent
 	if(parent!=NULL) {
 	  parent->updateRunnable(this);
 	}
 	else if (level != 0) {
 	  cout << "EventBased::schedule() - non-top level entity has null parent!\n";
 	}
-      }
-      /***** handle new jobs *****/
-      else if(newJobDeque.size()>0) {
-        #if _DEBUG==1
-        cout << "EventBased::schedule() is handling a new job!\n";
-        #endif
-        activeQueue->insertRunnable(newJobDeque.front());//insert head of newJobDeque
-        newJobDeque.pop_front();//erase head of newJobDeque
       }
       /***** handle finished jobs *****/
       else if(finishedJobDeque.size() > 0) {
@@ -263,6 +245,30 @@ void EventBased::schedule() {
         #endif
         activeQueue->deleteRunnable(finishedJobDeque.front());//erase from activeQueue
         finishedJobDeque.pop_front();//erase from finishedJobDeque
+
+	//If there are any pending jobs, update to new head's criteria and update with parent (if any)
+	if(activeQueue->getSize() > 0) {
+	  criteria = activeQueue->peek_front()->getCriteria();
+	  currentRunnable = activeQueue->peek_front();
+	  //Register event with parent
+	  if(parent!=NULL) {
+	    parent->updateRunnable(this);
+	  }
+	  else if (level != 0) {
+	    cout << "EventBased::schedule() - non-top level entity has null parent!\n";
+	  }	  
+	}
+	//otherwise, simple register a finished job
+	else {
+          currentRunnable=NULL;
+	  //Register event with parent
+	  if(parent!=NULL) {
+	    parent->finishedJob(id);
+	  }
+	  else if (level != 0) {
+	    cout << "EventBased::schedule() - non-top level entity has null parent!\n";
+	  }
+	}
       }
 
       //activate the (possibly new) head of activeQueue
@@ -270,7 +276,18 @@ void EventBased::schedule() {
 	#if _DEBUG==1
 	cout << "EventBased::schedule() - activating: " << activeQueue->peek_front()->getId() << endl;
 	#endif
-	activeQueue->peek_front()->activate();
+
+	currentRunnable = activeQueue->peek_front();
+
+	if(currentRunnable==NULL) {
+	  cout << "THIS SHOULDN'T PRINT!!\n";
+        }
+	else {
+          currentRunnable->activate();
+        }
+      }
+      else {
+        currentRunnable = NULL;
       }
 
       #if _DEBUG==1

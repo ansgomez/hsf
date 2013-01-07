@@ -61,9 +61,7 @@ struct timespec operator-(struct timespec a, struct timespec b) {
   return *x;
 }
 
-
-
-bool operator < (struct timespec a, struct timespec b) {
+bool operator <(struct timespec a, struct timespec b) {
   if (a.tv_sec < b.tv_sec) {
     return true;
   } else {
@@ -76,7 +74,7 @@ bool operator < (struct timespec a, struct timespec b) {
   }
 }
 
-bool operator > (struct timespec a, struct timespec b) {
+bool operator >(struct timespec a, struct timespec b) {
   if (a.tv_sec > b.tv_sec) {
     return true;
   } else {
@@ -99,4 +97,12 @@ bool operator ==(struct timespec a, struct timespec b) {
   }
 
   return true;
+}
+
+bool operator <=(struct timespec a, struct timespec b) {
+  return (a<b) || (a==b);
+}
+
+bool operator >=(struct timespec a, struct timespec b) {
+  return (a>b) || (a==b);
 }

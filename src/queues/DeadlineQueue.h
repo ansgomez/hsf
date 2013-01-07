@@ -20,8 +20,8 @@ class DeadlineQueue : RunnableQueue {
 
   /**** FROM RUNNABLEQUEUE ****/   
    
-  ///This function inserts the new runnable in the queue depending on the Runnable's deadline
-  void insertRunnable(Runnable *newRunnable);
+  ///This function inserts the new runnable in the queue depending on the Runnable's deadline, returns true if the new runnable is the new head of the queue (used as condition for registering jobs with parent).
+  bool insertRunnable(Runnable *newRunnable);
 };
 
 #endif 

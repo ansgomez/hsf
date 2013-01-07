@@ -76,7 +76,7 @@ class SimulationFigure {
   /*********** MEMBER FUNCTIONS ***********/
 
   //This function draws an arrival arrow at time t, with an option label
-  void drawArrival(int plot, double time, char *label, int color=0);  
+  void drawArrival(int plot, double time, int color=0);  
 
   //This function draws a rectangle of a defined color starting at time t and a relative width
   void drawJob(int plot, double start, double end, int clr=-1);

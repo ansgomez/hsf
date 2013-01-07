@@ -3,6 +3,7 @@
 #include "util/TimeUtil.h"
 
 #include <iostream>
+#include <sstream>
 
 using namespace std;
 
@@ -75,4 +76,17 @@ void Criteria::setPriority(int pr) {
 ///This function sets a new relative deadline
 void Criteria::setRelativeDeadline(struct timespec rel) {
   cout << "Criteria::setRelativeDeadline() - this should not print!\n";
+}
+
+///This auxiliaty function return all criteria variables in a string
+string Criteria::toString() {
+  stringstream aux;
+
+  aux << "Arrival Time : " << arrivalTime.tv_sec << "." << arrivalTime.tv_nsec << endl;
+  aux << "Relative Deadline: " << relativeDeadline.tv_sec << "." << relativeDeadline.tv_nsec << endl;
+  aux << "Absolute Deadline: " << absoluteDeadline.tv_sec << "." << absoluteDeadline.tv_nsec << endl;
+  aux << "Period: " << period.tv_sec << "." << period.tv_nsec << endl;
+  aux << "Priority: " << priority << endl;
+
+  return aux.str();
 }

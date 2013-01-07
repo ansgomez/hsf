@@ -23,7 +23,7 @@ DeadlineQueue::DeadlineQueue() : RunnableQueue() {
 /*********** MEMBER FUNCTIONS ***********/
 
 ///This function inserts the new runnable in the queue depending on the Runnable's deadline
-void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
+bool DeadlineQueue::insertRunnable(Runnable *newRunnable) {
   //increase the size counter
   size++;
   
@@ -41,7 +41,7 @@ void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
     #if _DEBUG==1
     cout << "New Head1: " << newRunnable->getId() << endl;
     #endif
-    return;
+    return true;
   }
 
   struct timespec currentDeadline = head->r->getCriteria()->getDeadline();
@@ -64,7 +64,7 @@ void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
     #if _DEBUG==1
     cout << "New Head2: " << newRunnable->getId() << endl;
     #endif
-    return;
+    return true;
   }
 
   currentDeadline = tail->r->getCriteria()->getDeadline();
@@ -73,8 +73,8 @@ void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
   cout << "Comparing: " << currentDeadline.tv_sec << ":" << currentDeadline.tv_nsec << " vs " << newDeadline.tv_sec << ":" << newDeadline.tv_nsec << endl;
   #endif
 
-  //If in a non-empty queue, the new runnable has a deadline later than the tail, it is the new tail
-  if( currentDeadline < newDeadline ) {
+  //If in a non-empty queue, the new runnable has a deadline equal to or later than the tail, it is the new tail
+  if( currentDeadline <= newDeadline ) {
     //create new node
     Node* newNode = (Node*) malloc(sizeof(Node));
     newNode->r = newRunnable;
@@ -88,7 +88,7 @@ void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
     #if _DEBUG==1
     cout << "New tail: " << newRunnable->getId() << endl;
     #endif
-    return;
+    return false;
   }
 
   Node* aux = head->next, *prev=head;
@@ -111,7 +111,7 @@ void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
       #if _DEBUG==1
       cout << "New node!" << newRunnable->getId() << endl;
       #endif
-      return;
+      return false;
     }
     
     prev=aux;
@@ -119,4 +119,5 @@ void DeadlineQueue::insertRunnable(Runnable *newRunnable) {
   }
 
   cout << "DeadlineQueue::insertRunnable() error! newRunnable was not inserted...\n";
+  return false;
 }

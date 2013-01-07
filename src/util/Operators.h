@@ -21,4 +21,10 @@ bool operator<(struct timespec a, struct timespec b);
 ///This operator compares two timespecs
 bool operator==(struct timespec a, struct timespec b);
 
+///This operator compares two timespecs
+bool operator <=(struct timespec a, struct timespec b);
+
+///This operator compares two timespecs
+bool operator >=(struct timespec a, struct timespec b);
+
 #endif
