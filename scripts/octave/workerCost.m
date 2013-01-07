@@ -1,4 +1,11 @@
 function workerCost(name)
+
+%CONSTANTS
+SCHED_START=1;
+SCHED_END=2;
+TASK_START = 3;
+TASK_END = 4;
+
 name_traces = strcat(name,'_traces.csv');
 
 if exist(name_traces, "file") == 0
@@ -17,12 +24,6 @@ end
 
 runTime = csvread(name_runtimes);
 
-%CONSTANTS
-SCHED_START=1;
-SCHED_END=2;
-TASK_START = 3;
-TASK_END = 4;
-
 aux=0;
 
 thread_ids=unique(traces(:,2));
@@ -37,7 +38,7 @@ for i1=1:num_threads;
     
     aux_count = 0;
     aux_began=0;
-    aux_start=0;
+    aux_start=-1;
 
     %foreach trace
     for i2=1:length(t_id)
@@ -94,5 +95,5 @@ ratio = sum_exec_traces ./(sum_exec_runtime*0.001);
 ratio = ratio'; #'
 
 name_workerCost = strcat(name,'_workerCost.csv');
-csvwrite(name_workerCost, ratio);
+csvwrite(name_workerCost, ratio, 'precision', '%2.3f' );
 

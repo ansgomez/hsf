@@ -191,7 +191,7 @@ function workerCost($FILE) {
 	    <th width="200px">Deadline (us)</th>
 	    <th width="200px">Finish Time (us)</th>
           </thead>
-          <?php csv2html($PREFIX."_missedDeadlines.csv");  ?>
+          <?php csv2html($PREFIX."_missed_deadlines.csv");  ?>
 	</table>
       </div>
     </p>
@@ -259,7 +259,7 @@ function workerCost($FILE) {
 		<td align="center"><?php echo "\n".file_get_contents($PREFIX."_alloc_cost_us.csv")."\n"; ?> us</td>
 	    </tr>
 	    <tr>
-		<td align="center">System</td>
+		<td align="center">Total System</td>
 		<td align="center"><?php echo "\n".file_get_contents($PREFIX."_sys_cost_us.csv")."\n"; ?> us</td>
 	    </tr>
 	    </tbody>
@@ -277,7 +277,7 @@ function workerCost($FILE) {
   <div id="tabs-4">
     <p>
       Simulation Figure: <br>
-      <img src="<?php echo $PREFIX."_figure.svg"; ?>" alt="Simulation Figure" width="1000px"/>
+      <img src="<?php echo $PREFIX."/".$PREFIX."_figure.svg"; ?>" alt="Simulation Figure" width="1000px"/>
     </p>
   </div>
 </div>

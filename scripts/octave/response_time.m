@@ -1,5 +1,9 @@
 function response_time ( name )
 
+%CONSTANTS
+TASK_ARRIVAL = 0;
+TASK_END = 4;
+
 name_traces = strcat(name,'_traces.csv');
 
 if exist(name_traces, "file") == 0
@@ -8,10 +12,6 @@ if exist(name_traces, "file") == 0
 end
 
 traces = csvread(name_traces);
-
-%CONSTANTS
-TASK_ARRIVAL = 0;
-TASK_END = 4;
 
 thread_ids=unique(traces(:,2));
 num_threads = length(thread_ids);
@@ -40,6 +40,6 @@ for i1=1:num_threads
 end
 
 name_resp = strcat(name,'_resp_ms.csv');
-csvwrite(name_resp, response_times_ms);
+csvwrite(name_resp, response_times_ms, 'precision', '%2.3f');
 
 clear all;

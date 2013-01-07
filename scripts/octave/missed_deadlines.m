@@ -1,4 +1,13 @@
 function missed_deadlines(name)
+
+%CONSTANTS
+SCHED_START=1;
+SCHED_END=2;
+TASK_START = 3;
+TASK_END = 4;
+
+WORKER = 4;
+
 name_traces = strcat(name,'_traces.csv');
 
 if exist(name_traces, "file") == 0
@@ -31,14 +40,8 @@ end
 
 runTime = csvread(name_runtimes);
 
-%CONSTANTS
-SCHED_START=1;
-SCHED_END=2;
-TASK_START = 3;
-TASK_END = 4;
-
 %findes workers ids
-worker = sort (runTime(find(runTime(:,1)==4),2));
+worker = sort (runTime(find(runTime(:,1)==WORKER),2));
 
 %finds thread ids and sorts them
 thread_ids=unique(traces(:,2));
@@ -49,7 +52,7 @@ sorted_missed = sort (ids_missed);
 
 %finds the number of jobs for each worker
 for i=1:size(thread_ids,1);
-  numJob(i) = size(find(traces(find(traces(:,2)==sorted_ids(i)),3)==4),1);
+  numJob(i) = size(find(traces(find(traces(:,2)==sorted_ids(i)),3)==TASK_END),1);
 end
 
 for i=1:size(thread_ids,1);
@@ -71,6 +74,6 @@ deadlines_matrix =transpose(matrix);
 
 
 name_missed_deadlines = strcat(name,'_deadline_metrics.csv');
-csvwrite(name_missed_deadlines,deadlines_matrix);
+csvwrite(name_missed_deadlines, deadlines_matrix , 'precision', '%2.3f');
 
 clear all;

@@ -1,5 +1,11 @@
 function execution_time(name)
 
+%CONSTANTS
+SCHED_START=1;
+SCHED_END=2;
+TASK_START = 3;
+TASK_END = 4;
+
 name_traces = strcat(name,'_traces.csv');
 
 if exist(name_traces, "file") == 0
@@ -8,12 +14,6 @@ if exist(name_traces, "file") == 0
 end
 
 traces = csvread(name_traces);
-
-%CONSTANTS
-SCHED_START=1;
-SCHED_END=2;
-TASK_START = 3;
-TASK_END = 4;
 
 aux=0;
 
@@ -29,7 +29,7 @@ for i1=1:num_threads;
     
     aux_count = 0;
     aux_began=0;
-    aux_start=0;
+    aux_start=-1;
 
     %foreach trace
     for i2=1:length(t_id)
@@ -73,6 +73,6 @@ for i1=1:num_threads;
 end
 
 name_exec = strcat(name,'_exec_ms.csv');
-csvwrite(name_exec, exec_ms);
+csvwrite(name_exec, exec_ms, 'precision', '%2.3f');
 
 clear all;

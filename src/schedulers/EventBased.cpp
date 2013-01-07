@@ -256,7 +256,7 @@ void EventBased::schedule() {
 	    criteria = aux->getCriteria();
 	  }
 	  else {
-	    cout << "BOO!!\n";
+	    cout << "EventBased::schedule() - fnishedjob, new criteria is null!\n";
 	  }
 	  currentRunnable = activeQueue->peek_front();
 	  //Register event with parent
@@ -288,11 +288,11 @@ void EventBased::schedule() {
 
 	currentRunnable = activeQueue->peek_front();
 
-	if(currentRunnable==NULL) {
-	  cout << "THIS SHOULDN'T PRINT!!\n";
+	if(currentRunnable!=NULL) {
+          currentRunnable->activate();
         }
 	else {
-          currentRunnable->activate();
+	  cout << "EventBased::schedule() - current runnable is null (when it shouldn't)...\n";
         }
       }
       else {

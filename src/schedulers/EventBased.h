@@ -29,9 +29,6 @@ class EventBased : public Scheduler {
   ///This deque holds the ids of runnables in the active queue who already finished
   deque<unsigned int> finishedJobDeque;
 
-  ///This deque holds the Runnables who are registering new jobs
-  deque<Runnable*> newJobDeque;
-
   ///This queue holds the Runnables who need to be updated in the activeQueue
   deque<Runnable*> updateDeque;
 

@@ -23,7 +23,7 @@ total = sum(runTime(:,3));
 utilization = 1 - (runT /total );
 
 name_util = strcat(name,'_utilization.csv');
-csvwrite(name_util, utilization);
+csvwrite(name_util, utilization, 'precision', '%2.3f');
 
 
 
