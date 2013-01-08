@@ -1,9 +1,31 @@
-HSF
+*************************************************************
+*
+*           HIERARCHICAL SCHEDULING FRAMEWORK
+*
+*************************************************************
 
-In your terminal, type:
+CONFIGURATION:
 
-source hsf_paths.sh
+1. Change line 3 of hsf_paths to the location of your HSF
+folder (by default it's in ~/git/HSF). 
 
-This will set a new $HSF variable, and add to your $PATH variable.
+2. In the terminal, type:
+     
+     source hsf_paths.sh
 
-You can also add that line to you ~/.bashrc file.
+This will set a new $HSF variable, and add it to your $PATH variable. 
+You can also add it to you ~/.bashrc file.
+
+3. Then type:
+     ./install.sh
+
+4. Run HSF!
+   you can now type in you terminal the following commands:
+   
+   sudo hsf [filename(.xml)]
+   simulate [filename(.xml)]
+   calculate [metric] [filename]
+   show [metric] [filename]
+   simfig [filename]
+   publish [filename]
+   
