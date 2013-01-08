@@ -30,5 +30,6 @@ class BusyWait : public Task {
   //This function will perform one task with execution time WCET
   void fire();
 };
+
 #endif
 

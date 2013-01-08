@@ -3,8 +3,8 @@
 
 #include "util/Enumerations.h"
 
-#include <vector>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -17,6 +17,7 @@ class MissedDeadline {
  private:
 
   /*********** VARIABLES ***********/
+
   //Variables will be traced in the following order:
 
   ///This variable stores the id of the thread 

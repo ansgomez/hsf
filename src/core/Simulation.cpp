@@ -1,10 +1,7 @@
 #include "core/Simulation.h"
 
 #include "core/Dispatcher.h"
-#include "core/Task.h"
 #include "core/Worker.h"
-#include "dispatchers/Aperiodic.h"
-#include "dispatchers/Periodic.h"
 #include "pthread/Idle.h"
 #include "pthread/Priorities.h"
 #include "pthread/Thread.h"
@@ -20,6 +17,8 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <unistd.h>
+
+using namespace std;
 
 /***************************************
  *        CLASS DEFINITION             * 

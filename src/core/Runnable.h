@@ -60,8 +60,10 @@ class Runnable : public Thread {
 
 
   /*********** GETTERS AND SETTERS ***********/
+
   ///This function return the runnable's schedulable criteria
   Criteria* getCriteria();
+
   ///This function sets the runnable's parent
   void setParent(ResourceAllocator* p);
 };

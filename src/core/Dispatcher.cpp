@@ -20,10 +20,9 @@ using namespace std;
 ///Constructor needs Simulation pointer, and a disp_id
 Dispatcher::Dispatcher(unsigned int _id) : Thread(_id)
 {
-
-#if _INFO == 1
+  #if _INFO == 1
   cout << "++New Dispatcher - " << _id << "\n";
-#endif
+  #endif
 
   thread_type = dispatcher;
 
@@ -53,16 +52,16 @@ void Dispatcher::join() {
 void Dispatcher::wrapper() {
   struct timespec rem;
 
-#if _INFO == 1
+  #if _INFO == 1
   cout << "Disp: " << id << " waiting for initialization\n";
-#endif
+  #endif
 
   //Wait until the simulation is initialized
   while( !Simulation::isInitialized() );
   
-#if _INFO == 1
+  #if _INFO == 1
   cout << "Disp: " << id << " begining execution \n";
-#endif
+  #endif
 
   //if offset != 0, sleep before dispatching
   if(offset.tv_nsec != 0 || offset.tv_sec !=0) {
@@ -71,9 +70,9 @@ void Dispatcher::wrapper() {
 
   dispatch();
 
-#if _INFO == 1
+  #if _INFO == 1
   cout << "Dispatcher " << id << " exiting wrapper...\n";
-#endif
+  #endif
 }
 
 /*********** MEMBER FUNCTIONS ***********/

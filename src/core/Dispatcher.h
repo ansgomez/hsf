@@ -57,8 +57,10 @@ class Dispatcher : public Thread {
 
   ///This function sets the dispatcher's offset
   void setOffset(struct timespec o);
+
   ///This function sets the tasks's periodicity
   void setPeriodicity(_task_periodicity t);
+
   ///This function sets the associated worker
   void setWorker(Worker *w);
 };

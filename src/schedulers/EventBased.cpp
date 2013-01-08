@@ -6,8 +6,8 @@
 #include <iostream>
 #include <time.h>
 
-#define _INFO 0
 #define _DEBUG 0
+#define _INFO 0
 
 using namespace std;
 
@@ -308,10 +308,3 @@ void EventBased::schedule() {
   }
 }
 
-/*********** MEMBER FUNCTIONS ***********/
-
-///This function compares a Criteria object with the current head of the active queue to determine whether the new Criteria is "greater" -> this could mean a higher priority, or earlier deadline, as defined by each subclass of the EventBased class.
-bool EventBased::greaterCriteria(Criteria* newCriteria) {
-  cout << "EventBased::greaterCriteria() - error! This should not print!\n";
-  return false;
-}

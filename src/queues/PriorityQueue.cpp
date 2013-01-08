@@ -35,8 +35,6 @@ bool PriorityQueue::insertRunnable(Runnable *newRunnable) {
     return false;
   }
 
-  //cout << "NewRunnable's criteria:\n" << newRunnable->getCriteria()->toString() << endl;
-
   #if _INFO==1
   cout << "PriorityQueue::insertRunnable() - size is now: " << size << endl;
   #endif

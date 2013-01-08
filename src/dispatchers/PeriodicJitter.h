@@ -40,8 +40,10 @@ class PeriodicJitter : public Dispatcher {
   
   ///This function returns the period
   struct timespec getPeriod();
+
   ///This function sets the jitter
   void setJitter(struct timespec j);
+
   ///This function sets the period
   void setPeriod(struct timespec p);
 };

@@ -32,6 +32,8 @@ class EventBased : public Scheduler {
   ///This queue holds the Runnables who need to be updated in the activeQueue
   deque<Runnable*> updateDeque;
 
+  /**** SEMAPHORES ****/
+
   ///Semaphores to ensure proper execution
   sem_t activation_sem, event_sem, schedule_sem;
 
@@ -72,12 +74,5 @@ class EventBased : public Scheduler {
   
   ///This function performs the actual scheduling (figuring out the order of execution for its load)
   void schedule();
-
-  /*********** MEMBER FUNCTIONS ***********/
-
-  ///This function compares a Criteria object with the current head of the active queue to determine whether the new Criteria is "greater". If newCriteria is "greater" this function returns true -> this could mean a higher priority, or earlier deadline, as defined by each subclass of the EventBased class. If this function returns true, the new arrival should be registered in order to update the activeQueue
-  virtual bool greaterCriteria(Criteria* newCriteria);
-
 };
-
 #endif

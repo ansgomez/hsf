@@ -14,8 +14,6 @@ class Statistics;
 class Thread;
 class Trace;
 
-using namespace std;
-
 /***************************************
  *        CLASS DECLARATION            * 
  ***************************************/
@@ -29,13 +27,13 @@ class Simulation {
   /**** INPUT VARIABLES ****/
 
   ///The name of the simulation (will be used for traced output)
-  string name;
+  std::string name;
 
   ///This attribute holds how long the simulation will last
   static struct timespec simTime;
 
   ///This variable stores the path to the XML input file
-  string xml_path;
+  std::string xml_path;
 
   /**** HSF VARIABLES */
 
@@ -43,7 +41,7 @@ class Simulation {
   Scheduler* top_sched;
 
   ///This vector holds all of the simulation's dispatchers
-  vector<Dispatcher*> disp;
+  std::vector<Dispatcher*> disp;
 
   ///This is the idle thread
   Idle* idle;
@@ -58,21 +56,21 @@ class Simulation {
 
   /**** AUXILIARY ****/
 
-  ///This vector holds a pointer to all Thread's
-  vector<Thread*> threads;
+  ///Auxiliary variable for the main thread's parameters
+  struct sched_param param;
 
   ///Auxiliary variable for the cpu affinity
   cpu_set_t set;
 
-  ///Auxiliary variable for the main thread's parameters
-  struct sched_param param;
+  ///This std::std::vector holds a pointer to all Thread's
+  std::vector<Thread*> threads;
 
  public:
 
   /*********** CONSTRUCTOR ***********/
 
   ///Constructor needs the path to xml and the cpu_set
-  Simulation(string xml_path, int cpu);
+  Simulation(std::string xml_path, int cpu);
 
   /*********** MEMBER FUNCTIONS ***********/
 
@@ -108,11 +106,14 @@ class Simulation {
   /*********** GETTER AND SETTER FUNCTIONS ***********/
 
   ///This function returns the name of the simulation
-  string getName();
+  std::string getName();
+
   ///This function sets the duration of the simulation
   void setDuration(struct timespec d);
+
   ///This function sets the name of the simulation
-  void setName(string s);
+  void setName(std::string s);
+
   ///This function sets the top scheduler
   void setTopScheduler(Scheduler* sched);
 };

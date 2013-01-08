@@ -18,7 +18,6 @@ Criteria::Criteria() {
   absoluteDeadline = TimeUtil::Millis(0);
   period = TimeUtil::Millis(0);
   priority = 0;
-  //relativeDeadline = TimeUtil::Millis(0);
 }
 
 /*********** GETTERS AND SETTERS ***********/

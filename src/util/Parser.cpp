@@ -256,9 +256,9 @@ TDMA* Parser::parseTDMA(xml_node tdma_node, unsigned int *id, int level) {
 
   TDMA *tdma = new TDMA(*id, level);
 
-#if _INFO==1
-    cout << "Creating TDMA " << *id << endl;
-#endif
+  #if _INFO==1
+  cout << "Creating TDMA " << *id << endl;
+  #endif
 
   //iterate through all of the children nodes
   for (xml_node load = tdma_node.first_child(); load; load = load.next_sibling()) {

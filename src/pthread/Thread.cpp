@@ -22,9 +22,9 @@ Thread::Thread(unsigned int _id) {
   id = _id;
   joined = false;
 
-#if _INFO==1
+  #if _INFO==1
   cout << "Thread " << _id << " created\n";
-#endif
+  #endif
 
   pthread_attr_init(&thread_attr);
 
@@ -49,9 +49,7 @@ void Thread::join() {
   if(joined) {
     return;
   }
-  //cout << "Thread " << id << " is being joined\n";
   pthread_join(thread, NULL);
-  //cout << "Thread " << id << " has been joined\n";
   joined = true;
 }
 
@@ -60,9 +58,7 @@ void Thread::join2() {
   if(joined) {
     return;
   }
-  //cout << "Thread " << id << " is being joined\n";
   pthread_join(thread, NULL);
-  //cout << "Thread " << id << " has been joined\n";
   joined = true;
 }
 
@@ -84,12 +80,10 @@ void * Thread::static_wrapper(void * This)
 
 ///Should be overwritten by all subclasses
 void Thread::wrapper() {
-  //empty
   cout << "Thread::wrapper (" << id << ") - This should not print!\n";
 }
 
 /*********** GETTER AND SETTER FUNCTIONS ***********/
-
 
 ///This function return the thread id
 unsigned int Thread::getId() {

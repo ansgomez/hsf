@@ -35,9 +35,9 @@ void Periodic::dispatch() {
     Statistics::addTrace(dispatcher, worker->getId(), task_arrival);
 
     if(worker != NULL) {
-#if _INFO==1
+      #if _INFO==1
       cout << "Disp : " << id << " is registering a new job\n";// @t=" << TimeUtil::getTimeUSec() << "\n";
-#endif
+      #endif
       worker->newJob();
     }
     else {
@@ -49,20 +49,9 @@ void Periodic::dispatch() {
     }
   }
 
-
-  //TODO: Verify is the code below can be erased -> worker::join now takes care of unblocking the worker
-
-  //Free worker from blocking. This runs only when the simulation has ended
-  if(worker != NULL) {
-    worker->newJob();
-  }
-  else {
-    cout << "Dispatcher::dispatch - Worker NULL problem\n";
-  }
-
-#if _INFO == 1
+  #if _INFO == 1
   cout << "Dispatcher " << id << " is exiting dispatch()\n";
-#endif
+  #endif
 }
 
 /*********** GETTER AND SETTER FUNCTIONS ***********/

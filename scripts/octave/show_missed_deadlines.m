@@ -4,7 +4,7 @@ missed_file = strcat(name,'_missed_deadlines.csv');
 
 [s, err, msg] = lstat(name_missed);
 
-if(s.size == 0)
+if(size(s) == 0)
   fprintf('  Missed Deadlines: \n\n');
   fprintf("\tNo Missed Deadlines \n");
   return;

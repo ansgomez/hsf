@@ -29,6 +29,16 @@ string Trace::toString() {
 
 /*********** GETTER FUNCTIONS ***********/
 
+///This function return the traced action
+_task_action Trace::getAction() {
+  return task_action;
+}
+
+///This function returns the thread ID
+unsigned int Trace::getId() {
+  return thread_id;
+}
+
 ///This function returns the timestamp
 struct timespec Trace::getTimestamp() {
   return timestamp;
@@ -39,12 +49,3 @@ _thread_type Trace::getType() {
   return thread_type;
 }
 
-///This function returns the thread ID
-unsigned int Trace::getId() {
-  return thread_id;
-}
-
-///This function return the traced action
-_task_action Trace::getAction() {
-  return task_action;
-}
