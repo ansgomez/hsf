@@ -1,5 +1,7 @@
 <?php
 
+pcntl_signal(SIGPIPE, function() { exit; });
+
 $PREFIX = $argv[1];
 
 function csv2html($FILE) {
@@ -78,6 +80,36 @@ function timesTable($FILE) {
   }
 }
 
+function workerThroughput($FILE) {
+  $row=1;
+
+  if (($handle = fopen($FILE, "r")) !== FALSE) {
+    echo "<table>\n";
+    echo "<thead>\n";
+    echo "<th width=\"150px\" align=\"center\">Worker</th>\n";
+    echo "<th width=\"300px\" align=\"center\">Throughput (Jobs/sec)</th>\n";
+    echo "</thead>\n";
+    
+    echo "<tbody>\n";
+    while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+      $num = count($data);
+      if($num>0) {
+        echo "<tr>\n";    
+        echo "<td align=\"center\">".$row."</td>\n";
+        echo "<td align=\"center\">".$data[0]."</td>\n";
+        echo "</tr>\n";
+      }
+      $row++;
+    }
+    
+    echo "</tbody>\n";
+    echo "</table>\n";
+  }
+  else {
+    echo "<h3>The file ".$FILE." was not found...</h3>\n";
+  } 
+}
+
 function workerCost($FILE) {
   $row=1;
 
@@ -146,6 +178,9 @@ function workerCost($FILE) {
   <tr>
     <td align="right"><b>Duration:</b></td>
     <td>0h01m03s</td>
+  </tr>
+  <tr>
+    <?php echo system("~/git/HSF/scripts/bash/info.sh html"); ?>
   </tr>
 </table>
 
@@ -232,10 +267,36 @@ function workerCost($FILE) {
 	<h3>Missed Deadlines</h3>
 	<div>
 	  <p>
+	    <?php 
+	    if(file_exists($PREFIX."_deadline_metrics.csv")) { 
+	    ?>
 	    These are the missed deadlines:
-	    *TABLE*
+            <div id="traces_table">
+	      <table border=\"1\">
+              <thead>
+                <th width="200px">Worker</th>
+                <th width="200px">% Missed</th>
+                <th width="200px">Average Tardiness</th>
+              </thead>
+              <?php csv2html($PREFIX."_deadline_metrics.csv");  ?>
+	      </table>
+	    </div>		
+	    <?php
+	    } 
+            else { 
+	      echo "There are no missed deadlines!\n"; 
+            } ?>
 	  </p>
 	</div>
+
+	<h3>Throughput</h3>
+	<div>
+	  <p>
+	    These are the worker costs:
+	    <?php workerThroughput($PREFIX."_throughput.csv"); ?>
+	  </p>
+	</div>
+
 	<h3>Utilization</h3>
 	<div>
           <p>

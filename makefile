@@ -26,6 +26,7 @@ HSFSRC=mainHSF.cpp
 SIMFIGSRC=mainSimulationFigure.cpp
 CALCULATESRC=mainCalculate.cpp
 SHOWSRC=mainShow.cpp
+PUBLISHSRC=mainPublish.cpp
 SIMULATESRC=mainSimulate.cpp
 
 #################    MAIN TARGETS   #################
@@ -126,6 +127,11 @@ show:
 	$(CXX) $(CFLAGS) -c $(SRCDIR)/$(SHOWSRC) -o $(OBJDIR)/mainShow.o
 	$(CXX) $(LFLAGS) $(OBJDIR)/mainShow.o -o $(BINDIR)/show 
 
+#################  PUBLISH  TOOL    #################
+publish:
+	$(CXX) $(CFLAGS) -c $(SRCDIR)/$(PUBLISHSRC) -o $(OBJDIR)/mainPublish.o
+	$(CXX) $(LFLAGS) $(OBJDIR)/mainPublish.o -o $(BINDIR)/publish 
+
 #################   SIMULATE TOOL   #################
 simulate:
 	$(CXX) $(CFLAGS) -c $(SRCDIR)/$(SIMULATESRC) -o $(OBJDIR)/mainSimulate.o
@@ -147,7 +153,7 @@ $(MJPEG_SRC):
 
 #################  MISCELLANEOUS   #################
 
-tools: simulate calculate simfig show 
+tools: simulate calculate show publish simfig 
 
 run:
 	sudo $(OBJDIR)/$(EXEC)

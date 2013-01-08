@@ -78,6 +78,8 @@ end
 matrix = [worker_id ; missed_percentage ; lateness];
 deadlines_matrix =transpose(matrix);
 
+deadlines_matrix(:,2) = deadlines_matrix(:,2)*100;
+deadlines_matrix(:,3) = deadlines_matrix(:,3)/1000;
 
 name_missed_deadlines = strcat(name,'_deadline_metrics.csv');
 csvwrite(name_missed_deadlines, deadlines_matrix , 'precision', '%2.3f');
