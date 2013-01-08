@@ -81,6 +81,12 @@ class SimulationFigure {
   //This function draws a rectangle of a defined color starting at time t and a relative width
   void drawJob(int plot, double start, double end, int clr=-1);
 
+  //This function draw a green downward arrow at the specified time to indicate a met deadline
+  void drawMetDeadline(int plot, double time);
+
+  //This function draw a green downward arrow at the specified time to indicate a met deadline
+  void drawMissedDeadline(int plot, double time);
+
   //This function draws an arrow indicating that the scheduler activated plot_i during this time
   void drawSched(int plot, double sched_start, double sched_end, int clr=0);
 

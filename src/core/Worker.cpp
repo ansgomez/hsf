@@ -94,17 +94,21 @@ void Worker::wrapper() {
       }
     }
 
+    //Add the task end to the statistics
+    Statistics::addTrace(worker, id, task_end);
+
     now = TimeUtil::getTime();
     deadline = criteria->getArrivalTime() + relativeDeadline;
     //If deadline was missed, add to statistics
     if(now > deadline) {
       arrival = TimeUtil::relative(criteria->getArrivalTime());
       Statistics::addMissedDeadline(id, arrival, TimeUtil::relative(deadline));
+      Statistics::addTrace(worker, id, deadline_missed);
+    }
+    else {
+      Statistics::addTrace(worker, id, deadline_met);
     }
    
-    //Add the task end to the statistics
-    Statistics::addTrace(worker, id, task_end);
-
     //Handle the end of the current job (might regise finishedJob or updateRunnable with parent)
     finishedJob();
   }

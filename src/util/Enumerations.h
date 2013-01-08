@@ -28,7 +28,9 @@ enum _task_action {
   sched_start,
   sched_end,
   task_start,
-  task_end
+  task_end,
+  deadline_met,
+  deadline_missed
 };
 
 ///This enumeration describes the possible loads for a worker
