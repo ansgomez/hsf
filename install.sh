@@ -1,9 +1,9 @@
 #!/bin/bash
 
 cd ./lib
+#extract auxiliary libraries
 tar zxvf lib.tar.gz 
-sudo mv libmgl.so.7.0.0.$(shell getconf LONG_BIT) /usr/lib/libmgl.so.7.0.0
-rm libmgl.so.7.0.0*
+#go back and compile all
 cd ..
 make all
 

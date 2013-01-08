@@ -19,7 +19,7 @@ SRCDIR=src
 
 #Libraries
 XML=xml/pugixml.cpp
-MATHGL= -rdynamic /usr/lib/libmgl.so.7.0.0
+MATHGL= -rdynamic /usr/local/lib/libmgl.so.7.0.0
 
 #SOURCE FILES
 HSFSRC=mainHSF.cpp

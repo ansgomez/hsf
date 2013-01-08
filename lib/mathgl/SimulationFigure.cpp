@@ -79,7 +79,7 @@ void SimulationFigure::drawMetDeadline(int plot, double time) {
     gr->SetRanges(x1,x2,y1,y2);
           
     //Draw Arrow
-    gr->Line(mglPoint(time,base), mglPoint(time,base+height*arrow_length), "IA1");
+    gr->Line(mglPoint(time,base), mglPoint(time,base+height*arrow_length), "_A1");
   }
 }
 
@@ -90,7 +90,7 @@ void SimulationFigure::drawMissedDeadline(int plot, double time) {
     gr->SetRanges(x1,x2,y1,y2);
           
     //Draw Arrow
-    gr->Line(mglPoint(time,base), mglPoint(time,base+height*arrow_length), "IAr1");
+    gr->Line(mglPoint(time,base), mglPoint(time,base+height*arrow_length), "_Ar1");
   }
 }
 

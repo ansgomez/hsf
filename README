@@ -4,28 +4,62 @@
 *
 *************************************************************
 
+REQUIREMENTS:
+
+   HSF requires a *NIX kernel with standard libraries. To compile
+   all sources, these packages are needed:
+   
+     g++
+     make
+     octave
+     php
+     libmgl-dev
+     libX11-dev
+
+  Mathgl library should be compiled, and libmgl.so.7.0.0 should be
+  placed in /usr/local/lib (otherwise the MATHGL variable in the makefile 
+  should be changed to the appriopiate location. For more information 
+  on Mathgl, please visit:
+  
+     http://mathgl.sourceforge.net/
+
 CONFIGURATION:
 
-1. Change line 3 of hsf_paths to the location of your HSF
-folder (by default it's in ~/git/HSF). 
+1. If you HSF folder is not located in ~/git, then please change 
+   line 3 of hsf_paths to the path to your HSF folder
 
 2. In the terminal, type:
      
-     source hsf_paths.sh
-
-This will set a new $HSF variable, and add it to your $PATH variable. 
-You can also add it to you ~/.bashrc file.
+         source hsf_paths.sh
+   
+   This will set a new $HSF variable, and add it to your $PATH variable. 
+   You can also add it to you ~/.bashrc file, to have it load automatically
+   
+   You need root privileges to execute hsf.
 
 3. Then type:
-     ./install.sh
+
+         ./install.sh
 
 4. Run HSF!
-   you can now type in you terminal the following commands:
+
+   You can now type in you terminal the following commands:
    
-   sudo hsf [filename(.xml)]
-   simulate [filename(.xml)]
-   calculate [metric] [filename]
-   show [metric] [filename]
-   simfig [filename]
-   publish [filename]
+     sudo hsf [filename(.xml)]
+     simulate [filename(.xml)]
+     calculate [metric] [filename]
+     show [metric] [filename]
+     simfig [filename]
+     publish [filename]
    
+     [metric] can be one (or more) of the following:
+   
+       exe|exec     ->  Execution Times
+       resp         ->  Response Times
+       throughput   ->  Throughput
+       util         ->  Utilization
+       alloc        ->  Resource allocation costs
+       sys          ->  System allocation costs
+       worker       ->  Worker costs
+       missed       ->  Missed deadlines
+      
