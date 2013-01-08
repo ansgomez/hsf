@@ -6,4 +6,4 @@ mkdir -p $1/
 
 mv "$1"_figure* $1/
 
-rm $1_*
+mv $1_* $1/
