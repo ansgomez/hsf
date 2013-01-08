@@ -24,6 +24,12 @@ if exist(name_missed, "file") == 0
   return;
 end
 
+[s, err, msg] = lstat(name_missed);
+
+if(s.size == 0)
+  return;
+end;
+
 missed = csvread(name_missed);
 
 if (size(missed)==0)

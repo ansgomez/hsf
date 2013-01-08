@@ -5,7 +5,7 @@ CXX=g++
 CFLAGS=-Wall -I./src/
 CARG=-lrt
 LFLAGS= -lm 
-LARG=-ldl -lpthread -lrt -lSM -lICE -lX11 -lXext -lpng -lz -Wl-rpath #-lGLU -lGL
+LARG=-ldl -lpthread -lrt -lX11 #-lSM -lICE -lXext -lpng -lz -Wl-rpath #-lGLU -lGL
 M_FLAGS=-Wall -pthread -c -g -DVIEWER -lX11 #MJPEG Flags
 
 #Architecture dependent variable
