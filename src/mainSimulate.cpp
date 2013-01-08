@@ -60,7 +60,7 @@ void simulate(string prefix) {
   string aux;
 
   //Call hsf
-  aux = "sudo hsf " + prefix;
+  aux = "sudo $HSF/bin/hsf " + prefix;
   system(aux.c_str());
 
   //Call calculate
