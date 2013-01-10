@@ -32,7 +32,7 @@ n_max=$2;
 #Experiment's short name
 short_name="$algorithm"_"$topology"_exp;
 #Experiment description
-desc="Algorithm: $algorithm\nTopology: $topology";
+desc="Algorithm: $algorithm\nTopology: $topology\nSweep: N_Tasks [2,"$n_max"]";
 
 #####################
 ##    FUNCTIONS    ##
@@ -91,18 +91,18 @@ do
   php $HSF/scripts/hsf/"$algorithm"/"$topology".php $sim_time_ms $periodicity $load $slot $gamma $n > "$algorithm".xml
 
   #Execute HSF
-  sudo hsf $algorithm
+  sudo $HSF/bin/hsf $algorithm
 
   #Calculate all metrics plus figure
-  calculate all $algorithm
-  simfig $algorithm
+  $HSF/bin/calculate all $algorithm
+  $HSF/bin/simfig $algorithm
 
   #Copy relevant results
   echo $n >> x.csv
   cat "$algorithm"_sys_cost_us.csv >> sys.csv
   cat "$algorithm"_alloc_cost_us.csv >> alloc.csv
-  if [[ -f "$algorithm"_deadline_metrics.csv ]]; then
-    cat "$algorithm"_deadline_metrics.csv >> deadlines.csv
+  if [[ -f "$algorithm"_deadline_total.csv ]]; then
+    cat "$algorithm"_deadline_total.csv >> deadlines.csv
   else
     echo "0,0" >> deadlines.csv
   fi
@@ -116,6 +116,9 @@ do
   mv "$algorithm"* $PREFIX/
        
 done
+
+#Plot all measures for n_sweep
+octave --no-window-system -q --eval "plotExperiment(\"Number of Tasks\");"
 
 #compare starting time with current time, and save it
 #echo "$(timer $tmr)" > $DIR/runtime.txt
