@@ -28,5 +28,5 @@ fprintf('  Missed Deadlines: \n\n');
 fprintf('\tID    Missed(%%)      Avg. Tardiness(ms) \n');
 
 for i=1:size(missed,1);
-fprintf ('\t%2d     %3d             %7.3f \n' ,missed(i,1), (missed(i,2)*100), missed(i,3));
+fprintf ('\t%2d     %3.3f             %7.3f \n' ,missed(i,1), missed(i,2), missed(i,3));
 end
