@@ -68,7 +68,13 @@ for i1=1:num_threads;
         end
     end
 
+    if c==1
+      exec_ms(1,i1)=0;
+      N=0;
+      continue;
+    end
 end
+
 [num_job , num_worker] = size(exec_ms);
 
 %calculates the matrix of workers execution time from the trace file

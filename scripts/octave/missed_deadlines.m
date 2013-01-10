@@ -63,7 +63,11 @@ end
 
 for i=1:size(thread_ids,1);
   numJob_missed(i) = size((find(missed(:,1)==sorted_ids(i))),1);
-  missed_percentage(i) =(numJob_missed (i)/numJob(i));
+  if numJob(i) == 0
+    missed_percentage(i) = 0;
+  else
+    missed_percentage(i) =(numJob_missed (i)/numJob(i));
+  end
 end
 
 for i=1:size(thread_ids,1);

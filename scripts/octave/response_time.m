@@ -32,14 +32,19 @@ for i1=1:num_threads
     for i2=1:length(end_times)
         %R=end-start
         aux = traces(end_times(i2), 1)-traces(arrival_times(i2), 1);
-        response_times_ms(c, i1) = aux/1000;
+        resp_ms(c, i1) = aux/1000;
         c=c+1;
     end
     
-    N = count(response_times_ms(:,i1));
+    if c==1
+      resp_ms(1,i1)=0;
+      N=0;
+      continue;
+    end
+
 end
 
 name_resp = strcat(name,'_resp_ms.csv');
-csvwrite(name_resp, response_times_ms, 'precision', '%2.3f');
+csvwrite(name_resp, resp_ms, 'precision', '%2.3f');
 
 clear all;
