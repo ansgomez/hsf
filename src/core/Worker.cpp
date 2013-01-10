@@ -12,8 +12,10 @@
 
 #include <iostream>
 
-#define _INFO 0
 #define _DEBUG 0
+#define _INFO 0
+
+using namespace std;
 
 /***************************************
  *        CLASS DEFINITION             * 
@@ -51,13 +53,13 @@ Worker::Worker(ResourceAllocator *p, unsigned int _id, _task_load tl) : Runnable
 ///This join function takes into account the worker's unblocking mechanism
 void Worker::join() {
 
-  //Post to sem in case worker is blocked
+  //Post to sems in case worker is blocked
   sem_post(&wrapper_sem);
   sem_post(&worker_sem);
   sem_post(&worker_sem);
   sem_post(&activation_sem);
-  sem_post(&arrival_sem);
   sem_post(&activation_sem);
+  sem_post(&arrival_sem);
   sem_post(&arrival_sem);
 
   if(parent!=NULL) {
@@ -94,17 +96,27 @@ void Worker::wrapper() {
       }
     }
 
+    //Add the task end to the statistics
+    Statistics::addTrace(worker, id, task_end);
+
     now = TimeUtil::getTime();
-    deadline = criteria->getArrivalTime() + relativeDeadline;
+    if(criteria!=NULL) {
+      deadline = criteria->getArrivalTime() + relativeDeadline;
+    }
+    else {
+      cout << "Worker::wrapper() - criteria is null!\n";
+    }
+
     //If deadline was missed, add to statistics
     if(now > deadline) {
       arrival = TimeUtil::relative(criteria->getArrivalTime());
       Statistics::addMissedDeadline(id, arrival, TimeUtil::relative(deadline));
+      Statistics::addTrace(worker, id, deadline_missed);
+    }
+    else {
+      Statistics::addTrace(worker, id, deadline_met);
     }
    
-    //Add the task end to the statistics
-    Statistics::addTrace(worker, id, task_end);
-
     //Handle the end of the current job (might regise finishedJob or updateRunnable with parent)
     finishedJob();
   }
@@ -168,7 +180,6 @@ void Worker::finishedJob() {
 
     //Notify parent of new arrival
     if (parent != NULL ) {
-    //cout << "Worker::finishedJob() - calling parent's finishedJob() ...\n";
       parent->updateRunnable(this);
     }
     else {
@@ -185,21 +196,19 @@ void Worker::finishedJob() {
 	criteria->setDeadline(TimeUtil::Millis(0));
       }
       else {
-	cout << "Worker::finishedJob() - criteria is null! (1)\n";
+	cout << "Worker::finishedJob() - criteria is null! (2)\n";
       }
 
       sem_wait(&arrival_sem);
         arrival_times.pop_front(); //Erase old arrival time
       sem_post(&arrival_sem);
 
-      //cout << "Worker::finishedJob() - calling parent's finishedJob() ...\n";
       parent->finishedJob(id); //Register event with the parent
     }
     else {
       cout << "Worker::finishedJob() - parent is null!\n";
     }
   }
-  //cout << "Worker::finishedJob() is exiting...\n";
 }
 
 ///This function will be called by the dispatcher thread, and will post to the wrapper_sem
@@ -233,20 +242,14 @@ void Worker::newJob() {
       
     //Notify parent of new arrival
     if (parent != NULL ) {
-    //cout << "Worker::newJob() - going to parent...\n";
       parent->newJob(this);
-      //cout << "Worker::newJob() - returning from parent..\n";
     }
     else {
       cout << "Worker::newJob() - parent is null!\n";
     }
   }
-  else {
-    //cout << "Worker::newJob() - worker was not idle...\n";
-  }
-
-  //If there is an active job, finishedJob() will take care of 
-  //'registering' this new job with parent    
+  /*If there is an active job, finishedJob() will take care of 
+    'registering' this new job with parent */
 
   //Signal the worker thread
   sem_post(&wrapper_sem);

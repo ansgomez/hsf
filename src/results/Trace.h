@@ -41,18 +41,19 @@ class Trace {
   string toString();
 
   /*********** GETTER FUNCTIONS ***********/
-  ///This function returns the thread type
-  _thread_type getType();
 
-  ///This function returns the timestamp
-  struct timespec getTimestamp();
+  ///This function return the traced action
+  _task_action getAction();
 
   ///This function returns the thread ID
   unsigned int getId();
 
-  ///This function return the traced action
-  _task_action getAction();
-};
+  ///This function returns the timestamp
+  struct timespec getTimestamp();
 
+  ///This function returns the thread type
+  _thread_type getType();
+
+};
 
 #endif

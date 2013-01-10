@@ -38,10 +38,13 @@ class Statistics {
   /*********** VARIABLES ***********/
 
   /**** VECTORS ****/
+
   ///This vector holds all of the missed deadlines
   static vector<MissedDeadline> missedDeadlines;
+
   ///This vector holds all of the simulation's runtime statistics
   static vector<Runtime> runtimes;
+
   ///This vector holds alll of the time traces
   static vector<Trace> traces;
 
@@ -52,8 +55,10 @@ class Statistics {
   static int state;
 
   /**** SEMAPHORES ****/
+
   ///Semaphore to protect writing to the trace vector
   static sem_t trace_sem;
+
   ///Semaphore to protect writing to the missedDealine vector
   static sem_t deadline_sem;
 

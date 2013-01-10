@@ -1,8 +1,8 @@
 #ifndef _CBS_H
 #define _CBS_H
 
-#include "servers/Server.h"
 #include "queues/QueueCBS.h"
+#include "servers/Server.h"
 
 /***************************************
  *        CLASS DECLARATION            * 

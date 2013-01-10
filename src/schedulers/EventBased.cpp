@@ -6,8 +6,8 @@
 #include <iostream>
 #include <time.h>
 
-#define _INFO 0
 #define _DEBUG 0
+#define _INFO 0
 
 using namespace std;
 
@@ -221,11 +221,17 @@ void EventBased::schedule() {
         #if _DEBUG==1
 	cout << "EventBased::schedule() is handling a runnable update!\n";
         #endif
+
 	Runnable* r = updateDeque.front();
-	
-	activeQueue->deleteRunnable(r->getId());//erase from activeQueue
-	activeQueue->insertRunnable(r);//insert into activeQueue with updated criteria
-	updateDeque.pop_front();//erase from updateDeque
+
+	if(r != NULL) {
+	  activeQueue->deleteRunnable(r->getId());//erase from activeQueue
+	  activeQueue->insertRunnable(r);//insert into activeQueue with updated criteria
+	  updateDeque.pop_front();//erase from updateDeque
+	}
+	else {
+	  cout << "EventBased::schedule() - runnable r is null!\n";
+	}
 	
 	//Update this runnable's critera
 	criteria = activeQueue->peek_front()->getCriteria();
@@ -243,22 +249,25 @@ void EventBased::schedule() {
         #if _DEBUG==1
         cout << "EventBased::schedule() is handling a finished job!\n";
         #endif
+
 	//erase from activeQueue
         if(!activeQueue->deleteRunnable(finishedJobDeque.front())) {
-	cout << "EventBased::schedule() error - finished runnable was not found!\n";
+	  cout << "EventBased::schedule() error - finished runnable was not found!\n";
 	}
         finishedJobDeque.pop_front();//erase from finishedJobDeque
 
 	//If there are any pending jobs, update to new head's criteria and update with parent (if any)
 	if(activeQueue->getSize() > 0) {
 	  Runnable *aux = activeQueue->peek_front();
+
 	  if(aux != NULL) {
 	    criteria = aux->getCriteria();
 	  }
 	  else {
-	    cout << "EventBased::schedule() - fnishedjob, new criteria is null!\n";
+	    cout << "EventBased::schedule() - fnishedjob, activeQueue head is null!\n";
 	  }
 	  currentRunnable = activeQueue->peek_front();
+
 	  //Register event with parent
 	  if(parent!=NULL) {
 	    parent->updateRunnable(this);
@@ -308,10 +317,3 @@ void EventBased::schedule() {
   }
 }
 
-/*********** MEMBER FUNCTIONS ***********/
-
-///This function compares a Criteria object with the current head of the active queue to determine whether the new Criteria is "greater" -> this could mean a higher priority, or earlier deadline, as defined by each subclass of the EventBased class.
-bool EventBased::greaterCriteria(Criteria* newCriteria) {
-  cout << "EventBased::greaterCriteria() - error! This should not print!\n";
-  return false;
-}

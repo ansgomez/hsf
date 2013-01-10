@@ -59,10 +59,10 @@ for i1=1:num_threads;
         end
     end
     
-    N = count(exec_ms(:,i1));
- 
-    if N == 0
-    	continue;
+    if c==1
+      exec_ms(1,i1)=0;
+      N=0;
+      continue;
     end
 
     min_i = minimum(exec_ms(:,i1));

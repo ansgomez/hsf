@@ -52,7 +52,6 @@ class TimeUtil {
 
   ///This function returns a timespec with the specified seconds
   static struct timespec Seconds(__time_t s);
-
 };
 
 #endif

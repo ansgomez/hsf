@@ -45,6 +45,9 @@ bool RunnableQueue::deleteRunnable(unsigned int id) {
   //iterate to find runnable and delete it
   while(aux!=NULL) {
     if(aux->r->getId() == id) {
+      if(aux == tail) {
+	tail = prev;
+      }
       prev->next = aux->next;
       delete(aux);
       size--;

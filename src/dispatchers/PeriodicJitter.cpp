@@ -52,17 +52,9 @@ void PeriodicJitter::dispatch() {
     }
   }
 
-  //Free worker from blocking. This runs only when the simulation has ended
-  if(worker != NULL) {
-    worker->newJob();
-  }
-  else {
-    cout << "Dispatcher::dispatch - Worker NULL problem\n";
-  }
-
-#if _INFO == 1
+  #if _INFO == 1
   cout << "Dispatcher " << id << " is exiting dispatch()\n";
-#endif
+  #endif
 }
 
 /*********** GETTER AND SETTER FUNCTIONS ***********/

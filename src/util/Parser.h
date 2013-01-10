@@ -8,11 +8,11 @@
 
 class Criteria;
 class Dispatcher;
+class EventBased;
 class ResourceAllocator;
 class Scheduler;
 class Simulation;
 class TDMA;
-class EventBased;
 class Worker;
 
 using namespace pugi;

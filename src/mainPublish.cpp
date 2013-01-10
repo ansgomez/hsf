@@ -1,6 +1,6 @@
 /*********************************
  *
- * Input parameter 1 .. N - names of HSF xml files to execute
+ * Input parameter 1 .. N - names of HSF simulations to publish
  *
  *********************************/
 
@@ -21,14 +21,14 @@ string prefix="simulation";
 void interpret(string str);
 
 ///This function executes, analyzes and shows the metrics of the input file
-void simulate(string f);
+void publish(string f);
 
 /*********** MAIN FUNCTION  ***********/
 int main(int argn, char **argv) {
   string* aux;
 
 #if _INFO==1
-  cout << "\nStarting HSF's simulate tool\n\n";
+  cout << "\nStarting HSF's publish tool\n\n";
 #endif
 
   ///If there are input parameters, interpret them
@@ -45,7 +45,7 @@ int main(int argn, char **argv) {
   }
   ///otherwise analyze all by default, 
   else {
-    simulate("simulation");
+    publish("simulation");
   }
 
 #if _INFO==1
@@ -56,28 +56,15 @@ int main(int argn, char **argv) {
 }
 
 ///This function executes, analyzes and shows the metrics of the input file
-void simulate(string prefix) {
+void publish(string prefix) {
   string aux;
 
   //Call hsf
-  aux = "sudo $HSF/bin/hsf " + prefix;
+  aux = "$HSF/scripts/bash/publish.sh " + prefix;
   system(aux.c_str());
 
-  //Call calculate
-  aux = "calculate " + prefix;
-  system(aux.c_str());  
+  cout << "\n***   Published: " + prefix + ".hmtl\t***\n\n";
 
-  //Call simfig
-  aux = "simfig " + prefix;
-  system(aux.c_str());
-
-  //Call show
-  //aux = "show " + prefix;
-  //system(aux.c_str());
-
-  //Call publish
-  //aux = "publish " + prefix;
-  //system(aux.c_str());
 }
 
 ///This function interprets all input parameters
@@ -88,5 +75,5 @@ void interpret(string str) {
     str = str.substr(0,str.size()-4);
   }
 
-  simulate(str);
+  publish(str);
 }

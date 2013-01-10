@@ -24,6 +24,15 @@ DeadlineQueue::DeadlineQueue() : RunnableQueue() {
 
 ///This function inserts the new runnable in the queue depending on the Runnable's deadline
 bool DeadlineQueue::insertRunnable(Runnable *newRunnable) {
+
+  if(newRunnable == NULL) {
+    cout << "PriorityQueue::insertRunnable() - newRunnable is null!\n";
+    return false;
+  }
+
+  //Clear the queue of any nodes with this runnable id
+  deleteRunnable(newRunnable->getId());
+
   //increase the size counter
   size++;
   

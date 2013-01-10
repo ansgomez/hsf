@@ -17,6 +17,7 @@ class Runtime {
  private:
 
   /*********** VARIABLES ***********/
+
   //Variables will be traced in the following order:
 
   ///This variable stores the type of thread the statistic belongs to

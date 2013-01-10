@@ -44,7 +44,6 @@ class Server : public ResourceAllocator {
   /*********** MEMBER FUNCTIONS ***********/
 
   virtual void serve();
-
 };
 
 #endif

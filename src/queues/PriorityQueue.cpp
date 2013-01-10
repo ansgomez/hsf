@@ -24,6 +24,11 @@ PriorityQueue::PriorityQueue() : RunnableQueue() {
 ///This function inserts the new runnable in the queue depending on the Runnable's priority, returns true if the new runnable is the new head of the queue (used as condition for registering jobs with parent).
 bool PriorityQueue::insertRunnable(Runnable *newRunnable) {
 
+  if(newRunnable == NULL) {
+    cout << "PriorityQueue::insertRunnable() - newRunnable is null!\n";
+    return false;
+  }
+
   //Clear the queue of any nodes with this runnable id
   deleteRunnable(newRunnable->getId());
   
@@ -34,8 +39,6 @@ bool PriorityQueue::insertRunnable(Runnable *newRunnable) {
     cout << "PriorityQueue::insertRunnable() error - newRunnable's criteria is null!\n";
     return false;
   }
-
-  //cout << "NewRunnable's criteria:\n" << newRunnable->getCriteria()->toString() << endl;
 
   #if _INFO==1
   cout << "PriorityQueue::insertRunnable() - size is now: " << size << endl;

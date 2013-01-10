@@ -22,11 +22,13 @@ class TDMA : public Scheduler {
   ///This variable holds the index of the load that is currently active 
   int active_index;
 
-  ///This vector stores all of the runnables it controls (it's load)
-  vector<Runnable*> load;
+  ///This std::vector stores all of the runnables it controls (it's load)
+  std::vector<Runnable*> load;
 
   ///There should be one timeslot per load
-  vector<struct timespec> timeslots; 
+  std::vector<struct timespec> timeslots; 
+
+  /**** SEMAPHORES ****/
 
   ///Semaphores to ensure proper execution
   sem_t activation_sem, preempt_sem, schedule_sem, timing_sem;

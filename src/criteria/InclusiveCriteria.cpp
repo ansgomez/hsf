@@ -14,7 +14,6 @@ using namespace std;
 /*********** CONSTRUCTOR ***********/
 
 InclusiveCriteria::InclusiveCriteria() : Criteria() {
-  //empty
   relativeDeadline = TimeUtil::Millis(0);
 }
 
@@ -69,6 +68,5 @@ void InclusiveCriteria::setPriority(int pr) {
 
 ///This function sets a new relative deadline
 void InclusiveCriteria::setRelativeDeadline(struct timespec rel) {
-  //cout << "relDed: " << rel.tv_nsec << endl;
   relativeDeadline = rel;
 }

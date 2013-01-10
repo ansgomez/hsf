@@ -34,6 +34,7 @@ class Aperiodic : public Dispatcher {
 
   ///This function returns the release time
   struct timespec getReleaseTime();  
+
   ///This function sets the release time for the aperiodic dispatcher
   void setReleaseTime(struct timespec r);
 };

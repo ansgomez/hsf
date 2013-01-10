@@ -5,7 +5,7 @@ CXX=g++
 CFLAGS=-Wall -I./src/
 CARG=-lrt
 LFLAGS= -lm 
-LARG=-ldl -lpthread -lrt -lSM -lICE -lX11 -lXext -lpng -lz -Wl-rpath #-lGLU -lGL
+LARG=-ldl -lpthread -lrt -lX11 #-lSM -lICE -lXext -lpng -lz -Wl-rpath #-lGLU -lGL
 M_FLAGS=-Wall -pthread -c -g -DVIEWER -lX11 #MJPEG Flags
 
 #Architecture dependent variable
@@ -19,13 +19,14 @@ SRCDIR=src
 
 #Libraries
 XML=xml/pugixml.cpp
-MATHGL= -rdynamic /usr/lib/libmgl.so.7.0.0
+MATHGL= -rdynamic /usr/local/lib/libmgl.so.7.0.0
 
 #SOURCE FILES
 HSFSRC=mainHSF.cpp
 SIMFIGSRC=mainSimulationFigure.cpp
 CALCULATESRC=mainCalculate.cpp
 SHOWSRC=mainShow.cpp
+PUBLISHSRC=mainPublish.cpp
 SIMULATESRC=mainSimulate.cpp
 
 #################    MAIN TARGETS   #################
@@ -126,6 +127,11 @@ show:
 	$(CXX) $(CFLAGS) -c $(SRCDIR)/$(SHOWSRC) -o $(OBJDIR)/mainShow.o
 	$(CXX) $(LFLAGS) $(OBJDIR)/mainShow.o -o $(BINDIR)/show 
 
+#################  PUBLISH  TOOL    #################
+publish:
+	$(CXX) $(CFLAGS) -c $(SRCDIR)/$(PUBLISHSRC) -o $(OBJDIR)/mainPublish.o
+	$(CXX) $(LFLAGS) $(OBJDIR)/mainPublish.o -o $(BINDIR)/publish 
+
 #################   SIMULATE TOOL   #################
 simulate:
 	$(CXX) $(CFLAGS) -c $(SRCDIR)/$(SIMULATESRC) -o $(OBJDIR)/mainSimulate.o
@@ -147,7 +153,7 @@ $(MJPEG_SRC):
 
 #################  MISCELLANEOUS   #################
 
-tools: simulate calculate simfig show 
+tools: simulate calculate show publish simfig 
 
 run:
 	sudo $(OBJDIR)/$(EXEC)

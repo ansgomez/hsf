@@ -24,6 +24,12 @@ if exist(name_missed, "file") == 0
   return;
 end
 
+[s, err, msg] = lstat(name_missed);
+
+if(s.size == 0)
+  return;
+end;
+
 missed = csvread(name_missed);
 
 if (size(missed)==0)
@@ -57,7 +63,11 @@ end
 
 for i=1:size(thread_ids,1);
   numJob_missed(i) = size((find(missed(:,1)==sorted_ids(i))),1);
-  missed_percentage(i) =(numJob_missed (i)/numJob(i));
+  if numJob(i) == 0
+    missed_percentage(i) = 0;
+  else
+    missed_percentage(i) =(numJob_missed (i)/numJob(i));
+  end
 end
 
 for i=1:size(thread_ids,1);
@@ -72,6 +82,8 @@ end
 matrix = [worker_id ; missed_percentage ; lateness];
 deadlines_matrix =transpose(matrix);
 
+deadlines_matrix(:,2) = deadlines_matrix(:,2)*100;
+deadlines_matrix(:,3) = deadlines_matrix(:,3)/1000;
 
 name_missed_deadlines = strcat(name,'_deadline_metrics.csv');
 csvwrite(name_missed_deadlines, deadlines_matrix , 'precision', '%2.3f');

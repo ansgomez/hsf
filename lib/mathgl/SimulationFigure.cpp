@@ -59,6 +59,7 @@ void SimulationFigure::drawArrival(int plot, double time, int color) {
     //gr->Label(mglData(2, xpt), mglData(2, ypt), label);
   }
 }
+
 //This function draws a rectangle of a defined color starting at time t and a relative width
 void SimulationFigure::drawJob(int plot, double start, double end, int clr) {
   //Assign plot color, unless it's overwritten
@@ -68,6 +69,28 @@ void SimulationFigure::drawJob(int plot, double start, double end, int clr) {
     gr->SetRanges(x1,x2,y1,y2);
     //Draw Face
     gr->Face(mglPoint(start,base), mglPoint(end,base), mglPoint(start,base+height), mglPoint(end,base+height), plot_color[color]);
+  }
+}
+
+//This function draw a green downward arrow at the specified time to indicate a met deadline
+void SimulationFigure::drawMetDeadline(int plot, double time) {
+  if(gr!=NULL) {
+    gr->ColumnPlot(n_plots, plot, plot_offset);
+    gr->SetRanges(x1,x2,y1,y2);
+          
+    //Draw Arrow
+    gr->Line(mglPoint(time,base), mglPoint(time,base+height*arrow_length), "_A1");
+  }
+}
+
+//This function draw a green downward arrow at the specified time to indicate a met deadline
+void SimulationFigure::drawMissedDeadline(int plot, double time) {
+  if(gr!=NULL) {
+    gr->ColumnPlot(n_plots, plot, plot_offset);
+    gr->SetRanges(x1,x2,y1,y2);
+          
+    //Draw Arrow
+    gr->Line(mglPoint(time,base), mglPoint(time,base+height*arrow_length), "_Ar1");
   }
 }
 
@@ -160,22 +183,29 @@ void SimulationFigure::genFig() {
 
     switch(traces[c].getAction()) {
     case task_arrival:
+      {
       drawArrival(id, TimeUtil::convert_ms(traces[c].getTimestamp()));
+      }
       break;   
 
     case task_start:
+      {
       start_time[id] = TimeUtil::convert_us(traces[c].getTimestamp());
+      }
       break;
 
     case sched_start:
+      {
       start_sched_us[id] = TimeUtil::convert_us(traces[c].getTimestamp());
 
       if(start_time[id] != 0) {
 	start_time[id] = start_sched_us[id];
       }
+      }
       break;
 
     case sched_end:
+      {
       if(true) { 
 	float x = start_sched_us[id]/1000;
 	drawSched(id, x,TimeUtil::convert_ms(traces[c].getTimestamp()) );
@@ -185,13 +215,27 @@ void SimulationFigure::genFig() {
 	float x = start_time[id]/1000;
 	drawJob(id, x, TimeUtil::convert_ms(traces[c].getTimestamp()) );
       }
-
+      }
       break;
 
     case task_end:
+      {
       float x = start_time[id]/1000;
       drawJob(id, x, TimeUtil::convert_ms(traces[c].getTimestamp()) );
       start_time[id] = 0;
+      }
+      break;
+
+    case deadline_missed:
+      {
+      drawMissedDeadline(id, TimeUtil::convert_ms(traces[c].getTimestamp()));
+      }
+      break;
+
+    case deadline_met:
+      {
+      drawMetDeadline(id, TimeUtil::convert_ms(traces[c].getTimestamp()));
+      }
       break;
     }
   }

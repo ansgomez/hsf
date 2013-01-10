@@ -4,13 +4,11 @@
 #include "core/Runnable.h"
 #include "util/Enumerations.h"
 
-#include <semaphore.h>
 #include <deque>
+#include <semaphore.h>
 
 class ResourceAllocator;
 class Task;
-
-using namespace std;
 
 /***************************************
  *        CLASS DECLARATION            * 
@@ -23,7 +21,7 @@ class Worker : public Runnable {
   /*********** VARIABLES ***********/
 
   ///Vector to hold arrival times of active tasks
-  deque<struct timespec> arrival_times;
+  std::deque<struct timespec> arrival_times;
   
   ///Pointer to the scheduler handling this worker
   ResourceAllocator* parent;

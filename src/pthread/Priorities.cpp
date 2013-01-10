@@ -19,7 +19,7 @@ int Priorities::get_disp_pr() {
 
 int Priorities::get_sched_pr(int level) {
   if(level<0 || level>MAX_LEVELS) {
-    return -1;
+    return 0;
   }
   else {
      return 5+MAX_LEVELS-level; 

@@ -9,11 +9,11 @@ enum _runnable_state {
 
 ///This enumeration describes the different scheduler types
 enum _sched_type {
-  tdma,
   edf,
-  rm,
   fifo,
-  fp
+  fp,
+  tdma,
+  rm
 };
 
 //This enumeration describes the different scerver types
@@ -28,7 +28,9 @@ enum _task_action {
   sched_start,
   sched_end,
   task_start,
-  task_end
+  task_end,
+  deadline_met,
+  deadline_missed
 };
 
 ///This enumeration describes the possible loads for a worker
@@ -39,16 +41,16 @@ enum _task_load {
 
 ///This enumeration descibes the possible task models
 enum _task_periodicity {
-  periodic,
   aperiodic,
+  periodic,
   periodic_jitter
 };
 
 ///This enum describes what thread types can produce traces
 enum _thread_type {
   idle,
-  dispatcher,
   scheduler,
+  dispatcher,
   server,
   worker
 };

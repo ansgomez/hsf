@@ -31,7 +31,7 @@ unsigned int Runtime::getId() {
 
 /*********** OPERATORS ***********/
 
-///This operator defines the sorting criteria to the the statistic's id
+///This operator defines the sorting criteria to be the statistic's id
 int Runtime::operator<(Runtime b) {
   return this->getId() < b.getId();
 }

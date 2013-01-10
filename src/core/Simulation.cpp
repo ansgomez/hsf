@@ -1,10 +1,7 @@
 #include "core/Simulation.h"
 
 #include "core/Dispatcher.h"
-#include "core/Task.h"
 #include "core/Worker.h"
-#include "dispatchers/Aperiodic.h"
-#include "dispatchers/Periodic.h"
 #include "pthread/Idle.h"
 #include "pthread/Priorities.h"
 #include "pthread/Thread.h"
@@ -21,6 +18,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+using namespace std;
+
 /***************************************
  *        CLASS DEFINITION             * 
  ***************************************/
@@ -29,8 +28,10 @@
 
 ///This attribute holds how long the simulation will last
 struct timespec Simulation::simTime;
+
 ///This attribute indicate if the simulation is initialized
 bool Simulation::initialized=false;
+
 ///This attribute indicates if there is currently a simulation
 bool Simulation::simulating=false;  
 
@@ -58,23 +59,27 @@ Simulation::Simulation(string _xml_path, int cpu) {
   }
 
   int n_cpus = sysconf( _SC_NPROCESSORS_ONLN );
-  //TODO: other options
-  //  if (cpu==1)
-  {
-    //Set CPU affinity
-     CPU_ZERO (&set);
 
-     for(int i=0;i<n_cpus;i++) {
-       //Set only the last CPU
-       if(i==n_cpus-1) {
-	 CPU_SET (i, &set);
-       }
-       //By default, clear CPU from the set
-       else {
-	 CPU_CLR (i, &set);
-       }
-     }
+  //if chosen cpu value is invalid, move it to the last core
+  if( cpu < 0 && cpu >= n_cpus)
+  {
+    cpu = n_cpus-1;
   }
+
+  //Set CPU affinity
+  CPU_ZERO (&set);
+  
+  for(int i=0;i<n_cpus;i++) {
+    //Set only the chosen cpu
+    if(i== cpu) {
+      CPU_SET (i, &set);
+    }
+    //By default, clear CPU from the set
+    else {
+      CPU_CLR (i, &set);
+    }
+  }
+
 
   if (pthread_setaffinity_np(pthread_self(), sizeof (cpu_set_t), &set) <0) {
     perror("Error setting CPU affinity\n");

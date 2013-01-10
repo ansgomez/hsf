@@ -18,6 +18,5 @@ Task::Task(_task_load load) {
 
 ///This function performs one task (whether it's decoding one frame, or one busy-wait loop)
 void Task::fire() {
-  //empty
   cout << "Task::fire - This should not print!\n";
 }
