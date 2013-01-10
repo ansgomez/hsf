@@ -218,17 +218,22 @@ function workerCost($FILE) {
     
     <p>
       These are the missed deadlines:
-      <div id="missed_deadlines_table">
-	<table border=\"1\">
-	  <thead>
-	    <th width="150px">Thread ID</th>
-	    <th width="200px">Arrival Time (us)</th>
-	    <th width="200px">Deadline (us)</th>
-	    <th width="200px">Finish Time (us)</th>
-          </thead>
-          <?php csv2html($PREFIX."_missed_deadlines.csv");  ?>
-	</table>
-      </div>
+      <?php if (($handle = fopen($PREFIX."_missed_deadlines.csv", "r")) !== FALSE) { ?>
+        <div id="missed_deadlines_table">
+          <table border=\"1\">
+	    <thead>
+              <th width="150px">Thread ID</th>
+              <th width="200px">Arrival Time (us)</th>
+              <th width="200px">Deadline (us)</th>
+              <th width="200px">Finish Time (us)</th>
+            </thead>
+            <?php csv2html($PREFIX."_missed_deadlines.csv");  ?>
+          </table>
+        </div>
+      <?php }
+      else { ?>
+         <h3>There are no missed deadlines!</h3>
+      <?php } ?>
     </p>
     
     <p>
@@ -338,7 +343,7 @@ function workerCost($FILE) {
   <div id="tabs-4">
     <p>
       Simulation Figure: <br>
-      <img src="<?php echo $PREFIX."/".$PREFIX."_figure.svg"; ?>" alt="Simulation Figure" width="1000px"/>
+      <img src="<?php echo $PREFIX."_data/".$PREFIX."_figure.svg"; ?>" alt="Simulation Figure" width="1000px"/>
     </p>
   </div>
 </div>

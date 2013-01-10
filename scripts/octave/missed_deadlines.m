@@ -82,7 +82,9 @@ end
 matrix = [worker_id ; missed_percentage ; lateness];
 deadlines_matrix =transpose(matrix);
 
+%multiply to get in percentage
 deadlines_matrix(:,2) = deadlines_matrix(:,2)*100;
+%divide to get millis
 deadlines_matrix(:,3) = deadlines_matrix(:,3)/1000;
 
 name_missed_deadlines = strcat(name,'_deadline_metrics.csv');

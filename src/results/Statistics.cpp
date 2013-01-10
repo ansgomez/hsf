@@ -119,8 +119,6 @@ void Statistics::toFile(string filePrefix) {
     file << aux_m.toString() << endl; 
   }
   file.close();
-  system(("chown hsf:hsf " + filePrefix + "_missed_deadlines.csv").data() );
-  system(("chmod 666 " + filePrefix + "_missed_deadlines.csv").data() );
 
   /************ SAVING RUNTIMES *********/
   Runtime aux_r;
@@ -133,8 +131,6 @@ void Statistics::toFile(string filePrefix) {
     file << aux_r.toString() << endl; 
   }
   file.close();
-  //system(("chown hsf:hsf " + filePrefix + "_runtimes.csv").data() );
-  system(("chmod 666 " + filePrefix + "_runtimes.csv").data() );
 
   /************ SAVING TRACES *********/
   Trace aux_t;
@@ -144,6 +140,8 @@ void Statistics::toFile(string filePrefix) {
     file << aux_t.toString() << "\n"; 
   }
   file.close();
-  system(("chown hsf:hsf " + filePrefix + "_traces.csv").data() );
-  system(("chmod 666 " + filePrefix + "_traces.csv").data() );
+
+  //Change the owner and permissions of generated files
+  //system(("chown hsf:hsf " + filePrefix + "_*.csv").data() );
+  system(("chmod 666 " + filePrefix + "_*.csv").data() );
 }
