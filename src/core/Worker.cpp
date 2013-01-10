@@ -58,8 +58,8 @@ void Worker::join() {
   sem_post(&worker_sem);
   sem_post(&worker_sem);
   sem_post(&activation_sem);
-  sem_post(&arrival_sem);
   sem_post(&activation_sem);
+  sem_post(&arrival_sem);
   sem_post(&arrival_sem);
 
   if(parent!=NULL) {
@@ -100,7 +100,13 @@ void Worker::wrapper() {
     Statistics::addTrace(worker, id, task_end);
 
     now = TimeUtil::getTime();
-    deadline = criteria->getArrivalTime() + relativeDeadline;
+    if(criteria!=NULL) {
+      deadline = criteria->getArrivalTime() + relativeDeadline;
+    }
+    else {
+      cout << "Worker::wrapper() - criteria is null!\n";
+    }
+
     //If deadline was missed, add to statistics
     if(now > deadline) {
       arrival = TimeUtil::relative(criteria->getArrivalTime());
@@ -190,7 +196,7 @@ void Worker::finishedJob() {
 	criteria->setDeadline(TimeUtil::Millis(0));
       }
       else {
-	cout << "Worker::finishedJob() - criteria is null! (1)\n";
+	cout << "Worker::finishedJob() - criteria is null! (2)\n";
       }
 
       sem_wait(&arrival_sem);
@@ -236,9 +242,7 @@ void Worker::newJob() {
       
     //Notify parent of new arrival
     if (parent != NULL ) {
-    //cout << "Worker::newJob() - going to parent...\n";
       parent->newJob(this);
-      //cout << "Worker::newJob() - returning from parent..\n";
     }
     else {
       cout << "Worker::newJob() - parent is null!\n";

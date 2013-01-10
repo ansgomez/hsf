@@ -133,7 +133,7 @@ void Statistics::toFile(string filePrefix) {
     file << aux_r.toString() << endl; 
   }
   file.close();
-  system(("chown hsf:hsf " + filePrefix + "_runtimes.csv").data() );
+  //system(("chown hsf:hsf " + filePrefix + "_runtimes.csv").data() );
   system(("chmod 666 " + filePrefix + "_runtimes.csv").data() );
 
   /************ SAVING TRACES *********/

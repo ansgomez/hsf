@@ -1,5 +1,7 @@
 #!/bin/bash
 
+alias sudo='sudo env PATH=$PATH $@'
+
 HSF=~/git/HSF
 export HSF
 

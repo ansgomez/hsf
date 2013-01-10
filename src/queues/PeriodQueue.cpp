@@ -24,6 +24,15 @@ PeriodQueue::PeriodQueue() : RunnableQueue() {
 
 ///This function inserts the new runnable in the queue depending on the Runnable's period, returns true if the new runnable is the new head of the queue (used as condition for registering jobs with parent).
 bool PeriodQueue::insertRunnable(Runnable *newRunnable) {
+
+  if(newRunnable == NULL) {
+    cout << "PriorityQueue::insertRunnable() - newRunnable is null!\n";
+    return false;
+  }
+
+  //Clear the queue of any nodes with this runnable id
+  deleteRunnable(newRunnable->getId());
+
   //increase the size counter
   size++;
   
