@@ -2,8 +2,6 @@
 
 php $HSF/scripts/php/html.php $1 > $1.html
 
-mkdir -p $1/
+mkdir -p $1_data/
 
-mv "$1"_figure* $1/
-
-mv $1_* $1/
+mv $1_*.* $1_data/
