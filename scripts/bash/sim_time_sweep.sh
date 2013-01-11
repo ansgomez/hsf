@@ -86,9 +86,9 @@ echo -e "\nRunning:\n\n$desc"
 tmr=$(timer)
 
 #foreach n_task
-for (( i=100 ; i <= $sim_time_ms_max ; n=n+100 ))
+for (( i=100 ; i <= $sim_time_ms_max ; i=i+100 ))
 do
-  echo -e "\n\n***   Simulating: N_tasks = $n ***\n"   
+  echo -e "\n\n***   Simulating: SimTime = $i ***\n"   
    
   #Generate XML
   php $HSF/scripts/hsf/"$algorithm"/"$topology".php $i $periodicity $util $n_tasks > "$algorithm".xml

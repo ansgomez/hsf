@@ -88,7 +88,7 @@ tmr=$(timer)
 #foreach util
 for (( i=10 ; i <= $util_max ; i=i+10 ))
 do
-  echo -e "\n\n***   Simulating: N_tasks = $n ***\n"   
+  echo -e "\n\n***   Simulating: Util = $i ***\n"   
    
   #Generate XML
   php $HSF/scripts/hsf/"$algorithm"/"$topology".php $sim_time_ms $periodicity $i $n_tasks > "$algorithm".xml
@@ -121,7 +121,7 @@ do
 done
 
 #Plot all measures for n_sweep
-octave --no-window-system -q --eval "plotExperiment(\"System Utilization\");"
+octave --no-window-system -q --eval "plotExperiment(\"System Utilization (%)\");"
 
 #compare starting time with current time, and save it
 echo "$(timer $tmr)" > runtime.txt
