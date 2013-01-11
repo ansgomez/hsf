@@ -68,8 +68,8 @@ void simulate(string prefix) {
   system(aux.c_str());  
 
   //Call simfig
-  aux = "simfig " + prefix;
-  system(aux.c_str());
+  //aux = "simfig " + prefix;
+  //system(aux.c_str());
 
   //Call show
   //aux = "show " + prefix;

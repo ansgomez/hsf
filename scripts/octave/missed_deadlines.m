@@ -46,17 +46,17 @@ end
 
 runTime = csvread(name_runtimes);
 
-%findes workers ids
+%find workers ids
 worker = sort (runTime(find(runTime(:,1)==WORKER),2));
 
-%finds thread ids and sorts them
+%find thread ids and sorts them
 thread_ids=unique(traces(:,2));
 sorted_ids = sort(thread_ids);
 
 ids_missed = unique(missed(:,2));
 sorted_missed = sort (ids_missed);
 
-%finds the number of jobs for each worker
+%find the number of jobs for each worker
 for i=1:size(thread_ids,1);
   numJob(i) = size(find(traces(find(traces(:,2)==sorted_ids(i)),3)==TASK_END),1);
 end
@@ -71,7 +71,7 @@ for i=1:size(thread_ids,1);
 end
 
 for i=1:size(thread_ids,1);
-lateness(i) =(average(missed(find(missed(:,1)==sorted_ids(i)),4))) - (average(missed(find(missed(:,1)==sorted_ids(i)),3)));
+tardiness(i) =(average(missed(find(missed(:,1)==sorted_ids(i)),4))) - (average(missed(find(missed(:,1)==sorted_ids(i)),3)));
 end
 
 for i=1:size(sorted_ids,1);
@@ -79,7 +79,7 @@ worker_id(i) = find(sorted_ids(i)==worker);
 end
 
 
-matrix = [worker_id ; missed_percentage ; lateness];
+matrix = [worker_id ; missed_percentage ; tardiness];
 deadlines_matrix =transpose(matrix);
 
 %multiply to get in percentage
@@ -89,5 +89,11 @@ deadlines_matrix(:,3) = deadlines_matrix(:,3)/1000;
 
 name_missed_deadlines = strcat(name,'_deadline_metrics.csv');
 csvwrite(name_missed_deadlines, deadlines_matrix , 'precision', '%2.3f');
+
+total_missed = average(missed_percentage);
+total_tardiness = average(tardiness);
+total_deadlines = [total_missed ; total_tardiness];
+name_total_deadlines = strcat(name,'_deadline_total.csv');
+csvwrite(name_total_deadlines, total_deadlines, 'precision', '%2.3f');
 
 clear all;
