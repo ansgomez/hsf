@@ -79,7 +79,7 @@ cd $DIR
 #save description
 echo -e $desc > description.txt
 
-echo -e "\n*****     N_SWEEP:      *****"
+echo -e "\n*****     U_SWEEP:      *****"
 echo -e "\nRunning:\n\n$desc"
 
 #save the starting time

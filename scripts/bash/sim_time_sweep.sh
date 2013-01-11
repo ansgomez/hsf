@@ -6,33 +6,36 @@
 
 #This script performs a sweep of Ntasks under one topology and saves all results.
 
-#Variable 1 -> EDF Topology (flat or tree)
-#Variable 2 -> Max number of tasks (flat), number of levels (tree). range is [2-Nmax]
+#Variable 1 -> Algorithm (EDF, FIFO, RateMonotonic, etc)
+#Variable 2 -> Topology (flat or tree)
+#Variable 3 -> Max simulation time [ms] (range is [100-100000]
 
 #####################
 ##    CONSTANTS    ##
 #####################
 
-#Simulation time in millis
-sim_time_ms=1000
+#Maximum number of tasks
+n_tasks=2;
+#System utilization ([0,1])
+util=50;
 #Periodicity of tasks
 periodicity="periodic"
-#Algorithm to experiment with
-algorithm="edf"
 
 #####################
 ##    VARIABLES    ##
 #####################
 
+#Algorithm to experiment with
+algorithm="$1"
 #Topology
-topology="$1";
-#Maximum number of tasks
-n_max=$2;
+topology="$2";
+#Simulation time in millis
+sim_time_ms_max="$3";
 
 #Experiment's short name
 short_name="$algorithm"_"$topology"_exp;
 #Experiment description
-desc="Algorithm: $algorithm\nTopology: $topology\nSweep: N_Tasks [2,"$n_max"]";
+desc="Algorithm: $algorithm\nTopology: $topology\nSweep: SimTime [100,"$sim_time_ms_max"]";
 
 #####################
 ##    FUNCTIONS    ##
@@ -76,19 +79,19 @@ cd $DIR
 #save description
 echo -e $desc > description.txt
 
-echo -e "\n*****     N_SWEEP:      *****"
+echo -e "\n*****     SIM_TIME_SWEEP:      *****"
 echo -e "\nRunning:\n\n$desc"
 
 #save the starting time
 tmr=$(timer)
 
 #foreach n_task
-for (( n=2 ; n <= $n_max ; n++ ))
+for (( i=100 ; i <= $sim_time_ms_max ; n=n+100 ))
 do
   echo -e "\n\n***   Simulating: N_tasks = $n ***\n"   
    
   #Generate XML
-  php $HSF/scripts/hsf/"$algorithm"/"$topology".php $sim_time_ms $periodicity $load $slot $gamma $n > "$algorithm".xml
+  php $HSF/scripts/hsf/"$algorithm"/"$topology".php $i $periodicity $util $n_tasks > "$algorithm".xml
 
   #Execute HSF
   sudo $HSF/bin/hsf $algorithm
@@ -98,7 +101,7 @@ do
   $HSF/bin/simfig $algorithm
 
   #Copy relevant results
-  echo $n >> x.csv
+  echo $i >> x.csv
   cat "$algorithm"_sys_cost_us.csv >> sys.csv
   cat "$algorithm"_alloc_cost_us.csv >> alloc.csv
   if [[ -f "$algorithm"_deadline_total.csv ]]; then
@@ -111,27 +114,16 @@ do
   publish $algorithm
 
   #Move simulation results
-  PREFIX=ntasks_"$n"
+  PREFIX=sim_time_"$i"
   mkdir $PREFIX
   mv "$algorithm"* $PREFIX/
        
 done
 
 #Plot all measures for n_sweep
-octave --no-window-system -q --eval "plotExperiment(\"Number of Tasks\");"
+octave --no-window-system -q --eval "plotExperiment(\"Simulation Time (ms)\");"
 
 #compare starting time with current time, and save it
-#echo "$(timer $tmr)" > $DIR/runtime.txt
+echo "$(timer $tmr)" > runtime.txt
 
-#After experimenting, plot results
-#sudo octave --no-window-system -qf plotXY("n_tasks")
-
-#Move experiment output
-#mv "sys.csv alloc.csv deadlines .csv" $PREFIX/
-
-#Save figures
-#sudo mv "$algorithm"_figure.* $DIR/
-
-#clear auxiliary files
-#rm "$algorithm"*
 
