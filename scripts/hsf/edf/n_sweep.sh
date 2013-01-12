@@ -26,10 +26,10 @@ topology="flat";
 ##    VARIABLES    ##
 #####################
 
-#Maximum initial period
-period_max=70;
+#Number of iterations
+iterations=20;
 #Maximum number of tasks
-n_max=5;
+n_max=6;
 
 #Experiment's short name
 short_name="$algorithm"_"$topology"_exp;
@@ -78,56 +78,53 @@ cd $DIR
 #save description
 echo -e $desc > description.txt
 
-echo -e "\n*****     N_SWEEP:      *****"
+echo -e "\n*****     FACTORIAL:      *****"
 echo -e "\nRunning:\n\n$desc"
 
 #save the starting time
 tmr=$(timer)
 
-for (( p=50 ; p <= $period_max ; p=p+10 ))
+for (( i=1 ; i <= $iterations ; i++ ))
 do
-  DIR_P=period_"$p";
-  mkdir $DIR_P
-
-  #foreach n_task
-  for (( n=2 ; n <= $n_max ; n++ ))
-  do
-    echo -e "\n###   Simulating: N_tasks = $n & Period = $p ###\n"   
    
-    #Generate XML
-    php $HSF/scripts/hsf/"$algorithm"/"$topology".php $sim_time_ms $periodicity $p $n > "$algorithm".xml
+  u=$[($RANDOM %90)+20];
+  n=$[($RANDOM % 4)+2];
 
-    #Execute HSF
-    sudo $HSF/bin/hsf $algorithm
+  echo -e "\n###   Simulation $i: (u=$u,n=$n)  ###\n"   
 
-    #Calculate all metrics plus figure
-    echo -e "***   Calculating all metrics!  ***"
-    $HSF/bin/calculate all $algorithm > /dev/null
-    #$HSF/bin/simfig $algorithm
+  #Generate XML
+  php $HSF/scripts/hsf/"$algorithm"/"$topology".php $sim_time_ms $periodicity $u $n > "$algorithm".xml
 
-    #Copy relevant results
-    echo $n >> n_tasks.csv
-    cat "$algorithm"_utilization.csv >> util.csv
-    cat "$algorithm"_sys_cost_us.csv >> sys.csv
-    cat "$algorithm"_alloc_cost_us.csv >> alloc.csv
-    if [[ -f "$algorithm"_deadline_total.csv ]]; then
-      cat "$algorithm"_deadline_total.csv >> deadlines.csv
-    else
-      echo "0" >> deadlines.csv
-    fi
+  #Execute HSF
+  sudo $HSF/bin/hsf $algorithm
 
-    #Publish results
-    publish $algorithm
+  #Calculate all metrics plus figure
+  echo -e "***   Calculating all metrics!  ***"
+  $HSF/bin/calculate all $algorithm > /dev/null
+  #$HSF/bin/simfig $algorithm
 
-    #Move simulation results
-    DIR_N=$DIR_P/ntasks_"$n"
-    mkdir $DIR_N
-    mv "$algorithm"* $DIR_N/
-  done
+  #Copy relevant results
+  echo $n >> n_tasks.csv
+  cat "$algorithm"_utilization.csv >> util.csv
+  cat "$algorithm"_sys_cost_us.csv >> sys.csv
+  cat "$algorithm"_alloc_cost_us.csv >> alloc.csv
+  if [[ -f "$algorithm"_deadline_total.csv ]]; then
+    cat "$algorithm"_deadline_total.csv >> deadlines.csv
+  else
+    echo "0" >> deadlines.csv
+  fi
+
+  #Publish results
+  publish $algorithm
+
+  #Move simulation results
+  DIR_N=n_"$i"
+  mkdir -p $DIR_N
+  mv "$algorithm"* $DIR_N/
 done
 
 #Plot all measures for n_sweep
-#octave --no-window-system -q --eval "plotExperiment(\"Number of Tasks\");"
+octave --no-window-system -q --eval "plotFactorial();"
 
 #compare starting time with current time, and save it
 echo "$(timer $tmr)" > runtime.txt
