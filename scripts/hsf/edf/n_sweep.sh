@@ -27,7 +27,7 @@ topology="flat";
 #####################
 
 #Maximum initial period
-period=80;
+period_max=70;
 #Maximum number of tasks
 n_max=5;
 
@@ -64,7 +64,7 @@ function timer()
 #####################
 
 #if old simulation data exists, remove it
-sudo rm -f "$algorithm"* sys.csv alloc.csv deadlines.csv
+sudo rm -f "$algorithm"* sys.csv alloc.csv deadlines.csv util.csv
 
 #create directory with the shortname
 mkdir -p $short_name
@@ -84,41 +84,46 @@ echo -e "\nRunning:\n\n$desc"
 #save the starting time
 tmr=$(timer)
 
-#foreach n_task
-for (( n=2 ; n <= $n_max ; n++ ))
+for (( p=50 ; p <= $period_max ; p=p+10 ))
 do
-  echo -e "\n###   Simulating: N_tasks = $n ###\n"   
+  DIR_P=period_"$p";
+  mkdir $DIR_P
+
+  #foreach n_task
+  for (( n=2 ; n <= $n_max ; n++ ))
+  do
+    echo -e "\n###   Simulating: N_tasks = $n & Period = $p ###\n"   
    
-  #Generate XML
-  php $HSF/scripts/hsf/"$algorithm"/"$topology".php $sim_time_ms $periodicity $period $n > "$algorithm".xml
+    #Generate XML
+    php $HSF/scripts/hsf/"$algorithm"/"$topology".php $sim_time_ms $periodicity $p $n > "$algorithm".xml
 
-  #Execute HSF
-  sudo $HSF/bin/hsf $algorithm
+    #Execute HSF
+    sudo $HSF/bin/hsf $algorithm
 
-  #Calculate all metrics plus figure
-  echo -e "***   Calculating all metrics!  ***"
-  $HSF/bin/calculate all $algorithm > /dev/null
-  #$HSF/bin/simfig $algorithm
+    #Calculate all metrics plus figure
+    echo -e "***   Calculating all metrics!  ***"
+    $HSF/bin/calculate all $algorithm > /dev/null
+    #$HSF/bin/simfig $algorithm
 
-  #Copy relevant results
-  echo $n >> n_tasks.csv
-  cat "$algorithm"_utilization.csv >> util.csv
-  cat "$algorithm"_sys_cost_us.csv >> sys.csv
-  cat "$algorithm"_alloc_cost_us.csv >> alloc.csv
-  if [[ -f "$algorithm"_deadline_total.csv ]]; then
-    cat "$algorithm"_deadline_total.csv >> deadlines.csv
-  else
-    echo "0" >> deadlines.csv
-  fi
+    #Copy relevant results
+    echo $n >> n_tasks.csv
+    cat "$algorithm"_utilization.csv >> util.csv
+    cat "$algorithm"_sys_cost_us.csv >> sys.csv
+    cat "$algorithm"_alloc_cost_us.csv >> alloc.csv
+    if [[ -f "$algorithm"_deadline_total.csv ]]; then
+      cat "$algorithm"_deadline_total.csv >> deadlines.csv
+    else
+      echo "0" >> deadlines.csv
+    fi
 
-  #Publish results
-  publish $algorithm
+    #Publish results
+    publish $algorithm
 
-  #Move simulation results
-  PREFIX=ntasks_"$n"
-  mkdir $PREFIX
-  mv "$algorithm"* $PREFIX/
-       
+    #Move simulation results
+    DIR_N=$DIR_P/ntasks_"$n"
+    mkdir $DIR_N
+    mv "$algorithm"* $DIR_N/
+  done
 done
 
 #Plot all measures for n_sweep
