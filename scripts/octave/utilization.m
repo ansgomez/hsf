@@ -20,7 +20,7 @@ runT = runTime(idle,3);
 total = sum(runTime(:,3));
 
 %calculates the utilization
-utilization = 1 - (runT /total );
+utilization = (1-(runT /total))*100;
 
 name_util = strcat(name,'_utilization.csv');
 csvwrite(name_util, utilization, 'precision', '%2.3f');

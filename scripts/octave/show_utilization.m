@@ -10,4 +10,4 @@ end
 utilization = csvread(name_traces);
 
 fprintf('  Utilization : \n\n');
-fprintf ('\tUtilization is %7.3f%% \n' ,utilization*100 );
+fprintf ('\tUtilization is %7.3f%% \n' ,utilization );

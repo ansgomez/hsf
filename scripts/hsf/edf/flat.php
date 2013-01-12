@@ -7,7 +7,7 @@
  *
  * Param 1: Simulation time (ms)
  * Param 2: Periodicity (periodic, periodic_jitter)
- * Param 3: Utilization (range is [0,100]
+ * Param 3: Initial worker period (normally [50-1000] ms)
  * Param 4: Number of tasks (normally [2,40])
  * 
  * If periodicity=periodic_jitter, then jitter = period/4
@@ -23,11 +23,10 @@ $WCET = 10; //WCET for busy_wait loops
 //Input Arguments
 $sim_time_ms = $argv[1]; //simulation time
 $periodicity = $argv[2]; //task periodicity
-$util = $argv[3]; //system utilization
+$period = $argv[3]; //initial worker period
 $n_tasks = $argv[4]; //number of tasks
 
 //Calculated constants...
-$period = $n_tasks*$WCET/($util/100);
 $jitter = ceil($period/4);
 
 /************************************************************
@@ -43,7 +42,7 @@ $jitter = ceil($period/4);
 <?php
    //Generate Workers
    for($i=0;$i<$n_tasks;$i++) {
-      generateWorker("busy_wait");
+      generateWorker("busy_wait", $i);
    }
 ?>
 
@@ -59,15 +58,18 @@ $jitter = ceil($period/4);
  ************************************************************/
 
 //This function generates one worker of a defined load type
-function generateWorker($task) {
+function generateWorker($task, $i) {
    global $period;
    global $jitter;
    global $periodicity;
    global $WCET;
+
+   $period_i = $period+10*$i;
+
    echo "\n";
 ?>
    <runnable type="worker" periodicity="<?php echo $periodicity; ?>" task="<?php echo $task; ?>">
-      <period value="<?php echo $period; ?>"  units="ms" />
+      <period value="<?php echo $period_i; ?>"  units="ms" />
 <?php
       if($periodicity==="periodic_jitter") {
          echo "      <jitter value=\"$jitter\" units=\"ms\" />\n";
@@ -76,7 +78,7 @@ function generateWorker($task) {
          echo "      <wcet   value=\"$WCET\" units=\"ms\" />\n";
       }
       
-      echo "      <relative_deadline value=\"$period\" units=\"ms\" /> ";
+      echo "      <relative_deadline value=\"$period_i\" units=\"ms\" /> ";
       echo "   </runnable>\n";
 }
 ?>
