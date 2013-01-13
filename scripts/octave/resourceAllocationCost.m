@@ -1,6 +1,6 @@
 function resourceAllocationCost(name)
 
-SCHED=2;
+SCHED=1;
 SERV=3;
 
 name_runtimes = strcat(name,'_runtimes.csv');
