@@ -1,3 +1,13 @@
+NOTE: This repository holds the 2012-2013 development history of the
+Hierarchical Scheduling Framework (HSF). It was later released as SF3P:
+https://github.com/ansgomez/sf3p  (see that repository for the current
+code, manual and the publication to cite:
+Gomez A, Schor L, Kumar P, Thiele L. SF3P: A Framework to Explore and
+Prototype Hierarchical Compositions of Real-Time Schedulers. RSP 2014. IEEE.)
+
+Third-party code in lib/lib.tar(.gz): pugixml (MIT, Arseny Kapoulkine) and
+CImg (CeCILL-C/CeCILL); see the file headers.
+
 *************************************************************
 *
 *           HIERARCHICAL SCHEDULING FRAMEWORK
