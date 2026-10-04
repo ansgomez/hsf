@@ -77,3 +77,8 @@ CONFIGURATION:
        worker       ->  Worker costs
        missed       ->  Missed deadlines
       
+
+LICENSE
+
+  MIT License, Copyright (c) 2012-2013 Andres Gomez, Lars Schor, Pratyush Kumar,
+  Lothar Thiele and ETH Zurich. See LICENSE.
